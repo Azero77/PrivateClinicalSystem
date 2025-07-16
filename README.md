@@ -20,5 +20,6 @@ A backend-driven appointment management system for clinics. Built to explore **D
 
 ---
 
-## 📦 Domain Model Overview
+## Invariants
+
 
