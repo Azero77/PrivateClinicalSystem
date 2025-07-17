@@ -1,20 +1,21 @@
-﻿using ErrorOr;
+﻿using ClinicApp.Domain.Session;
+using ErrorOr;
 
-namespace ClinicApp.Domain.Session
+namespace ClinicApp.Domain.Common.ValueObjects
 {
-    public record SessionDate
+    public record TimeRange
     {
-        private SessionDate(DateTime startTime, DateTime endTime)
+        private TimeRange(DateTime startTime, DateTime endTime)
         {
             StartTime = startTime;
             EndTime = endTime;
         }
 
-        public static ErrorOr<SessionDate> Create(DateTime startTime, DateTime endTime)
+        public static ErrorOr<TimeRange> Create(DateTime startTime, DateTime endTime)
         {
             if (startTime > endTime)
                 return SessionErrors.SessionTimeValidationError.error;
-            return new SessionDate(startTime, endTime);
+            return new TimeRange(startTime, endTime);
         }
         public TimeSpan Duration => EndTime - StartTime;
 
