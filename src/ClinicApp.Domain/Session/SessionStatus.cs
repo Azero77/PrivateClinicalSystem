@@ -5,11 +5,12 @@ public enum SessionStatus
 {
     Pending = 0,
     Set = 1,
-    Updated = 2,
-    Started = 4,
-    Finished = 8,
-    Deleted = 16,
+    Rejected = 2,
+    Updated = 4,
+    Started = 8,
+    Finished = 16,
+    Deleted = 32,
     //Financial
-    Paid = 32,
-    Unpaid = 64
+    Paid = 64,
+    Unpaid = 128
 }

@@ -21,6 +21,8 @@ namespace ClinicApp.Domain.Doctor
         public WorkingHours WorkingHours { get; private set; }
         public ErrorOr<Success> AddSession(Session.Session session)
         {
+            if (session.DoctorId != this.Id)
+                throw new ArgumentException("Can't Modify the session of another doctor");
             WorkingDays sessionDay = (WorkingDays)(1 << ((int)session.SessionDate.StartTime.DayOfWeek));
             if (SessionConflictsWithWorkingDays(sessionDay))
             {
@@ -45,6 +47,7 @@ namespace ClinicApp.Domain.Doctor
             if (result.IsError)
                 return result.Errors;
             _sessionIds.Add(session.Id);
+            session.SetSession();
             return Result.Success;
         }
 
