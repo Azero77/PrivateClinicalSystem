@@ -31,7 +31,8 @@ namespace ClinicApp.Domain.Session
                 RoomId = roomId,
                 SessionStatus = session,
                 PatientId = patientId,
-                DoctorId = doctorId
+                DoctorId = doctorId,
+                CreatedAt = DateTime.UtcNow
             };
         }
         private Session() { } 
@@ -42,89 +43,106 @@ namespace ClinicApp.Domain.Session
         public Guid DoctorId { get; private set; }
         public SessionStatus SessionStatus { get; private set; }
         public SessionHistory SessionHistory { get; private set; } = new();
+        public DateTime CreatedAt { get; private set; }
 
         internal bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;
         internal bool IsFinished => (SessionStatus & SessionStatus.Finished) == SessionStatus.Finished;
         internal bool IsPaid => (SessionStatus & SessionStatus.Paid) == SessionStatus.Paid;
         internal ErrorOr<Success> SetSession() //From Pending To Set
         {
-            this.SessionStatus |= SessionStatus.Set;
-            this.SessionStatus &= ~SessionStatus.Pending;
-            SessionHistory.AddNewState(SessionState.SetSessionState(DateTime.UtcNow));
-            
+            AddStatus(SessionStatus.Set);
+            RemoveStatus(SessionStatus.Pending);
+            PushChanges(SessionState.SetSessionState(DateTime.UtcNow));
             return Result.Success;
         }
 
         internal ErrorOr<Deleted> DeleteSession()
         {
-            if (IsDeleted)
+            if (HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Delete a deleted session");
-            SessionStatus |= SessionStatus.Deleted;
+            AddStatus(SessionStatus.Deleted);
             PushChanges(SessionState.DeletedSessionState(DateTime.UtcNow));
             return Result.Deleted;
         }
 
         internal ErrorOr<Success> StartSession()
         {
-            if(IsDeleted)
+            if(HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
                    description: "Can't Start a deleted session");
-            SessionStatus |= SessionStatus.Started;
+            AddStatus(SessionStatus.Started);
             PushChanges(SessionState.StartedSessionState(DateTime.UtcNow));
             return Result.Success;
         }
 
         internal ErrorOr<Success> FinishSession()
         {
-            if(IsDeleted)
+            if(HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
                    description: "Can't Finish a deleted session");
             if (DateTime.UtcNow < SessionDate.StartTime)
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Finish a session in the future");
-            SessionStatus |= SessionStatus.Finished;
+            AddStatus(SessionStatus.Finished);
             PushChanges(SessionState.FinishedSessionState(DateTime.UtcNow));
             return Result.Success;
         }
 
         internal ErrorOr<Success> RejectSession()
         {
-            if (IsDeleted || IsFinished)
+            if (HasStatus(SessionStatus.Deleted) || HasStatus(SessionStatus.Finished))
                 return Error.Validation(code: "Session.Validation",
                    description: "Can't Reject a deleted or finished session");
             else if (DateTime.UtcNow > SessionDate.StartTime)
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Reject a session in the future");
-            SessionStatus |= SessionStatus.Rejected;
-            SessionStatus &= ~SessionStatus.Pending;
+            AddStatus(SessionStatus.Pending);
+            RemoveStatus(SessionStatus.Pending);
             PushChanges(SessionState.RejectedSessionState(DateTime.UtcNow));
             return Result.Success;
         }
 
         internal ErrorOr<Success> UpdateDate(TimeRange newTimeRange)
         {
-            if ((SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted)
+            if (HasStatus(SessionStatus.Deleted))
             {
                 return Error.Validation(SessionErrors.SessionDeletionError,
                     "Can't Update Deleted Sessions");
             }
 
-            if ((SessionStatus & SessionStatus.Finished) == SessionStatus.Finished)
+            if (HasStatus(SessionStatus.Finished))
             {
                 return Error.Validation(SessionErrors.SessionDeletionError,
                     "Can't Update Finished Sessions");
             }
-            SessionStatus |= SessionStatus.Updated;
+            AddStatus(SessionStatus.Updated);
             PushChanges(SessionState.UpdatedSessionState(this.SessionDate, newTimeRange, DateTime.UtcNow));
             this.SessionDate = newTimeRange;
             return Result.Success;
         }
 
+
+        //For dealing with domain events and session history at the same time
         private void PushChanges(SessionState state)
         {
             _domainEvents.Add(SessionDomainEventFactory.From(state));
             SessionHistory.AddNewState(state);
+        }
+
+        private void AddStatus(SessionStatus status)
+        {
+            SessionStatus |= status;
+        }
+
+        private void RemoveStatus(SessionStatus status)
+        {
+            SessionStatus &= ~status;
+        }
+
+        private bool HasStatus(SessionStatus status)
+        {
+            return (SessionStatus & status) == status;
         }
     }
 
