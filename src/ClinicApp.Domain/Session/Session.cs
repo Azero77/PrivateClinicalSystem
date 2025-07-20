@@ -24,7 +24,7 @@ namespace ClinicApp.Domain.Session
             {
                 return SessionErrors.SessionTimeInThePast.error;
             }
-            return new Session()
+            var result =  new Session()
             {
                 SessionDate = sessionDate,
                 SessionDescription = sessionDescription,
@@ -34,6 +34,8 @@ namespace ClinicApp.Domain.Session
                 DoctorId = doctorId,
                 CreatedAt = DateTime.UtcNow
             };
+            result.PushChanges(SessionState.CreateSessionState(result.SessionStatus));
+            return result;
         }
         private Session() { } 
         public TimeRange SessionDate { get; private set; } = null!;
@@ -140,7 +142,7 @@ namespace ClinicApp.Domain.Session
             SessionStatus &= ~status;
         }
 
-        private bool HasStatus(SessionStatus status)
+        public bool HasStatus(SessionStatus status)
         {
             return (SessionStatus & status) == status;
         }

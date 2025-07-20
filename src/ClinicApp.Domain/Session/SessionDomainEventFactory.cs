@@ -8,6 +8,7 @@ namespace ClinicApp.Domain.Session
             state.metadata switch
             {
                 SetSessionMetadata m => new SessionSetEvent(m),
+                SessionCreatedMetadata m => new SessionCreatedEvent(new SessionCreatedMetadata()),
                 UpdatedSessionMetadata m => new SessionUpdatedEvent(m),
                 DeletedSessionMetadata m => new SessionDeletedEvent(m),
                 RejectedSessionMetadata m => new SessionRejectedEvent(m),
@@ -17,6 +18,7 @@ namespace ClinicApp.Domain.Session
             };
     }
 
+    public record SessionCreatedEvent(SessionCreatedMetadata session) : IDomainEvent;
     public record SessionSetEvent(SetSessionMetadata Metadata) : IDomainEvent;
 
     public record SessionUpdatedEvent(UpdatedSessionMetadata Metadata) : IDomainEvent;

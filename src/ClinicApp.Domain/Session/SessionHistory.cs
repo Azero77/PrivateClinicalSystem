@@ -4,7 +4,6 @@ namespace ClinicApp.Domain.Session
 {
     public class SessionHistory
     {
-
         public Queue<SessionState> States { get; private set; } = new Queue<SessionState>();
        
         public void AddNewState(SessionState state)
@@ -21,6 +20,7 @@ namespace ClinicApp.Domain.Session
     public record SessionState(SessionStatus newstate,
         SessionStateMetaData metadata)
     {
+        public static SessionState CreateSessionState(SessionStatus initialStatus) => new SessionState(initialStatus, new SessionCreatedMetadata());
         public static SessionState SetSessionState(DateTime setTimeAt) => new SessionState(SessionStatus.Set, new SetSessionMetadata(setTimeAt));
         public static SessionState UpdatedSessionState(TimeRange oldValue, TimeRange newValue, DateTime updateAt) =>
        new(SessionStatus.Updated, new UpdatedSessionMetadata(oldValue, newValue, updateAt));
@@ -40,6 +40,7 @@ namespace ClinicApp.Domain.Session
 
 
     public abstract record SessionStateMetaData;
+    public record SessionCreatedMetadata : SessionStateMetaData;
     public record UpdatedSessionMetadata(TimeRange oldValue,TimeRange newValue,DateTime updateAt) : SessionStateMetaData;
     public record DeletedSessionMetadata(DateTime deletedAt) : SessionStateMetaData;
     public record SetSessionMetadata(DateTime setTimeAt) : SessionStateMetaData;

@@ -14,41 +14,44 @@ namespace ClinicApp.Domain.Doctor
     public class Doctor : AggregateRoot
     {
         public Doctor(Guid id) : base(id) { }
-        public Schedule _schedule { get; private set; } = null!;
-
-        public List<Guid> _sessionIds { get; private set; } = new();
+        public List<Guid> SessionIds { get; private set; } = new();
         public WorkingDays WorkingDays { get; private set; }
         public WorkingHours WorkingHours { get; private set; }
         public ErrorOr<Success> AddSession(Session.Session session)
         {
+            if (this.SessionIds.Contains(session.Id))
+                return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
+
             if (session.DoctorId != this.Id)
-                throw new ArgumentException("Can't Modify the session of another doctor");
+                return DoctorErrors.DoctorModifyValidationError;
+            var canAdd = SessionConflictsWithDoctor(session);
+            if (canAdd.IsError)
+            {
+                return canAdd.Errors;
+            }
+            SessionIds.Add(session.Id);
+            return Result.Success;
+        }
+
+        internal ErrorOr<Success> SessionConflictsWithDoctor(Session.Session session)
+        {
             WorkingDays sessionDay = (WorkingDays)(1 << ((int)session.SessionDate.StartTime.DayOfWeek));
+
             if (SessionConflictsWithWorkingDays(sessionDay))
             {
-                return Error.Conflict(DoctorErrors.SessionOutOfWorkingDay,
-                    "Session Out of working Days of the doctor",
-                    new Dictionary<string, object> {
-                        { "SessionDay" , session.SessionDate.StartTime.DayOfWeek.ToString() },
-                        { "DoctorDays" , Enum.GetValues<WorkingDays>().Where(d => d != WorkingDays.None && d.HasFlag(WorkingDays)).ToList().Select(d => d.ToString())}
-                    });
+                return DoctorErrors.SessionOutOfWorkingDay(session.SessionDate.StartTime.DayOfWeek, this.WorkingDays);
             }
             else if (SessionConflictsWithWorkingHours(session))
             {
-                return Error.Conflict(DoctorErrors.SessionOutOfWorkingDay,
-                    "Session Out of working hours of the doctor",
-                    new Dictionary<string, object>
-                    {
-                        { "SessionTime" , session.SessionDate},
-                        { "DoctorTime" , this.WorkingHours }
-                    });
+                return DoctorErrors.SessionOutOfWorkingHours(session.SessionDate, this.WorkingHours);
             }
-            var result = _schedule.CanBookTimeSlot(session.SessionDate);
-            if (result.IsError)
-                return result.Errors;
-            _sessionIds.Add(session.Id);
-            session.SetSession();
             return Result.Success;
+        }
+
+        internal void RemoveSession(Guid sessionId)
+        {
+            if(SessionIds.Contains(sessionId))
+                this.SessionIds.Remove(sessionId);
         }
 
         private bool SessionConflictsWithWorkingDays(WorkingDays sessionDay)
@@ -62,9 +65,9 @@ namespace ClinicApp.Domain.Doctor
                             TimeOnly.FromDateTime(session.SessionDate.StartTime) > WorkingHours.StartTime &&
                             TimeOnly.FromDateTime(session.SessionDate.EndTime) < WorkingHours.EndTime);
         }
+
     }
 
-    public record DoctorSessionCreatedEvent(Session.Session session) : IDomainEvent;
     public record WorkingHours
     {
         public TimeOnly StartTime { get; private set; }
