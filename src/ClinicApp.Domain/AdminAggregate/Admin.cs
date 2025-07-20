@@ -15,6 +15,7 @@ namespace ClinicApp.Domain.AdminAggregate
             WorkingHours hours,
             WorkingDays days)
         {
+            return Error.Failure();
         }
 
 
