@@ -13,9 +13,13 @@ namespace ClinicApp.Domain.Doctor
 {
     public class Doctor : AggregateRoot
     {
-        public Doctor(Guid id) : base(id) { }
+        public Doctor(Guid id, WorkingDays workingDays, WorkingHours workingHours) : base(id)
+        {
+            WorkingDays = workingDays;
+            WorkingHours = workingHours;
+        }
         public WorkingDays WorkingDays { get; private set; }
-        public WorkingHours WorkingHours { get; private set; }
+        public WorkingHours WorkingHours { get; private set; } = null!;
         public ErrorOr<Success> AddSession(TimeRange sessionDate)
         {
             var canAdd = SessionConflictsWithDoctor(sessionDate);
@@ -41,12 +45,6 @@ namespace ClinicApp.Domain.Doctor
             return Result.Success;
         }
 
-        internal void RemoveSession(Guid sessionId)
-        {
-            if(SessionIds.Contains(sessionId))
-                this.SessionIds.Remove(sessionId);
-        }
-
         private bool SessionConflictsWithWorkingDays(WorkingDays sessionDay)
         {
             return (sessionDay & WorkingDays) != sessionDay;
@@ -66,5 +64,14 @@ namespace ClinicApp.Domain.Doctor
         public TimeOnly StartTime { get; private set; }
         public TimeOnly EndTime { get; private set; }
         internal bool InDayLight => StartTime < EndTime; //To check if a doctor has midnight working hours (very rare)
+
+        public static WorkingHours Create(TimeOnly startTime, TimeOnly endTime)
+        {
+            return new WorkingHours()
+            {
+                StartTime = startTime,
+                EndTime = endTime
+            };
+        }
     }
 }

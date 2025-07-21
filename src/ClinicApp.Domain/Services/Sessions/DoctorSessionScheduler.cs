@@ -19,7 +19,7 @@ namespace ClinicApp.Domain.Services.Sessions
         public async Task<ErrorOr<Created>> CreateSession(Session.Session session,Doctor.Doctor doctor)
         {
 
-            if (doctor.SessionIds.Contains(session.Id))
+            if (await IsSessionInDoctorSessionsAsync(session, doctor))
                 return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
 
             return await AddSession(session, doctor);
@@ -28,13 +28,13 @@ namespace ClinicApp.Domain.Services.Sessions
 
         private async Task<ErrorOr<Created>> AddSession(Session.Session session, Doctor.Doctor doctor)
         {
-            var doctorSession = (await _repo.GetAllSessionsForDoctor(doctor)).Select(s => s.Id).ToList();
-            if (doctorSession.Contains(session.Id))
+            
+            if (await IsSessionInDoctorSessionsAsync(session,doctor))
                 return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
 
-            var isConflictingWithWorkingTime = doctor.SessionConflictsWithDoctor(session);
+            var isConflictingWithWorkingTime = doctor.SessionConflictsWithDoctor(session.SessionDate);
             if (isConflictingWithWorkingTime.IsError)
                 return isConflictingWithWorkingTime.Errors;
 
@@ -46,13 +46,18 @@ namespace ClinicApp.Domain.Services.Sessions
             session.SetSession();
             return Result.Created;
         }
-
-        public ErrorOr<Deleted> DeleteSession(Session.Session session, Doctor.Doctor doctor)
+        private async Task<bool> IsSessionInDoctorSessionsAsync(Session.Session session, Doctor.Doctor doctor)
         {
-            if (doctor.SessionIds.Contains(session.Id))
+            var doctorSession = (await _repo.GetAllSessionsForDoctor(doctor)).Select(s => s.Id).ToList();
+            if (doctorSession.Contains(session.Id))
+                return true;
+            return false;
+        }
+        public async Task<ErrorOr<Deleted>> DeleteSession(Session.Session session, Doctor.Doctor doctor)
+        {
+            if (await IsSessionInDoctorSessionsAsync(session, doctor))
                 return DoctorErrors.DoctorModifyValidationError;
-
-            doctor.RemoveSession(session.Id);
+            await _repo.RemoveSessionFromDoctor(session);
             return Result.Deleted;
         }
 

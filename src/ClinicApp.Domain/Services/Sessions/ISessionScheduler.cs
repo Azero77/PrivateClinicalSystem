@@ -9,7 +9,7 @@ namespace ClinicApp.Domain.Services.Sessions
         Task<ErrorOr<Created>> CreateSession(Session.Session session,T entity);
         ErrorOr<Success> SetSession(Session.Session session, T entity);
         Task<ErrorOr<Updated>> UpdateSession(Session.Session session, TimeRange newTime, T entity);
-        ErrorOr<Deleted> DeleteSession(Session.Session session, T entity);
+        Task<ErrorOr<Deleted>> DeleteSession(Session.Session session, T entity);
         ErrorOr<Success> PaySession(Session.Session session, T entity);
     }
 }

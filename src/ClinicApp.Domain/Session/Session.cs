@@ -24,8 +24,9 @@ namespace ClinicApp.Domain.Session
             {
                 return SessionErrors.SessionTimeInThePast.error;
             }
-            var result =  new Session()
+            var result = new Session()
             {
+                Id = id,
                 SessionDate = sessionDate,
                 SessionDescription = sessionDescription,
                 RoomId = roomId,
@@ -50,7 +51,7 @@ namespace ClinicApp.Domain.Session
         internal bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;
         internal bool IsFinished => (SessionStatus & SessionStatus.Finished) == SessionStatus.Finished;
         internal bool IsPaid => (SessionStatus & SessionStatus.Paid) == SessionStatus.Paid;
-        internal ErrorOr<Success> SetSession() //From Pending To Set
+        public ErrorOr<Success> SetSession() //From Pending To Set
         {
             AddStatus(SessionStatus.Set);
             RemoveStatus(SessionStatus.Pending);
@@ -58,7 +59,7 @@ namespace ClinicApp.Domain.Session
             return Result.Success;
         }
 
-        internal ErrorOr<Deleted> DeleteSession()
+        public ErrorOr<Deleted> DeleteSession()
         {
             if (HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
@@ -68,7 +69,7 @@ namespace ClinicApp.Domain.Session
             return Result.Deleted;
         }
 
-        internal ErrorOr<Success> StartSession()
+        public ErrorOr<Success> StartSession()
         {
             if(HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
@@ -78,20 +79,20 @@ namespace ClinicApp.Domain.Session
             return Result.Success;
         }
 
-        internal ErrorOr<Success> FinishSession()
+        public ErrorOr<Success> FinishSession()
         {
             if(HasStatus(SessionStatus.Deleted))
                 return Error.Validation(code: "Session.Validation",
                    description: "Can't Finish a deleted session");
-            if (DateTime.UtcNow < SessionDate.StartTime)
+           /* if (DateTime.UtcNow.Day < SessionDate.StartTime.Day)
                 return Error.Validation(code: "Session.Validation",
-                    description: "Can't Finish a session in the future");
+                    description: "Can't Finish a session in the future");*/
             AddStatus(SessionStatus.Finished);
             PushChanges(SessionState.FinishedSessionState(DateTime.UtcNow));
             return Result.Success;
         }
 
-        internal ErrorOr<Success> RejectSession()
+        public ErrorOr<Success> RejectSession()
         {
             if (HasStatus(SessionStatus.Deleted) || HasStatus(SessionStatus.Finished))
                 return Error.Validation(code: "Session.Validation",
@@ -105,7 +106,7 @@ namespace ClinicApp.Domain.Session
             return Result.Success;
         }
 
-        internal ErrorOr<Success> UpdateDate(TimeRange newTimeRange)
+        public ErrorOr<Success> UpdateDate(TimeRange newTimeRange)
         {
             if (HasStatus(SessionStatus.Deleted))
             {
