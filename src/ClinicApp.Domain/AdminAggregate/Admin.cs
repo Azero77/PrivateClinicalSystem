@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Domain.Common;
+using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Doctor;
 using ErrorOr;
 using System;
@@ -11,13 +12,37 @@ namespace ClinicApp.Domain.AdminAggregate
 {
     public class Admin : AggregateRoot
     {
-        public ErrorOr<Updated> ChangeDoctorWorktime(Doctor.Doctor doctor,
-            WorkingHours hours,
-            WorkingDays days)
+        public List<Room> RoomIds { get; private set; } = new();
+
+        public ErrorOr<Success> AddRoom(Room room)
         {
-            return Error.Failure();
+            if (RoomIds.Contains(room))
+            {
+                return Error.Validation("Admin.Validation",
+                    "Can't Add a room already in");
+            }
+
+            RoomIds.Add(room);
+            _domainEvents.Add(new AdminCreatedRoomEvent(room));
+            return Result.Success;
+        }
+
+        public ErrorOr<Deleted> RemoveRoom(Room room)
+        {
+            if (!RoomIds.Contains(room))
+            {
+                return Error.Validation("Admin.Validation",
+                    "room has not been found");
+            }
+
+            RoomIds.Remove(room);
+            _domainEvents.Add(new AdminDeletedRoomEvent(room));
+            return Result.Deleted;
         }
 
 
     }
+
+    public record AdminCreatedRoomEvent(Room room) : IDomainEvent;
+    public record AdminDeletedRoomEvent(Room room) : IDomainEvent;
 }

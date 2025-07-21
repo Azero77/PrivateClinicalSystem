@@ -14,36 +14,29 @@ namespace ClinicApp.Domain.Doctor
     public class Doctor : AggregateRoot
     {
         public Doctor(Guid id) : base(id) { }
-        public List<Guid> SessionIds { get; private set; } = new();
         public WorkingDays WorkingDays { get; private set; }
         public WorkingHours WorkingHours { get; private set; }
-        public ErrorOr<Success> AddSession(Session.Session session)
+        public ErrorOr<Success> AddSession(TimeRange sessionDate)
         {
-            if (this.SessionIds.Contains(session.Id))
-                return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
-
-            if (session.DoctorId != this.Id)
-                return DoctorErrors.DoctorModifyValidationError;
-            var canAdd = SessionConflictsWithDoctor(session);
+            var canAdd = SessionConflictsWithDoctor(sessionDate);
             if (canAdd.IsError)
             {
                 return canAdd.Errors;
             }
-            SessionIds.Add(session.Id);
             return Result.Success;
         }
 
-        internal ErrorOr<Success> SessionConflictsWithDoctor(Session.Session session)
+        internal ErrorOr<Success> SessionConflictsWithDoctor(TimeRange sessionDate)
         {
-            WorkingDays sessionDay = (WorkingDays)(1 << ((int)session.SessionDate.StartTime.DayOfWeek));
+            WorkingDays sessionDay = (WorkingDays)(1 << ((int)sessionDate.StartTime.DayOfWeek));
 
             if (SessionConflictsWithWorkingDays(sessionDay))
             {
-                return DoctorErrors.SessionOutOfWorkingDay(session.SessionDate.StartTime.DayOfWeek, this.WorkingDays);
+                return DoctorErrors.SessionOutOfWorkingDay(sessionDate.StartTime.DayOfWeek, this.WorkingDays);
             }
-            else if (SessionConflictsWithWorkingHours(session))
+            else if (SessionConflictsWithWorkingHours(sessionDate))
             {
-                return DoctorErrors.SessionOutOfWorkingHours(session.SessionDate, this.WorkingHours);
+                return DoctorErrors.SessionOutOfWorkingHours(sessionDate, this.WorkingHours);
             }
             return Result.Success;
         }
@@ -59,11 +52,11 @@ namespace ClinicApp.Domain.Doctor
             return (sessionDay & WorkingDays) != sessionDay;
         }
 
-        private bool SessionConflictsWithWorkingHours(Session.Session session)
+        private bool SessionConflictsWithWorkingHours(TimeRange sessionDate)
         {
             return !(
-                            TimeOnly.FromDateTime(session.SessionDate.StartTime) > WorkingHours.StartTime &&
-                            TimeOnly.FromDateTime(session.SessionDate.EndTime) < WorkingHours.EndTime);
+                            TimeOnly.FromDateTime(sessionDate.StartTime) > WorkingHours.StartTime &&
+                            TimeOnly.FromDateTime(sessionDate.EndTime) < WorkingHours.EndTime);
         }
 
     }

@@ -28,6 +28,9 @@ namespace ClinicApp.Domain.Services.Sessions
 
         private async Task<ErrorOr<Created>> AddSession(Session.Session session, Doctor.Doctor doctor)
         {
+            var doctorSession = (await _repo.GetAllSessionsForDoctor(doctor)).Select(s => s.Id).ToList();
+            if (doctorSession.Contains(session.Id))
+                return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
 
