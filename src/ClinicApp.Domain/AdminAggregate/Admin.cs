@@ -14,6 +14,8 @@ namespace ClinicApp.Domain.AdminAggregate
     {
         public List<Room> RoomIds { get; private set; } = new();
 
+        public Guid UserId {get;private set;}
+
         public ErrorOr<Success> AddRoom(Room room)
         {
             if (RoomIds.Contains(room))

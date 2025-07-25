@@ -18,6 +18,7 @@ namespace ClinicApp.Domain.Doctor
             WorkingDays = workingDays;
             WorkingHours = workingHours;
         }
+        public Guid UserId { get; private set; }
         public WorkingDays WorkingDays { get; private set; }
         public WorkingHours WorkingHours { get; private set; } = null!;
         public ErrorOr<Success> AddSession(TimeRange sessionDate)
