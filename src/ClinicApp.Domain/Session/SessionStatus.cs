@@ -1,7 +1,7 @@
 ﻿namespace ClinicApp.Domain.Session;
 
 [Flags]
-public enum SessionStatus
+public enum SessionStatus : byte
 {
     Pending = 0,
     Set = 1,
