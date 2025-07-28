@@ -1,4 +1,5 @@
-﻿using ClinicApp.Domain.Doctor;
+﻿using ClinicApp.Domain.Common.ValueObjects;
+using ClinicApp.Domain.DoctorAgg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ClinicApp.Domain.Tests.UnitTest
 {
     public static class Factories
     {
-        public static Doctor.Doctor DoctorFactory() => new Doctor.Doctor(Guid.NewGuid(),
+        public static Doctor DoctorFactory => new Doctor(Guid.NewGuid(),
                 WorkingDays.Monday | WorkingDays.Wednesday,
                 WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0)));
     }

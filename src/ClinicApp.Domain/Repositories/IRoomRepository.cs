@@ -1,6 +1,8 @@
-﻿namespace ClinicApp.Domain.Repositories;
+﻿using ClinicApp.Domain.DoctorAgg;
+
+namespace ClinicApp.Domain.Repositories;
 
 public interface IRoomRepository
 {
-    public Doctor.Doctor GetDoctorOfRoom(Guid roomId);
+    public Doctor GetDoctorOfRoom(Guid roomId);
 }

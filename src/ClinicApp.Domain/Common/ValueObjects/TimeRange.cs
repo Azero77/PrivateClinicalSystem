@@ -1,4 +1,4 @@
-﻿using ClinicApp.Domain.Session;
+﻿using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 
 namespace ClinicApp.Domain.Common.ValueObjects

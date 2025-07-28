@@ -1,6 +1,6 @@
 
-using ClinicApp.Domain.Doctor;
-using ClinicApp.Domain.Session;
+using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Domain.Common.ValueObjects;
 using Xunit;
 using FluentAssertions;
@@ -16,12 +16,10 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         public void AddSession_Should_ReturnError_When_SessionIsOutsideOfWorkingDays()
         {
             // Arrange
-            var doctor = new Doctor.Doctor(Guid.NewGuid(),
-                WorkingDays.Monday | WorkingDays.Wednesday,
-                WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0)));
-            
+            var doctor = Factories.DoctorFactory;
+            var fakerClock = new FakerClock { UtcNow = new DateTime(2025,7,21) };
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 22), new DateTime(2025, 7, 22, 10, 30, 0)).Value; // Tuesday
-            var session = Session.Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id).Value;
+            var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
 
             // Act
             var result = doctor.AddSession(session.SessionDate);
@@ -35,12 +33,11 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         public void AddSession_Should_ReturnError_When_SessionIsOutsideOfWorkingHours()
         {
             // Arrange
-            var doctor = new Doctor.Doctor(Guid.NewGuid(),
-                WorkingDays.Monday,
-                WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0)));
-            
+            var doctor = Factories.DoctorFactory;
+
+            var fakerClock = new FakerClock { UtcNow = new DateTime(2025, 7, 21) };
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 21, 8, 0, 0), new DateTime(2025, 7, 21, 9, 0, 0)).Value; // Monday, but too early
-            var session = Session.Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id).Value;
+            var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
 
             // Act
             var result = doctor.AddSession(session.SessionDate);

@@ -1,5 +1,5 @@
-﻿using ClinicApp.Domain.Doctor;
-using ClinicApp.Domain.Session;
+﻿using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.SessionAgg;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -21,5 +21,7 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
 
         builder.Property(s => s.SessionStatus)
             .HasConversion<byte>();
+
+
     }
 }

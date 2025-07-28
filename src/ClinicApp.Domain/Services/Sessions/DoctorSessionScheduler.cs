@@ -1,14 +1,14 @@
 ﻿using ClinicApp.Domain.Common.ValueObjects;
-using ClinicApp.Domain.Doctor;
+using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
-using ClinicApp.Domain.Session;
+using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using System.Globalization;
 using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
-    public class DoctorSessionScheduler : ISessionScheduler<Doctor.Doctor>
+    public class DoctorSessionScheduler : ISessionScheduler<Doctor>
     {
         private readonly ISessionRepository _repo;
         public DoctorSessionScheduler(ISessionRepository repo)
@@ -16,7 +16,7 @@ namespace ClinicApp.Domain.Services.Sessions
             _repo = repo;
         }
 
-        public async Task<ErrorOr<Created>> CreateSession(Session.Session session,Doctor.Doctor doctor)
+        public async Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor)
         {
 
             if (await IsSessionInDoctorSessionsAsync(session, doctor))
@@ -26,7 +26,7 @@ namespace ClinicApp.Domain.Services.Sessions
 
         }
 
-        private async Task<ErrorOr<Created>> AddSession(Session.Session session, Doctor.Doctor doctor)
+        private async Task<ErrorOr<Created>> AddSession(Session session, Doctor doctor)
         {
             
             if (await IsSessionInDoctorSessionsAsync(session,doctor))
@@ -46,14 +46,14 @@ namespace ClinicApp.Domain.Services.Sessions
             session.SetSession();
             return Result.Created;
         }
-        private async Task<bool> IsSessionInDoctorSessionsAsync(Session.Session session, Doctor.Doctor doctor)
+        private async Task<bool> IsSessionInDoctorSessionsAsync(Session session, Doctor doctor)
         {
             var doctorSession = (await _repo.GetAllSessionsForDoctor(doctor)).Select(s => s.Id).ToList();
             if (doctorSession.Contains(session.Id))
                 return true;
             return false;
         }
-        public async Task<ErrorOr<Deleted>> DeleteSession(Session.Session session, Doctor.Doctor doctor)
+        public async Task<ErrorOr<Deleted>> DeleteSession(Session session, Doctor doctor)
         {
             if (await IsSessionInDoctorSessionsAsync(session, doctor))
                 return DoctorErrors.DoctorModifyValidationError;
@@ -61,18 +61,18 @@ namespace ClinicApp.Domain.Services.Sessions
             return Result.Deleted;
         }
 
-        public ErrorOr<Success> PaySession(Session.Session session,Doctor.Doctor doctor)
+        public ErrorOr<Success> PaySession(Session session,Doctor doctor)
         {
             throw new NotImplementedException();
         }
 
-        public ErrorOr<Success> SetSession(Session.Session session,Doctor.Doctor doctor)
+        public ErrorOr<Success> SetSession(Session session,Doctor doctor)
         {
             session.SetSession();
             return Result.Success;
         }
 
-        public async Task<ErrorOr<Updated>> UpdateSession(Session.Session session, TimeRange newTime,Doctor.Doctor doctor)
+        public async Task<ErrorOr<Updated>> UpdateSession(Session session, TimeRange newTime,Doctor doctor)
         {
             var result = await AddSession(session, doctor);
             if (result.IsError)
@@ -80,7 +80,7 @@ namespace ClinicApp.Domain.Services.Sessions
             return Result.Updated;
         }
 
-        private static ErrorOr<Success> IsSessionOverlapsWithDoctorSchedule(Session.Session newSession,IEnumerable<Session.Session> doctorSessions)
+        private static ErrorOr<Success> IsSessionOverlapsWithDoctorSchedule(Session newSession,IEnumerable<Session> doctorSessions)
         {
             
             foreach (var doctorsession in doctorSessions)

@@ -1,6 +1,6 @@
 ﻿//using System;
 using ClinicApp.Domain.Patient;
-using ClinicApp.Domain.Session;
+using ClinicApp.Domain.SessionAgg;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

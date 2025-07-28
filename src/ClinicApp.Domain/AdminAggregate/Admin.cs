@@ -1,6 +1,6 @@
 ﻿using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.Entities;
-using ClinicApp.Domain.Doctor;
+using ClinicApp.Domain.DoctorAgg;
 using ErrorOr;
 using System;
 using System.Collections.Generic;

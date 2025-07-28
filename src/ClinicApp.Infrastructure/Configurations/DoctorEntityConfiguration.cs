@@ -1,5 +1,5 @@
-﻿using ClinicApp.Domain.Doctor;
-using ClinicApp.Domain.Session;
+﻿using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.SessionAgg;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
