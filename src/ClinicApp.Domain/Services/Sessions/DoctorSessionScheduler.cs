@@ -20,7 +20,7 @@ namespace ClinicApp.Domain.Services.Sessions
         {
 
             if (await IsSessionInDoctorSessionsAsync(session, doctor))
-                return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
+                return ScheduleErrors.SessionAlreadyExists;
 
             return await AddSession(session, doctor);
 
@@ -30,7 +30,7 @@ namespace ClinicApp.Domain.Services.Sessions
         {
             
             if (await IsSessionInDoctorSessionsAsync(session,doctor))
-                return Error.Validation("Doctor.Validation", "Can't Add the session, it is already Added");
+                return ScheduleErrors.SessionAlreadyExists;
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
 
@@ -92,11 +92,7 @@ namespace ClinicApp.Domain.Services.Sessions
                     && 
                     doctorsession.SessionDate.StartTime < newSession.SessionDate.EndTime
                     )
-                    return Error.Validation("Schedule.Conflict", $"Can't Book this time", new Dictionary<string, object>()
-                    {
-                        {"Conflicted",newSession},
-                        {"Exisiting",doctorsession}
-                    });
+                    return ScheduleErrors.ConflictingSession(newSession, doctorsession);
             }
             return Result.Success;
 

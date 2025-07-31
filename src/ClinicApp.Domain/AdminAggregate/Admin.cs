@@ -20,8 +20,7 @@ namespace ClinicApp.Domain.AdminAggregate
         {
             if (RoomIds.Contains(room))
             {
-                return Error.Validation("Admin.Validation",
-                    "Can't Add a room already in");
+                return AdminErrors.RoomAlreadyExists;
             }
 
             RoomIds.Add(room);
@@ -33,8 +32,7 @@ namespace ClinicApp.Domain.AdminAggregate
         {
             if (!RoomIds.Contains(room))
             {
-                return Error.Validation("Admin.Validation",
-                    "room has not been found");
+                return AdminErrors.RoomNotFound;
             }
 
             RoomIds.Remove(room);

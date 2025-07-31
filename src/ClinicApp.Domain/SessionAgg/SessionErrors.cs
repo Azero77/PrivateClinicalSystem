@@ -19,9 +19,33 @@ namespace ClinicApp.Domain.SessionAgg
             public static Error error = Error.Validation(code, message);
         }
 
-        public const string OverlappingSessionValidationError = "Session.OverlappingValidationError";
-        public const string SessionDeletionError = "Session.DeletionError";
-        public const string SessionModifyState = "Session.ModifyError";
+        public static Error CantDeleteADeletedSession => Error.Validation(
+            code: "Session.Validation",
+            description: "Can't Delete a deleted session");
+
+        public static Error CantStartADeletedSession => Error.Validation(
+            code: "Session.Validation",
+            description: "Can't Start a deleted session");
+
+        public static Error CantFinishADeletedSession => Error.Validation(
+            code: "Session.Validation",
+            description: "Can't Finish a deleted session");
+
+        public static Error CantRejectADeletedOrFinishedSession => Error.Validation(
+            code: "Session.Validation",
+            description: "Can't Reject a deleted or finished session");
+
+        public static Error CantRejectASessionInTheFuture => Error.Validation(
+            code: "Session.Validation",
+            description: "Can't Reject a session in the future");
+
+        public static Error CantUpdateDeletedSessions => Error.Validation(
+            SessionErrors.SessionDeletionError,
+            "Can't Update Deleted Sessions");
+
+        public static Error CantUpdateFinishedSessions => Error.Validation(
+            SessionErrors.SessionDeletionError,
+            "Can't Update Finished Sessions");
 
     }
 }

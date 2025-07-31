@@ -67,8 +67,7 @@ namespace ClinicApp.Domain.SessionAgg
         public ErrorOr<Deleted> DeleteSession()
         {
             if (HasStatus(SessionStatus.Deleted))
-                return Error.Validation(code: "Session.Validation",
-                    description: "Can't Delete a deleted session");
+                return SessionErrors.CantDeleteADeletedSession;
             AddStatus(SessionStatus.Deleted);
             PushChanges(SessionState.DeletedSessionState(_clock.UtcNow));
             return Result.Deleted;
@@ -77,8 +76,7 @@ namespace ClinicApp.Domain.SessionAgg
         public ErrorOr<Success> StartSession()
         {
             if(HasStatus(SessionStatus.Deleted))
-                return Error.Validation(code: "Session.Validation",
-                   description: "Can't Start a deleted session");
+                return SessionErrors.CantStartADeletedSession;
             AddStatus(SessionStatus.Started);
             PushChanges(SessionState.StartedSessionState(_clock.UtcNow));
             return Result.Success;
@@ -87,8 +85,7 @@ namespace ClinicApp.Domain.SessionAgg
         public ErrorOr<Success> FinishSession()
         {
             if(HasStatus(SessionStatus.Deleted))
-                return Error.Validation(code: "Session.Validation",
-                   description: "Can't Finish a deleted session");
+                return SessionErrors.CantFinishADeletedSession;
            /* if (_clock.UtcNow.Day < SessionDate.StartTime.Day)
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Finish a session in the future");*/
@@ -100,11 +97,9 @@ namespace ClinicApp.Domain.SessionAgg
         public ErrorOr<Success> RejectSession()
         {
             if (HasStatus(SessionStatus.Deleted) || HasStatus(SessionStatus.Finished))
-                return Error.Validation(code: "Session.Validation",
-                   description: "Can't Reject a deleted or finished session");
+                return SessionErrors.CantRejectADeletedOrFinishedSession;
             else if (_clock.UtcNow > SessionDate.StartTime)
-                return Error.Validation(code: "Session.Validation",
-                    description: "Can't Reject a session in the future");
+                return SessionErrors.CantRejectASessionInTheFuture;
             AddStatus(SessionStatus.Pending);
             RemoveStatus(SessionStatus.Pending);
             PushChanges(SessionState.RejectedSessionState(_clock.UtcNow));
@@ -115,14 +110,12 @@ namespace ClinicApp.Domain.SessionAgg
         {
             if (HasStatus(SessionStatus.Deleted))
             {
-                return Error.Validation(SessionErrors.SessionDeletionError,
-                    "Can't Update Deleted Sessions");
+                return SessionErrors.CantUpdateDeletedSessions;
             }
 
             if (HasStatus(SessionStatus.Finished))
             {
-                return Error.Validation(SessionErrors.SessionDeletionError,
-                    "Can't Update Finished Sessions");
+                return SessionErrors.CantUpdateFinishedSessions;
             }
             AddStatus(SessionStatus.Updated);
             PushChanges(SessionState.UpdatedSessionState(this.SessionDate, newTimeRange, _clock.UtcNow));
