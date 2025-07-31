@@ -11,68 +11,32 @@ using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.DoctorAgg
 {
-    public class Doctor : AggregateRoot
+    public class Doctor : Member
     {
         public Doctor(Guid id, WorkingDays workingDays, WorkingHours workingHours) : base(id)
         {
-            WorkingDays = workingDays;
-            WorkingHours = workingHours;
+            WorkingTime = WorkingTime.Create(workingHours.StartTime, workingHours.EndTime,
+                workingDays).Value;
         }
-        public Guid UserId { get; private set; }
-        public WorkingDays WorkingDays { get; private set; }
-        public WorkingHours WorkingHours { get; private set; } = null!;
-        public ErrorOr<Success> AddSession(TimeRange sessionDate)
+        private Doctor()
         {
-            var canAdd = SessionConflictsWithDoctor(sessionDate);
-            if (canAdd.IsError)
-            {
-                return canAdd.Errors;
-            }
+
+        }
+        public WorkingTime WorkingTime { get; private set; } = null!;
+        public string? Major { get; private set; } = null!;
+        public ErrorOr<Success> CanAddBasedToSchedule(TimeRange sessionDate)
+        {
+            var result = WorkingTime.CanAddBasedToSchedule(sessionDate);
+            if (result.IsError)
+                return result.Errors;
             return Result.Success;
         }
-
-        internal ErrorOr<Success> SessionConflictsWithDoctor(TimeRange sessionDate)
+        public void AddTimeOff(TimeOff newtimeOff)
         {
-            WorkingDays sessionDay = (WorkingDays)(1 << ((int)sessionDate.StartTime.DayOfWeek));
-
-            if (SessionConflictsWithWorkingDays(sessionDay))
+            foreach (var timeoff in WorkingTime.TimesOff)
             {
-                return DoctorErrors.SessionOutOfWorkingDay(sessionDate.StartTime.DayOfWeek, this.WorkingDays);
+
             }
-            else if (SessionConflictsWithWorkingHours(sessionDate))
-            {
-                return DoctorErrors.SessionOutOfWorkingHours(sessionDate, this.WorkingHours);
-            }
-            return Result.Success;
-        }
-
-        private bool SessionConflictsWithWorkingDays(WorkingDays sessionDay)
-        {
-            return (sessionDay & WorkingDays) != sessionDay;
-        }
-
-        private bool SessionConflictsWithWorkingHours(TimeRange sessionDate)
-        {
-            return !(
-                            TimeOnly.FromDateTime(sessionDate.StartTime) > WorkingHours.StartTime &&
-                            TimeOnly.FromDateTime(sessionDate.EndTime) < WorkingHours.EndTime);
-        }
-
-    }
-
-    public record WorkingHours
-    {
-        public TimeOnly StartTime { get; private set; }
-        public TimeOnly EndTime { get; private set; }
-        internal bool InDayLight => StartTime < EndTime; //To check if a doctor has midnight working hours (very rare)
-
-        public static WorkingHours Create(TimeOnly startTime, TimeOnly endTime)
-        {
-            return new WorkingHours()
-            {
-                StartTime = startTime,
-                EndTime = endTime
-            };
         }
     }
 }

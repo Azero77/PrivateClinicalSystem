@@ -15,13 +15,20 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
         builder.OwnsOne(s => s.SessionDate,
             sd =>
             {
-                sd.Property(sd => sd.StartTime).HasColumnName("StartTime");
-                sd.Property(sd => sd.EndTime).HasColumnName("Endtime");
+                sd.Property(sd => sd.StartTime).HasColumnName("StartTime").IsRequired();
+                sd.Property(sd => sd.EndTime).HasColumnName("Endtime").IsRequired();
             });
 
         builder.Property(s => s.SessionStatus)
-            .HasConversion<byte>();
+            .HasConversion<byte>()
+            .IsRequired();
 
+        builder.OwnsOne(s => s.SessionDescription,nb =>
+        {
+            nb.Property(nb => nb.content).HasColumnName("Content").IsRequired(false);
+        });
 
+        //Before adding history management (temporary)
+        builder.Ignore(s => s.SessionHistory);
     }
 }

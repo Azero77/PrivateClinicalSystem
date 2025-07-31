@@ -1,6 +1,6 @@
 ﻿namespace ClinicApp.Infrastructure.Extensions;
 
-using ClinicApp.Infrastructure.Middlewares;
+using global::ClinicApp.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
 public static class InfrastructureMiddlewareExtensions
@@ -12,3 +12,4 @@ public static class InfrastructureMiddlewareExtensions
     }
 }
 
+    

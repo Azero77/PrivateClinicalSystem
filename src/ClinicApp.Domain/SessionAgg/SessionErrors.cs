@@ -40,11 +40,11 @@ namespace ClinicApp.Domain.SessionAgg
             description: "Can't Reject a session in the future");
 
         public static Error CantUpdateDeletedSessions => Error.Validation(
-            SessionErrors.SessionDeletionError,
+            "Session.SessionDeletionError",
             "Can't Update Deleted Sessions");
 
         public static Error CantUpdateFinishedSessions => Error.Validation(
-            SessionErrors.SessionDeletionError,
+            "Session.SessionDeletionError",
             "Can't Update Finished Sessions");
 
     }

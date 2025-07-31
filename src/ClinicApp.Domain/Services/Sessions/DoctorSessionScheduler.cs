@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
-    public class DoctorSessionScheduler : ISessionScheduler<Doctor>
+    public class DoctorScheduler : IScheduler<Doctor>
     {
         private readonly ISessionRepository _repo;
-        public DoctorSessionScheduler(ISessionRepository repo)
+        public DoctorScheduler(ISessionRepository repo)
         {
             _repo = repo;
         }
@@ -34,13 +34,13 @@ namespace ClinicApp.Domain.Services.Sessions
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
 
-            var isConflictingWithWorkingTime = doctor.SessionConflictsWithDoctor(session.SessionDate);
+            var isConflictingWithWorkingTime = doctor.CanAddBasedToSchedule(session.SessionDate);
             if (isConflictingWithWorkingTime.IsError)
                 return isConflictingWithWorkingTime.Errors;
 
             //check the session repositories for the new session and check if it overlaps
             var doctorSessions = await _repo.GetFutureSessionsDoctor(doctor);
-            var doesOverlaps = IsSessionOverlapsWithDoctorSchedule(session, doctorSessions);
+            var doesOverlaps = IsSessionNotOverlapsWithDoctorSchedule(session, doctorSessions);
             if (doesOverlaps.IsError)
                 return doesOverlaps.Errors;
             session.SetSession();
@@ -80,7 +80,7 @@ namespace ClinicApp.Domain.Services.Sessions
             return Result.Updated;
         }
 
-        private static ErrorOr<Success> IsSessionOverlapsWithDoctorSchedule(Session newSession,IEnumerable<Session> doctorSessions)
+        private static ErrorOr<Success> IsSessionNotOverlapsWithDoctorSchedule(Session newSession,IEnumerable<Session> doctorSessions)
         {
             
             foreach (var doctorsession in doctorSessions)
@@ -88,14 +88,11 @@ namespace ClinicApp.Domain.Services.Sessions
                 if (
                     newSession.Id != doctorsession.Id
                     &&
-                    newSession.SessionDate.StartTime < doctorsession.SessionDate.EndTime
-                    && 
-                    doctorsession.SessionDate.StartTime < newSession.SessionDate.EndTime
-                    )
+                    TimeRange.IsOverlapping(doctorsession.SessionDate, newSession.SessionDate)
+                   )
                     return ScheduleErrors.ConflictingSession(newSession, doctorsession);
             }
             return Result.Success;
-
         }
     }
 }

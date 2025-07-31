@@ -10,32 +10,30 @@ using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.AdminAggregate
 {
-    public class Admin : AggregateRoot
+    public class Admin : Member
     {
-        public List<Room> RoomIds { get; private set; } = new();
-
-        public Guid UserId {get;private set;}
+        public List<Room> Rooms { get; private set; } = new();
 
         public ErrorOr<Success> AddRoom(Room room)
         {
-            if (RoomIds.Contains(room))
+            if (Rooms.Contains(room))
             {
                 return AdminErrors.RoomAlreadyExists;
             }
 
-            RoomIds.Add(room);
+            Rooms.Add(room);
             _domainEvents.Add(new AdminCreatedRoomEvent(room));
             return Result.Success;
         }
 
         public ErrorOr<Deleted> RemoveRoom(Room room)
         {
-            if (!RoomIds.Contains(room))
+            if (!Rooms.Contains(room))
             {
                 return AdminErrors.RoomNotFound;
             }
 
-            RoomIds.Remove(room);
+            Rooms.Remove(room);
             _domainEvents.Add(new AdminDeletedRoomEvent(room));
             return Result.Deleted;
         }

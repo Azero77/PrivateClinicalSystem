@@ -5,7 +5,7 @@ using ErrorOr;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
-    public interface ISessionScheduler<T> where T : Entity
+    public interface IScheduler<T> where T : Entity
     {
         Task<ErrorOr<Created>> CreateSession(Session session,T entity);
         ErrorOr<Success> SetSession(Session session, T entity);

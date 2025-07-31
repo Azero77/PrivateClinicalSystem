@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClinicApp.Infrastructure.Configurations;
 
-public class PatientEntityConfiguration : IEntityTypeConfiguration<Patient>
+public class PatientEntityConfiguration : MemberEntityConfiguration<Patient>
 {
-    public void Configure(EntityTypeBuilder<Patient> builder)
+    public override void Configure(EntityTypeBuilder<Patient> builder)
     {
+        base.Configure(builder);
         builder.HasMany<Session>()
             .WithOne()
             .HasForeignKey(s => s.PatientId)

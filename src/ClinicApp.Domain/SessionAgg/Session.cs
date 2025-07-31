@@ -147,5 +147,5 @@ namespace ClinicApp.Domain.SessionAgg
         }
     }
 
-    public record SessionDescription(object content);
+    public record SessionDescription(string? content);
 }

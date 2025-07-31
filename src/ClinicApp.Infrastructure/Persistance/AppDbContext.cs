@@ -7,9 +7,9 @@ namespace ClinicApp.Infrastructure.Persistance;
 
 public class AppDbContext : DbContext
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
 
-    public AppDbContext(IHttpContextAccessor httpContextAccessor)
+    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)
     {
         _httpContextAccessor = httpContextAccessor;
     }
@@ -27,13 +27,16 @@ public class AppDbContext : DbContext
             .SelectMany(domainEventList => domainEventList)
             .ToList();
         var result = await base.SaveChangesAsync(cancellationToken);
-        Queue<IDomainEvent> domainEventsQueue = _httpContextAccessor.HttpContext.Items.TryGetValue(EventualConsistencyMiddleware.DomainEventsKey, out var value)
-            && value is Queue<IDomainEvent> exisistingDomainEvents ?
-            exisistingDomainEvents : new();
+        if (_httpContextAccessor?.HttpContext is not null)
+        {
+            Queue<IDomainEvent> domainEventsQueue = _httpContextAccessor.HttpContext.Items.TryGetValue(EventualConsistencyMiddleware.DomainEventsKey, out var value)
+                && value is Queue<IDomainEvent> exisistingDomainEvents ?
+                exisistingDomainEvents : new();
 
-        newDomainEvents.ForEach(domainEventsQueue.Enqueue);
+            newDomainEvents.ForEach(domainEventsQueue.Enqueue);
 
-        _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = newDomainEvents;
+            _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = domainEventsQueue;
+        }
         return result;
     }
 }

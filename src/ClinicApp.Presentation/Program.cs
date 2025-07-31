@@ -1,3 +1,7 @@
+using ClinicApp.Infrastructure.Extensions;
+using ClinicApp.Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
+
 namespace ClinicApp.Presentation
 {
     public class Program
@@ -8,12 +12,15 @@ namespace ClinicApp.Presentation
             builder.AddServiceDefaults();
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddDbContext<AppDbContext>(opts =>
+            {
+                opts.UseNpgsql(builder.Configuration.GetConnectionString("AppConnectionString"));
+            });
+            builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
 
             app.MapDefaultEndpoints();
@@ -29,6 +36,7 @@ namespace ClinicApp.Presentation
 
             app.UseAuthorization();
 
+            app.UseInfrastructure();
 
             app.MapControllers();
 

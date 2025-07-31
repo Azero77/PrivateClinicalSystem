@@ -36,6 +36,17 @@ namespace ClinicApp.Domain.DoctorAgg
                 { "DoctorWorkingHours", workingHours}
                 });
 
+        public static Error SessionConflictsWithDoctorTimeOff(TimeRange newSession, TimeOff conflictedTimeOff)
+        {
+            return Error.Conflict(
+                code: "Doctor.SessionConflictsWithDoctorTimeOff",
+                description: $"You can't put session in doctor's time off",
+                new Dictionary<string, object> {
+                    { "newSession" , newSession},
+                    { "conflictedTimeOff" , conflictedTimeOff} }
+                );
+        }
+
         private static List<string> GetDaysList(WorkingDays daysEnum) =>
        Enum.GetValues<WorkingDays>()
            .Where(day => day != WorkingDays.None && daysEnum.HasFlag(day))

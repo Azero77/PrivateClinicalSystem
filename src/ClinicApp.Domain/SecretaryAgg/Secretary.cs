@@ -1,9 +1,8 @@
 ﻿using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.Entities;
 
-namespace ClinicApp.Domain.Patient;
+namespace ClinicApp.Domain.SecretaryAgg;
 
-public class Patient : Member
+public class Secretary : Member
 {
-
 }

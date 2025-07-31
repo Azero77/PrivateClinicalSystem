@@ -17,5 +17,7 @@ namespace ClinicApp.Domain.Services.Sessions
                 { "Conflicted", newSession },
                 { "Existing", existingSession }
             });
+        public static Error TimeValidationError => Error.Validation("Schedule.TimeValidationError",
+            "You can not put Start Time After End Time");
     }
 }

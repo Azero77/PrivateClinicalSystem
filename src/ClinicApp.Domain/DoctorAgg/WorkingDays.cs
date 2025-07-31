@@ -1,7 +1,7 @@
 ﻿namespace ClinicApp.Domain.DoctorAgg;
 
 [Flags]
-public enum WorkingDays
+public enum WorkingDays : byte
 {
     None = 0,
     Sunday = 1 << 0,
