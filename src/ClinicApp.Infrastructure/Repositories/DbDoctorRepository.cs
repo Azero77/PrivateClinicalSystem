@@ -27,16 +27,16 @@ public class DbDoctorRepository : IDoctorRepository
 
     public Task<Doctor?> GetByIdAsync(Guid id)
     {
-        return _context.Doctors.SingleOrDefaultAsync(d => d.Id == id);
+        return _context.Doctors.AsNoTracking().SingleOrDefaultAsync(d => d.Id == id);
     }
     public Task<Doctor?> GetDoctorByRoom(Guid roomId)
     {
-        return _context.Doctors.FirstOrDefaultAsync(d => d.RoomId == roomId);
+        return _context.Doctors.AsNoTracking().FirstOrDefaultAsync(d => d.RoomId == roomId);
     }
 
     public async Task<IReadOnlyCollection<Doctor>> GetDoctors()
     {
-        var list = await _context.Doctors.ToListAsync();
+        var list = await _context.Doctors.AsNoTracking().ToListAsync();
         return list.AsReadOnly();
     }
 
@@ -46,7 +46,7 @@ public class DbDoctorRepository : IDoctorRepository
         await _context.SaveChangesAsync();
         return doctor;
     }
-    async Task<Doctor?> IDoctorRepository.AddDoctor(Doctor doctor)
+    public async Task<Doctor?> AddDoctor(Doctor doctor)
     {
         await _context.Doctors.AddAsync(doctor);
         await _context.SaveChangesAsync();
