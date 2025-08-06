@@ -24,6 +24,7 @@ namespace ClinicApp.Domain.DoctorAgg
         }
         public WorkingTime WorkingTime { get; private set; } = null!;
         public string? Major { get; private set; } = null!;
+        public Guid RoomId { get; private set; }
         public ErrorOr<Success> CanAddBasedToSchedule(TimeRange sessionDate)
         {
             var result = WorkingTime.CanAddBasedToSchedule(sessionDate);

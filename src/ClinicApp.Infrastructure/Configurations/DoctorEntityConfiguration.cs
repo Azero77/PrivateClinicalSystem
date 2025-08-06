@@ -1,4 +1,5 @@
-﻿using ClinicApp.Domain.DoctorAgg;
+﻿using ClinicApp.Domain.Common.Entities;
+using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,6 +15,10 @@ public class DoctorEntityConfiguration :
         base.Configure(builder);
         builder.HasKey(e => e.Id);
 
+        builder.HasOne<Room>()
+            .WithOne()
+            .HasForeignKey<Doctor>(d => d.RoomId)
+            .OnDelete(DeleteBehavior.Cascade);
         builder.Property(e => e.Major)
             .HasMaxLength(255)
             .IsRequired(false);
