@@ -22,7 +22,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
 
             // Act
-            var result = doctor.AddSession(session.SessionDate);
+            var result = doctor.CanAddBasedToSchedule(session.SessionDate);
 
             // Assert
             result.IsError.Should().BeTrue();
@@ -40,7 +40,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
 
             // Act
-            var result = doctor.AddSession(session.SessionDate);
+            var result = doctor.CanAddBasedToSchedule(session.SessionDate);
 
             // Assert
             result.IsError.Should().BeTrue();

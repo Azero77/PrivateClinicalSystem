@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ClinicApp.Infrastructure.ClinicApp.Infrastructure.Migrations
+namespace ClinicApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -54,13 +54,11 @@ namespace ClinicApp.Infrastructure.ClinicApp.Infrastructure.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("Major")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
-
-                    b.Property<byte>("WorkingDays")
-                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 
@@ -125,18 +123,14 @@ namespace ClinicApp.Infrastructure.ClinicApp.Infrastructure.Migrations
 
             modelBuilder.Entity("ClinicApp.Domain.DoctorAgg.Doctor", b =>
                 {
-                    b.OwnsOne("ClinicApp.Domain.DoctorAgg.WorkingHours", "WorkingHours", b1 =>
+                    b.OwnsOne("ClinicApp.Domain.DoctorAgg.WorkingTime", "WorkingTime", b1 =>
                         {
                             b1.Property<Guid>("DoctorId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<TimeOnly>("EndTime")
-                                .HasColumnType("time without time zone")
-                                .HasColumnName("EndTime");
-
-                            b1.Property<TimeOnly>("StartTime")
-                                .HasColumnType("time without time zone")
-                                .HasColumnName("StartTime");
+                            b1.Property<byte>("WorkingDays")
+                                .HasColumnType("smallint")
+                                .HasColumnName("WorkingDays");
 
                             b1.HasKey("DoctorId");
 
@@ -144,9 +138,58 @@ namespace ClinicApp.Infrastructure.ClinicApp.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("DoctorId");
+
+                            b1.OwnsMany("ClinicApp.Domain.DoctorAgg.TimeOff", "TimesOff", b2 =>
+                                {
+                                    b2.Property<Guid>("DoctorId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<DateTime>("StartDate")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<DateTime>("EndDate")
+                                        .HasColumnType("timestamp with time zone");
+
+                                    b2.Property<string>("reason")
+                                        .HasMaxLength(255)
+                                        .HasColumnType("character varying(255)");
+
+                                    b2.HasKey("DoctorId", "StartDate", "EndDate");
+
+                                    b2.ToTable("Doctor_TimesOff", (string)null);
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("DoctorId");
+                                });
+
+                            b1.OwnsOne("ClinicApp.Domain.DoctorAgg.WorkingHours", "WorkingHours", b2 =>
+                                {
+                                    b2.Property<Guid>("WorkingTimeDoctorId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<TimeOnly>("EndTime")
+                                        .HasColumnType("time without time zone")
+                                        .HasColumnName("EndTime");
+
+                                    b2.Property<TimeOnly>("StartTime")
+                                        .HasColumnType("time without time zone")
+                                        .HasColumnName("StartTime");
+
+                                    b2.HasKey("WorkingTimeDoctorId");
+
+                                    b2.ToTable("Doctor");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("WorkingTimeDoctorId");
+                                });
+
+                            b1.Navigation("TimesOff");
+
+                            b1.Navigation("WorkingHours")
+                                .IsRequired();
                         });
 
-                    b.Navigation("WorkingHours")
+                    b.Navigation("WorkingTime")
                         .IsRequired();
                 });
 
@@ -197,7 +240,8 @@ namespace ClinicApp.Infrastructure.ClinicApp.Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("content")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("Content");
 
                             b1.HasKey("SessionId");
 

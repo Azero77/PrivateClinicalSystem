@@ -14,6 +14,9 @@ public class DoctorEntityConfiguration :
         base.Configure(builder);
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.Major)
+            .HasMaxLength(255)
+            .IsRequired(false);
         builder.HasMany<Session>()
             .WithOne()
             .HasForeignKey(s => s.DoctorId)
@@ -26,17 +29,21 @@ public class DoctorEntityConfiguration :
             .HasConversion<byte>()
             .IsRequired();
 
-            eb.Property(eb => eb.WorkingHours)
-            .HasColumnName(nameof(WorkingHours));
-
+            /*eb.Property(eb => eb.WorkingHours)
+            .HasColumnName(nameof(WorkingHours));*/
+            eb.OwnsOne(eb => eb.WorkingHours,whb =>
+            {
+                whb.Property(w => w.StartTime).HasColumnName("StartTime");
+                whb.Property(w => w.EndTime).HasColumnName("EndTime");
+            });
             eb.OwnsMany(eb => eb.TimesOff, tof =>
             {
                 tof.ToTable("Doctor_TimesOff");
+                tof.WithOwner().HasForeignKey("DoctorId");
                 tof.HasKey("DoctorId","StartDate","EndDate");
                 tof.Property(eeb => eeb.reason)
                 .IsRequired(false)
                 .HasMaxLength(255);
-                tof.WithOwner().HasForeignKey("DoctorId");
                 tof.Property(eeb => eeb.StartDate)
                 .IsRequired();
                 tof.Property(eeb => eeb.EndDate)

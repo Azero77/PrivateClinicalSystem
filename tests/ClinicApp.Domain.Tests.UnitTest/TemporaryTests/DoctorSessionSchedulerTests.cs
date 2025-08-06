@@ -16,12 +16,12 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
     public class DoctorSessionSchedulerTests
     {
         private readonly Mock<ISessionRepository> _sessionRepoMock;
-        private readonly DoctorSessionScheduler _scheduler;
+        private readonly DoctorScheduler _scheduler;
 
         public DoctorSessionSchedulerTests()
         {
             _sessionRepoMock = new Mock<ISessionRepository>();
-            _scheduler = new DoctorSessionScheduler(_sessionRepoMock.Object);
+            _scheduler = new DoctorScheduler(_sessionRepoMock.Object);
         }
 
         [Fact]
