@@ -1,7 +1,7 @@
 ﻿using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.Entities;
 
-namespace ClinicApp.Domain.Patient;
+namespace ClinicApp.Domain.PatientAgg;
 
 public class Patient : Member
 {

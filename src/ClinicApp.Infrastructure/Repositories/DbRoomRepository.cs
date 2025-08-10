@@ -21,6 +21,7 @@ public class DbRoomRepository : IRoomRepository
         return room;
     }
 
+    //TODO make the method take an id and ExecuteDeleteAsync() instead of the blocking one
     public async Task DeleteRoom(Room deletedRoom)
     {
         _context.Rooms.Remove(deletedRoom);
