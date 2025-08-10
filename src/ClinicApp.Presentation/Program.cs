@@ -1,6 +1,9 @@
+using ClinicApp.Application;
+using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicApp.Presentation
 {
@@ -20,6 +23,8 @@ namespace ClinicApp.Presentation
             {
                 opts.UseNpgsql(builder.Configuration.GetConnectionString("AppConnectionString"));
             });
+            builder.Services.AddInfrastructure();
+            builder.Services.AddApplication();
             builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
 

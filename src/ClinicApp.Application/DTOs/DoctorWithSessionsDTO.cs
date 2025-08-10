@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClinicApp.Domain.SessionAgg;
 
-namespace ClinicApp.Application.DTOs
+namespace ClinicApp.Application.DTOs;
+
+public class DoctorWithSessionsDTO
 {
-    internal class DoctorWithSessionsDTO
-    {
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public IReadOnlyCollection<Session> Sessions { get; set; } = new List<Session>().AsReadOnly();
 }
+
+
