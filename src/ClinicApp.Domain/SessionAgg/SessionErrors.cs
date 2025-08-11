@@ -11,6 +11,7 @@ namespace ClinicApp.Domain.SessionAgg
             public static Error error = Error.Validation(code, message);
         }
 
+
         public static class SessionTimeInThePast
         {
 
@@ -46,6 +47,8 @@ namespace ClinicApp.Domain.SessionAgg
         public static Error CantUpdateFinishedSessions => Error.Validation(
             "Session.SessionDeletionError",
             "Can't Update Finished Sessions");
+
+        public static Error CantCreateSessionWithUserRole => Error.Validation("Session.Create", "Can't Create Session if the user role is not doctor,admin or secretary");
 
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
-    public class DoctorScheduler : IScheduler<Doctor>
+    public class DoctorScheduler : IScheduler
     {
         private readonly ISessionRepository _repo;
         public DoctorScheduler(ISessionRepository repo)
@@ -18,19 +18,14 @@ namespace ClinicApp.Domain.Services.Sessions
 
         public async Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor)
         {
-
-            if (await IsSessionInDoctorSessionsAsync(session, doctor))
-                return ScheduleErrors.SessionAlreadyExists;
-
-            return await AddSession(session, doctor);
-
+            var result = await AddSession(session, doctor);
+            if(!result.IsError)
+                await _repo.AddSession(session);
+            return result;
         }
 
         private async Task<ErrorOr<Created>> AddSession(Session session, Doctor doctor)
         {
-            
-            if (await IsSessionInDoctorSessionsAsync(session,doctor))
-                return ScheduleErrors.SessionAlreadyExists;
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
 
@@ -39,12 +34,20 @@ namespace ClinicApp.Domain.Services.Sessions
                 return isConflictingWithWorkingTime.Errors;
 
             //check the session repositories for the new session and check if it overlaps
-            var doctorSessions = await _repo.GetFutureSessionsDoctor(doctor);
+            //if session is not in midnight we check for sessions for today only, but if it was we check for sessions for the day and the day after
+            IReadOnlyCollection<Session>? doctorSessions = await _repo.GetFutureSessionsDoctor(doctor);
+
+            if (session.SessionDate.IsMidnight)
+            {
+                doctorSessions = await _repo.GetSesssionsForDoctorOnDayAndAfter(doctor.Id,session.SessionDate.StartTime);
+            }
+            else
+            {
+                doctorSessions = await _repo.GetSessionsForDoctorOnDay(doctor.Id, session.SessionDate.StartTime);
+            }
             var doesOverlaps = IsSessionNotOverlapsWithDoctorSchedule(session, doctorSessions);
             if (doesOverlaps.IsError)
                 return doesOverlaps.Errors;
-            await _repo.AddSession(session);
-            session.SetSession();
             return Result.Created;
         }
         private async Task<bool> IsSessionInDoctorSessionsAsync(Session session, Doctor doctor)
@@ -56,10 +59,8 @@ namespace ClinicApp.Domain.Services.Sessions
         }
         public async Task<ErrorOr<Deleted>> DeleteSession(Session session, Doctor doctor)
         {
-            if (await IsSessionInDoctorSessionsAsync(session, doctor))
-                return DoctorErrors.DoctorModifyValidationError;
-            await _repo.DeleteSession(session.Id);
-            return Result.Deleted;
+            var result = await _repo.DeleteSession(session.Id);
+            return  result is null ? Error.NotFound() : Result.Deleted;
         }
 
         public ErrorOr<Success> PaySession(Session session,Doctor doctor)

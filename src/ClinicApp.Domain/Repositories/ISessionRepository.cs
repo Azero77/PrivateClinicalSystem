@@ -11,6 +11,8 @@ public interface ISessionRepository
     Task<Session?> GetSessionById(Guid sessionId);
     Task<IReadOnlyCollection<Session>> GetSessionsForToday();
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid);
+    Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid,DateTime date);
+    Task<IReadOnlyCollection<Session>>  GetSesssionsForDoctorOnDayAndAfter(Guid doctorid, DateTime date);
     Task<IReadOnlyCollection<Session>> GetSessionsForDay(DateTime date);
     Task<Session> AddSession(Session session);
     Task<Session> UpdateSession(Session session);

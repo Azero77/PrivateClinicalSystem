@@ -1,16 +1,17 @@
 ﻿using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.ValueObjects;
+using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
-    public interface IScheduler<T> where T : Entity
+    public interface IScheduler
     {
-        Task<ErrorOr<Created>> CreateSession(Session session,T entity);
-        ErrorOr<Success> SetSession(Session session, T entity);
-        Task<ErrorOr<Updated>> UpdateSession(Session session, TimeRange newTime, T entity);
-        Task<ErrorOr<Deleted>> DeleteSession(Session session, T entity);
-        ErrorOr<Success> PaySession(Session session, T entity);
+        Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor);
+        ErrorOr<Success> SetSession(Session session, Doctor doctor);
+        Task<ErrorOr<Updated>> UpdateSession(Session session, TimeRange newTime, Doctor doctor);
+        Task<ErrorOr<Deleted>> DeleteSession(Session session, Doctor doctor);
+        ErrorOr<Success> PaySession(Session session, Doctor doctor);
     }
 }

@@ -3,13 +3,13 @@ using Xunit;
 using FluentAssertions;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.Services.Sessions;
 using ErrorOr;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using ClinicApp.Domain.SessionAgg;
-using ClinicApp.Domain.Common.ValueObjects;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {

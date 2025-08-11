@@ -28,5 +28,7 @@ namespace ClinicApp.Domain.Common.ValueObjects
                     &&
                    t2.StartTime < t1.EndTime;
         }
+
+        public bool IsMidnight => StartTime.Day != EndTime.Day;
     }
 }

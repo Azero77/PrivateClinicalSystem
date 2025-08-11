@@ -2,6 +2,7 @@
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ErrorOr;
+using System.Data;
 
 namespace ClinicApp.Domain.SessionAgg
 {
@@ -22,6 +23,8 @@ namespace ClinicApp.Domain.SessionAgg
             {
                 return SessionErrors.SessionTimeInThePast.error;
             }
+
+            
             var result = new Session()
             {
                 Id = id,
@@ -37,6 +40,35 @@ namespace ClinicApp.Domain.SessionAgg
             result.PushChanges(SessionState.CreateSessionState(result.SessionStatus));
             return result;
         }
+
+        public static ErrorOr<Session> Schedule(
+                        Guid id,
+                       TimeRange sessionDate,
+                       SessionDescription sessionDescription,
+                       Guid roomId,
+                       Guid patientId,
+                       Guid doctorId,
+                       IClock clock,
+                       UserRole role)
+        {
+            SessionStatus state;
+            switch (role)
+            {
+                case UserRole.Doctor:
+                    state = SessionStatus.Set;
+                    break;
+                case UserRole.Admin:
+                    state = SessionStatus.Set;
+                    break;
+                case UserRole.Secretary:
+                    state = SessionStatus.Pending;
+                    break;
+                default:
+                    return SessionErrors.CantCreateSessionWithUserRole;
+            }
+            return Create(id,sessionDate,sessionDescription,roomId,patientId,doctorId,clock,state);
+        }
+
         private Session() { } 
         public TimeRange SessionDate { get; private set; } = null!;
         public SessionDescription SessionDescription { get; private set; } = null!;

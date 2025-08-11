@@ -89,4 +89,22 @@ public class DbSessionRepository : ISessionRepository
         await _context.SaveChangesAsync();
         return session;
     }
+
+    public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid, DateTime date)
+    {
+        date = date.Date;
+        List<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == date)
+            .ToListAsync();
+        return sessions.AsReadOnly();
+    }
+
+    public async Task<IReadOnlyCollection<Session>> GetSesssionsForDoctorOnDayAndAfter(Guid doctorid, DateTime date)
+    {
+        var day = date.Date;
+        var dayAfter = day.AddDays(1);
+        IReadOnlyCollection<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid 
+        && (s.SessionDate.StartTime.Date == date && s.SessionDate.StartTime.Date == dayAfter))
+            .ToListAsync();
+        return sessions;
+    }
 }
