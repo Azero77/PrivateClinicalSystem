@@ -27,6 +27,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.AppHost", "aspire
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.ServiceDefaults", "aspire\ClinicApp.ServiceDefaults\ClinicApp.ServiceDefaults.csproj", "{DD07CBBC-C643-9052-D0F8-9A98DC5158EB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Shared", "src\ClinicApp.Shared\ClinicApp.Shared.csproj", "{1CBAF785-E279-43EC-8928-9C19F547567E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +76,10 @@ Global
 		{DD07CBBC-C643-9052-D0F8-9A98DC5158EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD07CBBC-C643-9052-D0F8-9A98DC5158EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD07CBBC-C643-9052-D0F8-9A98DC5158EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBAF785-E279-43EC-8928-9C19F547567E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBAF785-E279-43EC-8928-9C19F547567E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBAF785-E279-43EC-8928-9C19F547567E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBAF785-E279-43EC-8928-9C19F547567E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +94,7 @@ Global
 		{BE5D8959-5577-4877-B50D-0216865348EC} = {FE7CDB21-65C2-4952-8A80-DE23E4FD7F1C}
 		{78046AE2-AB1D-4099-AD92-FD4833867B1D} = {054549EC-349C-46F5-9762-CE1811F43953}
 		{DD07CBBC-C643-9052-D0F8-9A98DC5158EB} = {054549EC-349C-46F5-9762-CE1811F43953}
+		{1CBAF785-E279-43EC-8928-9C19F547567E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28E7AD30-B8DF-4623-8D1F-A5BAD12EA064}

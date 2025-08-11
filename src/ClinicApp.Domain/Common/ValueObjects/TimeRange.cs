@@ -1,4 +1,4 @@
-﻿using ClinicApp.Domain.Session;
+﻿using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 
 namespace ClinicApp.Domain.Common.ValueObjects
@@ -21,5 +21,14 @@ namespace ClinicApp.Domain.Common.ValueObjects
 
         public DateTime StartTime { get; }
         public DateTime EndTime { get; }
+
+        public static bool IsOverlapping(TimeRange t1, TimeRange t2)
+        {
+            return t1.StartTime < t2.EndTime
+                    &&
+                   t2.StartTime < t1.EndTime;
+        }
+
+        public bool IsMidnight => StartTime.Day != EndTime.Day;
     }
 }

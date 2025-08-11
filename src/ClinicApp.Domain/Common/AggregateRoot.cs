@@ -1,24 +1,22 @@
-﻿
-namespace ClinicApp.Domain.Common
+﻿namespace ClinicApp.Domain.Common;
+
+public abstract class AggregateRoot : Entity
 {
-    public abstract class AggregateRoot : Entity
+    public AggregateRoot(Guid id) : base(id)
     {
-        public AggregateRoot(Guid id) : base(id)
-        {
-        }
-        protected AggregateRoot()
-        {
-        }
+    }
+    protected AggregateRoot()
+    {
+    }
 
-        protected List<IDomainEvent> _domainEvents = new();
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
+    protected List<IDomainEvent> _domainEvents = new();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
-        public List<IDomainEvent> PopDomainEvents()
-        {
-            var copy = _domainEvents.ToList();
+    public List<IDomainEvent> PopDomainEvents()
+    {
+        var copy = _domainEvents.ToList();
 
-            _domainEvents.Clear();
-            return copy;
-        }
+        _domainEvents.Clear();
+        return copy;
     }
 }
