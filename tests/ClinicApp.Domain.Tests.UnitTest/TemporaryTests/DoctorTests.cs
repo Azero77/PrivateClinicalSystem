@@ -1,12 +1,12 @@
 
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
-using ClinicApp.Domain.Common.ValueObjects;
 using Xunit;
 using FluentAssertions;
 using ErrorOr;
 using Moq;
 using ClinicApp.Domain.Services.Sessions;
+using ClinicApp.Domain.Common.ValueObjects;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {

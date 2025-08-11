@@ -1,10 +1,9 @@
-
-using ClinicApp.Domain.Common.ValueObjects;
 using Xunit;
 using FluentAssertions;
 using ClinicApp.Domain.SessionAgg;
-using ClinicApp.Domain.Common.Interfaces;
 using ErrorOr;
+using ClinicApp.Domain.Common.Interfaces;
+using ClinicApp.Domain.Common.ValueObjects;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {

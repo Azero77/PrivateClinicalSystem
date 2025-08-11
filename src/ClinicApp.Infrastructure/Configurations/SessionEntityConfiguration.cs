@@ -10,6 +10,7 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
 {
     public void Configure(EntityTypeBuilder<Session> builder)
     {
+        builder.ToTable("Sessions");
         builder.HasKey(s => s.Id);
 
         builder.OwnsOne(s => s.SessionDate,

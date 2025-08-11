@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
+    <Folder Include="Commands\AddSessionsCommands\" />
   </ItemGroup>
 
   <ItemGroup>

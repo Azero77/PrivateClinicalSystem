@@ -1,5 +1,4 @@
-﻿
-using ClinicApp.Domain.Common.Entities;
+﻿using ClinicApp.Domain.Common.Entities;
 
 namespace ClinicApp.Domain.Repositories;
 

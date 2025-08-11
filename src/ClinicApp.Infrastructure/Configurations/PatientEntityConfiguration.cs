@@ -11,6 +11,7 @@ public class PatientEntityConfiguration : MemberEntityConfiguration<Patient>
     public override void Configure(EntityTypeBuilder<Patient> builder)
     {
         base.Configure(builder);
+        builder.ToTable("Patients");
         builder.HasMany<Session>()
             .WithOne()
             .HasForeignKey(s => s.PatientId)

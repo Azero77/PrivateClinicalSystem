@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Application.QueryServices;
+using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
@@ -13,5 +14,6 @@ public static class DependencyInjection
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
         services.AddScoped<IDoctorQueryService, DoctorQueryService>();
+        services.AddSingleton<IClock, Clock>();
     }
 }

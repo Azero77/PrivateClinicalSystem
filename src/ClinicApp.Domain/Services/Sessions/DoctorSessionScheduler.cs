@@ -43,6 +43,7 @@ namespace ClinicApp.Domain.Services.Sessions
             var doesOverlaps = IsSessionNotOverlapsWithDoctorSchedule(session, doctorSessions);
             if (doesOverlaps.IsError)
                 return doesOverlaps.Errors;
+            await _repo.AddSession(session);
             session.SetSession();
             return Result.Created;
         }
@@ -57,7 +58,7 @@ namespace ClinicApp.Domain.Services.Sessions
         {
             if (await IsSessionInDoctorSessionsAsync(session, doctor))
                 return DoctorErrors.DoctorModifyValidationError;
-            await _repo.RemoveSessionFromDoctor(session);
+            await _repo.DeleteSession(session.Id);
             return Result.Deleted;
         }
 

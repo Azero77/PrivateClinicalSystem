@@ -1,9 +1,11 @@
 ﻿using ClinicApp.Application.DTOs;
+using ClinicApp.Application.QueryServices;
+using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Queries;
 
-public class GetDoctorWithSessionsQueryHandler : IRequestHandler<GetDoctorWithSessionsQuery, DoctorWithSessionsDTO>
+public class GetDoctorWithSessionsQueryHandler : IRequestHandler<GetDoctorWithSessionsQuery, ErrorOr<DoctorWithSessionsDTO>>
 {
     IDoctorQueryService _service;
 
@@ -12,8 +14,10 @@ public class GetDoctorWithSessionsQueryHandler : IRequestHandler<GetDoctorWithSe
         _service = service;
     }
 
-    public Task<DoctorWithSessionsDTO> Handle(GetDoctorWithSessionsQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<DoctorWithSessionsDTO>> Handle(GetDoctorWithSessionsQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var doctor = await _service.GetDoctorWithSessions(request.doctorId);
+
+        return doctor is null ? Error.NotFound() : doctor;
     }
 }

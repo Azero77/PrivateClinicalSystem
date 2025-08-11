@@ -2,12 +2,6 @@
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ClinicApp.Domain.SessionAgg
 {

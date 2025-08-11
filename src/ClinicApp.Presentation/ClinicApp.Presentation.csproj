@@ -14,7 +14,7 @@
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5"/>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
 
   </ItemGroup>
@@ -22,6 +22,8 @@
   <ItemGroup>
 	  
     <ProjectReference Include="..\..\aspire\ClinicApp.ServiceDefaults\ClinicApp.ServiceDefaults.csproj" />
+	  
+    <ProjectReference Include="..\ClinicApp.Application\ClinicApp.Application.csproj" />
     <ProjectReference Include="..\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
   </ItemGroup>
 

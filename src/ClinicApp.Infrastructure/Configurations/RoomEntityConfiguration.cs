@@ -9,6 +9,7 @@ public class RoomEntityConfiguration : IEntityTypeConfiguration<Room>
 {
     public void Configure(EntityTypeBuilder<Room> builder)
     {
+        builder.ToTable("Rooms");
         builder.HasMany<Session>()
             .WithOne()
             .HasForeignKey(s => s.RoomId)

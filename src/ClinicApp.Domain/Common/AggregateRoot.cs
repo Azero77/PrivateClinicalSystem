@@ -1,5 +1,4 @@
-﻿
-namespace ClinicApp.Domain.Common
+﻿namespace ClinicApp.Domain.Common
 {
     public abstract class AggregateRoot : Entity
     {

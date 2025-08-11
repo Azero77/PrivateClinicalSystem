@@ -13,6 +13,7 @@ public class DoctorEntityConfiguration :
     public override void Configure(EntityTypeBuilder<Doctor> builder)
     {
         base.Configure(builder);
+        builder.ToTable("Doctors");
         builder.HasKey(e => e.Id);
 
         builder.HasOne<Room>()

@@ -4,6 +4,7 @@ using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicApp.Presentation
 {
@@ -22,6 +23,7 @@ namespace ClinicApp.Presentation
             builder.Services.AddDbContext<AppDbContext>(opts =>
             {
                 opts.UseNpgsql(builder.Configuration.GetConnectionString("AppConnectionString"));
+                opts.LogTo(Console.WriteLine, LogLevel.Information);
             });
             builder.Services.AddInfrastructure();
             builder.Services.AddApplication();
