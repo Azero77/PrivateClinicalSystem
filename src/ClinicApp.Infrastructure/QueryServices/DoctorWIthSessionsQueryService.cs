@@ -26,4 +26,9 @@ public class DoctorQueryService : IDoctorQueryService
 
         return doctordto;
     }
+
+    public Task<DoctorWithSessionsDTO?> GetDoctorWithSessionsForDay(Guid doctorid, DateTime day)
+    {
+        throw new NotImplementedException();
+    }
 }

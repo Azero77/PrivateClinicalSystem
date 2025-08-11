@@ -38,7 +38,7 @@ Admins can perform all actions.
 2. Session Booking
 2.1 Book Session
 Story:
-As a sercretary, I want to select a doctor, date, and time from their available schedule, so that I can book an Session without calling the doctor.
+As a sercretary, I want to select a doctor, date, and time from their available schedule, so that I can book a Session without calling the doctor.
 
 Acceptance Criteria:
 
