@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\AddSessionsCommands\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ClinicApp.Domain\ClinicApp.Domain.csproj" />
   </ItemGroup>
 
