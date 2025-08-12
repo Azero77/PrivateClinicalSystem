@@ -1,4 +1,5 @@
 using ClinicApp.Application;
+using ClinicApp.Domain;
 using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
@@ -22,11 +23,12 @@ namespace ClinicApp.Presentation
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(opts =>
             {
-                opts.UseNpgsql(builder.Configuration.GetConnectionString("AppConnectionString"));
+                opts.UseNpgsql(builder.Configuration.GetConnectionString("postgresClinicdb"));
                 opts.LogTo(Console.WriteLine, LogLevel.Information);
             });
-            builder.Services.AddInfrastructure();
-            builder.Services.AddApplication();
+            builder.Services.AddDomainServices()
+                .AddInfrastructure()
+                .AddApplication();
             builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
 

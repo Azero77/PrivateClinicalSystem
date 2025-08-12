@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Domain.Common;
+using ClinicApp.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,10 @@ public class EventualConsistencyMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context,CancellationToken token,IPublisher publisher,DbContext dbContext)
+    public async Task Invoke(HttpContext context,IPublisher publisher,AppDbContext dbContext)
     {
-        var transaction = await dbContext.Database.BeginTransactionAsync();
+        var token = context.RequestAborted;
+        var transaction = await dbContext.Database.BeginTransactionAsync(token);
         context.Response.OnCompleted(async () =>
         {
             try
