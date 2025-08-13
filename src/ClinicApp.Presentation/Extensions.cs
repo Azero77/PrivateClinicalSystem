@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Presentation;
 
-public static class Extensions
+public static class DbExtensions
 {
     /// <summary>
     /// Running Migrations in dev environment only
