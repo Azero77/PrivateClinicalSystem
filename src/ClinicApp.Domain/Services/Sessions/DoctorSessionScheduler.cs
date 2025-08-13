@@ -16,7 +16,7 @@ namespace ClinicApp.Domain.Services.Sessions
             _repo = repo;
         }
 
-        public async Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor,IReadOnlyCollection<Session> doctorSessions)
+        public async Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor)
         {
             var result = await AddSession(session, doctor);
             if(!result.IsError)
