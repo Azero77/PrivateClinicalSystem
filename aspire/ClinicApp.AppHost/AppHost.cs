@@ -1,3 +1,5 @@
+using Aspire.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresClinic = builder.AddPostgres("postgres")
@@ -7,6 +9,7 @@ var postgresClinic = builder.AddPostgres("postgres")
 var db = postgresClinic.AddDatabase("postgresClinicdb");
 
 builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
-    .WithReference(db);
+    .WithReference(db)
+    .WithEnvironment("ASPNETCORE_ENVIRONMENT","Development");
 
 builder.Build().Run();
