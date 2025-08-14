@@ -32,4 +32,17 @@ public static class ErrorExtension
             }
         };
     }
+
+    public static IActionResult ToProblemResult(this ProblemDetails problemDetails,HttpContext httpContext)
+    {
+        IProblemDetailsService service = httpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+
+        service.WriteAsync(new ProblemDetailsContext()
+        {
+            HttpContext = httpContext,
+            ProblemDetails = problemDetails
+        });
+
+        return new EmptyResult();
+    }
 }

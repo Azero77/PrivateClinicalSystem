@@ -13,10 +13,9 @@ namespace ClinicApp.Presentation.Controllers;
 public class DoctorsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public DoctorsController(IMediator mediator, IProblemDetailsService problemDetailsService)
+    public DoctorsController(IMediator mediator)
     {
         _mediator = mediator;
-        _problemDetailsService = problemDetailsService;
     }
 
     [HttpGet("{id}/with-sessions")]
@@ -24,8 +23,8 @@ public class DoctorsController : ControllerBase
     {
         var query = await _mediator.Send(new GetDoctorWithSessionsQuery(id));
         return query.Match(
-            value => Ok(value),
-            errors => Problem(errors.ToProblemDetails())
+            Ok,
+            errors => errors.ToProblemDetails().ToProblemResult(HttpContext)
             );
     }
 }

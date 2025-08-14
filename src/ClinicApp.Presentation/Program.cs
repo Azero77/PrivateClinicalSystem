@@ -27,7 +27,7 @@ namespace ClinicApp.Presentation
                     context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";;
                     context.ProblemDetails.Extensions.TryAdd("requestId",context.HttpContext.TraceIdentifier);
                     Activity? activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
-                    context.ProblemDetails.Extensions.Add("traceId",activity);
+                    context.ProblemDetails.Extensions.Add("traceId",activity.TraceId);
                 };
             });
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -60,7 +60,6 @@ namespace ClinicApp.Presentation
 
             app.UseExceptionHandler();
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
             app.UseInfrastructure();
