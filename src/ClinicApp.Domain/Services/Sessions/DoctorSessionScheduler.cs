@@ -1,4 +1,6 @@
-﻿using ClinicApp.Domain.Common.ValueObjects;
+﻿using ClinicApp.Domain.Common;
+using ClinicApp.Domain.Common.Interfaces;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
@@ -15,16 +17,37 @@ namespace ClinicApp.Domain.Services.Sessions
         {
             _repo = repo;
         }
-
-        public async Task<ErrorOr<Created>> CreateSession(Session session,Doctor doctor)
+        //Encapsulated the logic of creating the session only in this service
+        public async Task<ErrorOr<Session>> CreateSession(
+                        Guid id,
+                       TimeRange sessionDate,
+                       SessionDescription sessionDescription,
+                       Guid roomId,
+                       Guid patientId,
+                       Guid doctorId,
+                       IClock clock,
+                       UserRole role,
+                       Doctor doctor)
         {
-            var result = await AddSession(session, doctor);
-            if(!result.IsError)
-                await _repo.AddSession(session);
-            return result;
+            ErrorOr<Session> session = Session.Schedule(id,
+                sessionDate,
+                sessionDescription,
+                roomId,
+                patientId,
+                doctorId,
+                clock,
+                role
+                );
+
+            if (session.IsError)
+                return session.Errors;
+            var canadd =  await CanAddSession(session.Value, doctor);
+            if (canadd.IsError)
+                return canadd.Errors;
+            return await _repo.AddSession(session.Value);
         }
 
-        private async Task<ErrorOr<Created>> AddSession(Session session, Doctor doctor)
+        private async Task<ErrorOr<Created>> CanAddSession(Session session, Doctor doctor)
         {
             if (session.DoctorId != doctor.Id)
                 return DoctorErrors.DoctorModifyValidationError;
@@ -48,14 +71,8 @@ namespace ClinicApp.Domain.Services.Sessions
             var doesOverlaps = IsSessionNotOverlapsWithDoctorSchedule(session, doctorSessions);
             if (doesOverlaps.IsError)
                 return doesOverlaps.Errors;
+
             return Result.Created;
-        }
-        private async Task<bool> IsSessionInDoctorSessionsAsync(Session session, Doctor doctor)
-        {
-            var doctorSession = (await _repo.GetAllSessionsForDoctor(doctor)).Select(s => s.Id).ToList();
-            if (doctorSession.Contains(session.Id))
-                return true;
-            return false;
         }
         public async Task<ErrorOr<Deleted>> DeleteSession(Session session, Doctor doctor)
         {
@@ -76,7 +93,7 @@ namespace ClinicApp.Domain.Services.Sessions
 
         public async Task<ErrorOr<Updated>> UpdateSession(Session session, TimeRange newTime,Doctor doctor)
         {
-            var result = await AddSession(session, doctor);
+            var result = await CanAddSession(session, doctor);
             if (result.IsError)
                 return result.Errors;
             return Result.Updated;

@@ -16,7 +16,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         {
             clock = new FakerClock() { UtcNow = new DateTime(2025, 11, 2) };
         }
-        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Admin);
+        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Secretary);
         [Fact]
         public void Create_Should_ReturnError_When_SessionIsInThePast()
         {

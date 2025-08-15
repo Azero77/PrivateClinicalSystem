@@ -3,13 +3,16 @@ using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ErrorOr;
 using System.Data;
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("ClinicApp.Domain.Tests.UnitTest")]
+
 
 namespace ClinicApp.Domain.SessionAgg
 {
     public class Session : AggregateRoot
     {
         private IClock _clock = null!;
-        internal static ErrorOr<Session> Create(Guid id,
+        private static ErrorOr<Session> Create(Guid id,
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,
@@ -41,7 +44,8 @@ namespace ClinicApp.Domain.SessionAgg
             return result;
         }
 
-        public static ErrorOr<Session> Schedule(
+        
+        internal static ErrorOr<Session> Schedule(
                         Guid id,
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
