@@ -5,6 +5,7 @@ using FluentAssertions;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Domain.Common.Interfaces;
 using ErrorOr;
+using ClinicApp.Domain.Common;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {
@@ -15,7 +16,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         {
             clock = new FakerClock() { UtcNow = new DateTime(2025, 11, 2) };
         }
-        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock);
+        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Admin);
         [Fact]
         public void Create_Should_ReturnError_When_SessionIsInThePast()
         {

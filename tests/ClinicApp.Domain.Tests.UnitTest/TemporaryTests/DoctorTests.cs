@@ -1,6 +1,7 @@
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Domain.Common.ValueObjects;
 using FluentAssertions;
+using ClinicApp.Domain.Common;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {
@@ -13,7 +14,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var doctor = Factories.DoctorFactory;
             var fakerClock = new FakerClock { UtcNow = new DateTime(2025,7,21) };
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 22), new DateTime(2025, 7, 22, 10, 30, 0)).Value; // Tuesday
-            var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             // Act
             var result = doctor.CanAddBasedToSchedule(session.SessionDate);
@@ -31,7 +32,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 
             var fakerClock = new FakerClock { UtcNow = new DateTime(2025, 7, 21) };
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 21, 8, 0, 0), new DateTime(2025, 7, 21, 9, 0, 0)).Value; // Monday, but too early
-            var session = Session.Create(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             // Act
             var result = doctor.CanAddBasedToSchedule(session.SessionDate);
