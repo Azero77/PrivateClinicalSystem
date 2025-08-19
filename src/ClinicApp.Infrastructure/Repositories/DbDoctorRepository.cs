@@ -1,5 +1,6 @@
 ﻿using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
+using ClinicApp.Infrastructure.DataQueryHelpers;
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 
