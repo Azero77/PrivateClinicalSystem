@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbRoomRepository : IRoomRepository
+public class DbRoomRepository : PaginatedRepostiory<Room>,IRoomRepository
 {
     private readonly AppDbContext _context;
 
     public DbRoomRepository(AppDbContext context)
+        :  base(context)
     {
         _context = context;
     }

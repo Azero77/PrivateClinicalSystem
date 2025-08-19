@@ -7,13 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbSessionRepository : ISessionRepository
+public class DbSessionRepository : PaginatedRepostiory<Session>,ISessionRepository
 {
     private readonly AppDbContext _context;
     private IQueryable<Session> _sessionsNotTracked => _context.Sessions.AsNoTracking();
     private readonly IClock _clock;
 
     public DbSessionRepository(AppDbContext context, IClock clock)
+        : base(context)
     {
         _context = context;
         _clock = clock;

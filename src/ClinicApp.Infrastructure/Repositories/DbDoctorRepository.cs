@@ -5,11 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbDoctorRepository : IDoctorRepository
+public class DbDoctorRepository : PaginatedRepostiory<Doctor>,IDoctorRepository
 {
     private readonly AppDbContext _context;
+    private const int InitialPageNumber = 5;
+
 
     public DbDoctorRepository(AppDbContext context)
+        : base(context)
     {
         _context = context;
     }
