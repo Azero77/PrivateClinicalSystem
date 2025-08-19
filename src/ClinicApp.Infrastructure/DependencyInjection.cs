@@ -12,12 +12,11 @@ namespace ClinicApp.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
-        string connectionString)
+        string connectionstring)
     {
         services.AddDbContext<AppDbContext>(opts =>
         {
-            opts.UseNpgsql(connectionString);
-            opts.LogTo(Console.WriteLine, LogLevel.Debug);
+            opts.UseNpgsql(connectionstring);
         });
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();

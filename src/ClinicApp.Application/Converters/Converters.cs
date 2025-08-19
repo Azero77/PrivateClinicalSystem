@@ -1,14 +1,33 @@
-﻿using ClinicApp.Application.DTOs;
+﻿using ClinicApp.Application.Commands.DoctorAddCommands;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.SessionAgg;
 
 namespace ClinicApp.Application.Converters;
 public static class Converters
 {
-    public static Doctor ToDoctor(this DoctorWithSessionsDTO dto)
+
+    public static Doctor ToDoctor(this DoctorAddCommand doctordto)
     {
-        return new Doctor(dto.Id,
-            dto.WorkingDays,
-            dto.WorkingHours
-            );
+        return new Doctor(doctordto.doctorId,
+            doctordto.workingDays,
+            WorkingHours.Create(doctordto.workingHoursStartTime,
+                                doctordto.workingHoursEndTime),
+            doctordto.roomId,
+            doctordto.Major);
     }
+
+    public static DoctorWithSessionsDTO DTOFrom(Doctor doctor,IReadOnlyCollection<Session> sessions)
+    {
+        return new DoctorWithSessionsDTO
+        {
+            Id = doctor.Id,
+            Name = doctor.FirstName + " " + doctor.LastName,
+            WorkingDays = doctor.WorkingTime.WorkingDays.ToListDays(),
+            WorkingDaysBit = doctor.WorkingTime.WorkingDays.ToList(),
+            WorkingHours = doctor.WorkingTime.WorkingHours,
+            Sessions = sessions
+        };
+    }
+
 }

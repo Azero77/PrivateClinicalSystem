@@ -12,6 +12,8 @@ namespace ClinicApp.Domain.Tests.UnitTest
     {
         public static Doctor DoctorFactory => new Doctor(Guid.NewGuid(),
                 WorkingDays.Monday | WorkingDays.Wednesday,
-                WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0)));
+                WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0)),
+                Guid.NewGuid(),
+                major : null);
     }
 }
