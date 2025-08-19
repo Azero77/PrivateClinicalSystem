@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbRoomRepository : PaginatedRepostiory<Room>,IRoomRepository
+public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
 {
     private readonly AppDbContext _context;
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbDoctorRepository : PaginatedRepostiory<Doctor>,IDoctorRepository
+public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
 {
     private readonly AppDbContext _context;
     private const int InitialPageNumber = 5;

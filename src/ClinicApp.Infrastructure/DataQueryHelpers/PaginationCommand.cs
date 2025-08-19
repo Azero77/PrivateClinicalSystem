@@ -17,6 +17,6 @@ public class PaginationCommand<T> : IQueryCommand<T>
     public IQueryable<T> Apply(IQueryable<T> query)
     {
         return query.Skip(_pageNumber * _pageSize)
-            .Take(_pageNumber);
+            .Take(_pageSize);
     }
 }

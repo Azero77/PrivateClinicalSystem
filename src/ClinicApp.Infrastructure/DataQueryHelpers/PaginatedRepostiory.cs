@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.DataQueryHelpers;
 
-public class PaginatedRepostiory<T> : IPaginatedRepository<T>
+public class PaginatedRepository<T> : IPaginatedRepository<T>
     where T : Entity
 {
     private readonly AppDbContext _context;
     protected int ItemsPerPage { get; set; } = 5;
-    public PaginatedRepostiory(AppDbContext context)
+    public PaginatedRepository(AppDbContext context)
     {
         _context = context;
     }

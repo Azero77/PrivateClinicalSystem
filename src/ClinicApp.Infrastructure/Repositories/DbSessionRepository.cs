@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbSessionRepository : PaginatedRepostiory<Session>,ISessionRepository
+public class DbSessionRepository : PaginatedRepository<Session>,ISessionRepository
 {
     private readonly AppDbContext _context;
     private IQueryable<Session> _sessionsNotTracked => _context.Sessions.AsNoTracking();
