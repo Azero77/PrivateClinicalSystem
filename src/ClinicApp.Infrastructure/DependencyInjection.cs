@@ -1,8 +1,6 @@
-﻿using ClinicApp.Application.QueryServices;
-using ClinicApp.Domain.Common.Interfaces;
+﻿using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Persistance;
-using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
