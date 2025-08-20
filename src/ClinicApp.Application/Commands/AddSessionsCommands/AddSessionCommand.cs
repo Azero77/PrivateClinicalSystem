@@ -1,5 +1,4 @@
 ﻿using ClinicApp.Application.Converters;
-using ClinicApp.Application.QueryServices;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.SessionAgg;

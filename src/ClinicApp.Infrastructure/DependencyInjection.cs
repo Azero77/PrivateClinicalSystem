@@ -21,7 +21,6 @@ public static class DependencyInjection
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
-        services.AddScoped<IDoctorQueryService, DoctorQueryService>();
         services.AddSingleton<IClock, Clock>();
         return services;
     }
