@@ -2,7 +2,7 @@
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 
-namespace ClinicApp.Infrastructure.DataQueryHelpers;
+namespace ClinicApp.Application.DataQueryHelpers;
 
 public class PaginatedRepository<T> : IPaginatedRepository<T>
     where T : Entity

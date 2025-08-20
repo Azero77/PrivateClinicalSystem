@@ -1,6 +1,6 @@
 ﻿using ClinicApp.Domain.Common;
 
-namespace ClinicApp.Infrastructure.DataQueryHelpers;
+namespace ClinicApp.Application.DataQueryHelpers;
 
 public class DataQueryOptions<T>
     where T : Entity

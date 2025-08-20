@@ -3,7 +3,7 @@ using ErrorOr;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ClinicApp.Infrastructure.DataQueryHelpers;
+namespace ClinicApp.Application.DataQueryHelpers;
 
 public class OrderCommand<T> : IQueryCommand<T>
     where T : Entity

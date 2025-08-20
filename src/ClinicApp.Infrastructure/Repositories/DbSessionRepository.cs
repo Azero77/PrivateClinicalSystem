@@ -1,8 +1,8 @@
-﻿using ClinicApp.Domain.Common.Interfaces;
+﻿using ClinicApp.Application.DataQueryHelpers;
+using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
-using ClinicApp.Infrastructure.DataQueryHelpers;
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,7 @@
 ﻿using ClinicApp.Domain.Common;
 using System.Linq.Expressions;
 
-namespace ClinicApp.Infrastructure.DataQueryHelpers;
+namespace ClinicApp.Application.DataQueryHelpers;
 
 public class FilterCommand<T> : IQueryCommand<T>
     where T : Entity
