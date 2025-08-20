@@ -27,7 +27,7 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
         if (doctor is null)
             return Error.NotFound("Application.Doctor.NotFound","Doctor with id not found");
 
-        ErrorOr<Session> session =  await _scheduler.CreateSession(request.sessionId,
+        ErrorOr<Session> session =  await _scheduler.CreateSession(Guid.NewGuid(),
             request.sessionDate,
             request.sessionDescription,
             request.roomId,
