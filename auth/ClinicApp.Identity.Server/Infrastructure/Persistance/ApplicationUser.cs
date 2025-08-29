@@ -2,6 +2,6 @@
 
 namespace ClinicApp.Identity.Server.Infrastructure.Persistance;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser<Guid>
 {
 }

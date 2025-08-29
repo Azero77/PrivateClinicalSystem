@@ -17,7 +17,7 @@ internal static class HostingExtensions
             options.UseNpgsql(connectionString);
         });
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        builder.Services.AddIdentity<ApplicationUser,ApplicationRole>()
             .AddEntityFrameworkStores<UsersDbContext>();
         builder.Services.AddIdentityServer(options =>
         {
