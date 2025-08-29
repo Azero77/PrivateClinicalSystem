@@ -31,6 +31,8 @@ try
             Console.Write(Summary(usage));
             Console.ReadKey();
         });
+
+        await Seed.SeedDatabase(app);
     }
 
     app.Run();
