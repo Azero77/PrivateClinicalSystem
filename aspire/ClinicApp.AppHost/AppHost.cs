@@ -10,9 +10,17 @@ var postgresClinic = builder.AddPostgres("postgres")
 var pgadmin = postgresClinic.WithPgAdmin();
 var db = postgresClinic.AddDatabase("postgresClinicdb");
 
+var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("identity")
+    .WithReference(db)
+    .WithReference(pgadmin);
+
+var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
+    .WithReference(identityServer);
 builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)
     .WithReference(pgadmin)
+    .WithReference(identityServer)
+    .WithReference(bff)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT","Development");
 
 builder.Build().Run();

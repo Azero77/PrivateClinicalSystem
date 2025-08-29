@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\auth\ClinicApp.Identity.Presentation\ClinicApp.Identity.BFF.csproj" />
+    <ProjectReference Include="..\..\auth\ClinicApp.Identity.Server\ClinicApp.Identity.Server.csproj" />
     <ProjectReference Include="..\..\src\ClinicApp.Presentation\ClinicApp.Presentation.csproj" />
   </ItemGroup>
 

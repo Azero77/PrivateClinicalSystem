@@ -35,11 +35,11 @@ namespace ClinicApp.Presentation
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtoptions => 
                 {
-                    jwtoptions.Authority = builder.Configuration?["Identity_Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
-                    jwtoptions.Audience = builder.Configuration?["Identity_Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                    jwtoptions.Authority = builder.Configuration?["Identity:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                    jwtoptions.Audience = builder.Configuration?["Identity:Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
                     jwtoptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
+                        ValidateIssuer = true,  
                         ValidateAudience = true
                     };
                     jwtoptions.MapInboundClaims = false;

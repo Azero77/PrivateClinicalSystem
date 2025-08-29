@@ -5,7 +5,9 @@ using ClinicApp.Presentation.Extensions;
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Controllers;
 
@@ -20,7 +22,8 @@ public class SessionController : ApiController
         _mediator = mediator;
     }
 
-    [HttpPost]
+    [HttpPost("Add")]
+    [Authorize]
     public async Task<IActionResult> AddSession(AddSessionRequest request,CancellationToken token)
     {
         var validation = _validator.Validate(request);
@@ -28,15 +31,14 @@ public class SessionController : ApiController
 
         if (!validation.IsValid)
             throw new ApplicationException();
-
+        var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst(ClaimTypes.Role)!.ToString());
         var command = new AddSessionCommand(
             TimeRange.Create(request.StartTime,request.EndTime).Value,
             request.SessionDescription,
             request.roomId,
             request.patientId,
             request.doctorId,
-            UserRole.Admin
-            //detecting user role (should be changed later)
+            userRole
             );
 
         var result = await _mediator.Send(command,token);
