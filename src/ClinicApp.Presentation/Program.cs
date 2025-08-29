@@ -44,6 +44,8 @@ namespace ClinicApp.Presentation
                     };
                     jwtoptions.MapInboundClaims = false;
                 });
+
+            builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
             builder.Services.AddControllers();
@@ -74,6 +76,7 @@ namespace ClinicApp.Presentation
 
             app.UseExceptionHandler();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseInfrastructure();

@@ -9,6 +9,10 @@ builder.Services.AddBff()
 Configuration config = new();
 builder.Configuration.Bind("BFF", config);
 
+
+
+builder.Services.AddAuthentication();
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = "cookie";

@@ -1,3 +1,6 @@
+using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace ClinicApp.Identity.Server;
@@ -8,6 +11,14 @@ internal static class HostingExtensions
         // uncomment if you want to add a UI
         //builder.Services.AddRazorPages();
 
+        builder.Services.AddDbContext<UsersDbContext>(options =>
+        {
+            string connectionString = builder.Configuration.GetConnectionString("AppConnectionString") ?? builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
+            options.UseNpgsql(connectionString);
+        });
+
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<UsersDbContext>();
         builder.Services.AddIdentityServer(options =>
         {
             options.Events.RaiseErrorEvents = true;
@@ -18,6 +29,7 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
+            .AddAspNetIdentity<ApplicationUser>()
             .AddLicenseSummary();
         return builder.Build();
     }
