@@ -22,7 +22,7 @@ public static class Config
     public static IEnumerable<Client> Clients(IConfiguration configuration)
     {
         string bff_url = configuration?["Identity__Bff_url"] ?? throw new ArgumentException("No Bff Url provided");
-        string secret =  configuration?["Identity__Secret"] ?? throw new ArgumentException("No Secret is provided")
+        string secret = configuration?["Identity__Secret"] ?? throw new ArgumentException("No Secret is provided");
         return new Client[]
             {
                 new Client()

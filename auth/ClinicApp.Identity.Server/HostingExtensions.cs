@@ -19,7 +19,6 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddLicenseSummary();
-
         return builder.Build();
     }
 

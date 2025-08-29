@@ -4,6 +4,7 @@ using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Presentation.Exceptions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,6 +31,19 @@ namespace ClinicApp.Presentation
                     context.ProblemDetails.Extensions.Add("traceId",activity?.TraceId);
                 };
             });
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtoptions => 
+                {
+                    jwtoptions.Authority = builder.Configuration?["Identity_Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                    jwtoptions.Audience = builder.Configuration?["Identity_Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                    jwtoptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true
+                    };
+                    jwtoptions.MapInboundClaims = false;
+                });
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
             builder.Services.AddControllers();
