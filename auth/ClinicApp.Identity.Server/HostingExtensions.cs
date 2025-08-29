@@ -8,10 +8,16 @@ internal static class HostingExtensions
         // uncomment if you want to add a UI
         //builder.Services.AddRazorPages();
 
-        builder.Services.AddIdentityServer()
+        builder.Services.AddIdentityServer(options =>
+        {
+            options.Events.RaiseErrorEvents = true;
+            options.Events.RaiseFailureEvents = true;
+            options.Events.RaiseInformationEvents = true;
+            options.Events.RaiseSuccessEvents = true;
+        })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddLicenseSummary();
 
         return builder.Build();
