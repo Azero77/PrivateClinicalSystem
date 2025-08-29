@@ -1,6 +1,6 @@
 using Duende.Bff;
 
-namespace ClinicApp.Identity.Auth.Api;
+namespace ClinicApp.Identity.Presentation;
 /// <summary>
 /// Configuration section
 /// </summary>

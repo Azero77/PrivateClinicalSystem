@@ -1,4 +1,4 @@
-using ClinicApp.Identity.Auth.Api;
+using ClinicApp.Identity.Presentation;
 using Duende.Bff.Yarp;
 
 var builder = WebApplication.CreateBuilder(args);
