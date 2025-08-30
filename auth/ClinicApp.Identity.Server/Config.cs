@@ -28,7 +28,7 @@ public static class Config
                 new Client()
                 {
                     ClientId = "bff",
-                    ClientSecrets = [new Secret(secret)],
+                    ClientSecrets = {new Secret(secret.Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris = { $"{bff_url}/signin-oidc"},
                     FrontChannelLogoutUri = $"{bff_url}/signout-oidc",

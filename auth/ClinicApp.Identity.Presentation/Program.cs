@@ -9,7 +9,7 @@ builder.Services.AddBff()
 Configuration config = new();
 builder.Configuration.Bind("BFF", config);
 
-
+var isDev = builder.Environment.IsDevelopment();
 
 builder.Services.AddAuthentication();
 
@@ -21,9 +21,19 @@ builder.Services.AddAuthentication(options =>
     })
     .AddCookie("cookie", options =>
     {
-        options.Cookie.Name = "__Host-bff";
+        options.Cookie.Name = isDev ? "bff-dev" : "__Host-bff";
+
         options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.HttpOnly = true;
+        if (builder.Environment.IsDevelopment())
+        {
+            options.Cookie.SecurePolicy = CookieSecurePolicy.None; //Allow http
+        }
+        else
+        {
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        }
+
     })
     .AddOpenIdConnect("oidc", options =>
     {
