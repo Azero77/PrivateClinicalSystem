@@ -17,6 +17,7 @@ namespace ClinicApp.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("domain")
                 .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -34,7 +35,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", "domain");
                 });
 
             modelBuilder.Entity("ClinicApp.Domain.DoctorAgg.Doctor", b =>
@@ -68,10 +69,10 @@ namespace ClinicApp.Infrastructure.Migrations
                     b.HasIndex("RoomId")
                         .IsUnique();
 
-                    b.ToTable("Doctors");
+                    b.ToTable("Doctors", "domain");
                 });
 
-            modelBuilder.Entity("ClinicApp.Domain.Patient.Patient", b =>
+            modelBuilder.Entity("ClinicApp.Domain.PatientAgg.Patient", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,7 +93,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patient");
+                    b.ToTable("Patients", "domain");
                 });
 
             modelBuilder.Entity("ClinicApp.Domain.SessionAgg.Session", b =>
@@ -124,7 +125,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", "domain");
                 });
 
             modelBuilder.Entity("ClinicApp.Domain.DoctorAgg.Doctor", b =>
@@ -146,7 +147,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                             b1.HasKey("DoctorId");
 
-                            b1.ToTable("Doctors");
+                            b1.ToTable("Doctors", "domain");
 
                             b1.WithOwner()
                                 .HasForeignKey("DoctorId");
@@ -168,7 +169,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                                     b2.HasKey("DoctorId", "StartDate", "EndDate");
 
-                                    b2.ToTable("Doctor_TimesOff", (string)null);
+                                    b2.ToTable("Doctor_TimesOff", "domain");
 
                                     b2.WithOwner()
                                         .HasForeignKey("DoctorId");
@@ -189,7 +190,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                                     b2.HasKey("WorkingTimeDoctorId");
 
-                                    b2.ToTable("Doctors");
+                                    b2.ToTable("Doctors", "domain");
 
                                     b2.WithOwner()
                                         .HasForeignKey("WorkingTimeDoctorId");
@@ -213,7 +214,7 @@ namespace ClinicApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ClinicApp.Domain.Patient.Patient", null)
+                    b.HasOne("ClinicApp.Domain.PatientAgg.Patient", null)
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
@@ -240,7 +241,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                             b1.HasKey("SessionId");
 
-                            b1.ToTable("Sessions");
+                            b1.ToTable("Sessions", "domain");
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionId");
@@ -257,7 +258,7 @@ namespace ClinicApp.Infrastructure.Migrations
 
                             b1.HasKey("SessionId");
 
-                            b1.ToTable("Sessions");
+                            b1.ToTable("Sessions", "domain");
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionId");

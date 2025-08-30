@@ -13,7 +13,7 @@ internal static class HostingExtensions
 
         builder.Services.AddDbContext<UsersDbContext>(options =>
         {
-            string connectionString = builder.Configuration.GetConnectionString("AppConnectionString") ?? builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
+            string connectionString = builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
             options.UseNpgsql(connectionString);
         });
 

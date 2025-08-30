@@ -16,7 +16,7 @@ var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("ide
 
 var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
     .WithReference(identityServer);
-builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
+var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)
     .WithReference(pgadmin)
     .WithReference(identityServer)

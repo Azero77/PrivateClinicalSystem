@@ -22,7 +22,7 @@ public static class Seed
             // Ensure the database is created and migrations are applied
             if (context.Database.GetPendingMigrations().Any())
             {
-                await context.Database.MigrateAsync();
+                context.Database.Migrate();
             }
 
             // Seed users only if none exist
