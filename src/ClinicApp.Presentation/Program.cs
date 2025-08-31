@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
+using System.Text;
 
 namespace ClinicApp.Presentation
 {
@@ -33,16 +35,27 @@ namespace ClinicApp.Presentation
             });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwtoptions => 
+                .AddJwtBearer(jwtoptions =>
                 {
                     jwtoptions.Authority = builder.Configuration?["JWT:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
                     jwtoptions.Audience = builder.Configuration?["JWT:Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
-                    jwtoptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    SymmetricSecurityKey key = getKey(builder);
+                    jwtoptions.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,  
-                        ValidateAudience = true
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        IssuerSigningKey = key
                     };
                     jwtoptions.MapInboundClaims = false;
+
+                    static SymmetricSecurityKey getKey(WebApplicationBuilder builder)
+                    {
+                        // This secret must be the base64 encoded key from 'dotnet user-jwts'
+                        var key_string = builder.Configuration?["Identity:Key"] ?? throw new ArgumentException("Identity:Secret was not provided");
+                        var bytes = Convert.FromBase64String(key_string);
+                        var key = new SymmetricSecurityKey(bytes);
+                        return key;
+                    }
                 });
 
             builder.Services.AddAuthorization();

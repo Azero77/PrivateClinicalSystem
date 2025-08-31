@@ -4,9 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>855eb16a-340d-4076-a448-bc1f3fc9f994</UserSecretsId>
+    
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <UserSecretsId>7e61507b-f43d-4382-a082-92a918cf4971</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

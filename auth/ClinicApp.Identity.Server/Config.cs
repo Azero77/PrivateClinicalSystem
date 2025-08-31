@@ -31,6 +31,8 @@ public static class Config
                     ClientSecrets = {new Secret(secret.Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris = { $"{bff_url}/signin-oidc"},
+                    PostLogoutRedirectUris = { $"{bff_url}/signout-callback-oidc" },
+                    AllowedCorsOrigins = { bff_url },
                     FrontChannelLogoutUri = $"{bff_url}/signout-oidc",
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.Profile,
