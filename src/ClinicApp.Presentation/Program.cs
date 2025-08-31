@@ -4,6 +4,7 @@ using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Presentation.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -37,26 +38,49 @@ namespace ClinicApp.Presentation
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtoptions =>
                 {
-                    jwtoptions.Authority = builder.Configuration?["JWT:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
-                    jwtoptions.Audience = builder.Configuration?["JWT:Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
-                    SymmetricSecurityKey key = getKey(builder);
-                    jwtoptions.TokenValidationParameters = new TokenValidationParameters()
+
+                    //a key will be used in dev and ignoring authority claim
+                    //but in prod we will not use symmetric keys and we will move to assymetric
+                    //in prod we don't need to provide key because while providng authority claim it will check .well-know/configuration to get the public key to validate issued token
+                    //without the need to know the private key
+                    
+                    if (builder.Environment.IsDevelopment())
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        IssuerSigningKey = key
-                    };
+                        jwtoptions.RequireHttpsMetadata = false;
+                        SymmetricSecurityKey key = getKey(builder);
+
+                        jwtoptions.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidAudience = builder.Configuration?["JWT:Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided"),
+                            ValidIssuer = builder.Configuration?["JWT:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided"),
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            IssuerSigningKey = key
+                        };
+                    }
+                    else
+                    {
+                        jwtoptions.Authority = builder.Configuration?["JWT:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                        jwtoptions.Audience = builder.Configuration?["JWT:Audience"] ?? throw new ArgumentException("IdentityUrl Should Be Provided");
+                        jwtoptions.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true
+                        };
+                    }
                     jwtoptions.MapInboundClaims = false;
 
                     static SymmetricSecurityKey getKey(WebApplicationBuilder builder)
                     {
                         // This secret must be the base64 encoded key from 'dotnet user-jwts'
-                        var key_string = builder.Configuration?["Identity:Key"] ?? throw new ArgumentException("Identity:Secret was not provided");
+                        var key_string = builder.Configuration?["JWT:Key"] ?? throw new ArgumentException("JWT:Key was not provided");
                         var bytes = Convert.FromBase64String(key_string);
                         var key = new SymmetricSecurityKey(bytes);
                         return key;
                     }
                 });
+
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly,includeInternalTypes:true);
 
             builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

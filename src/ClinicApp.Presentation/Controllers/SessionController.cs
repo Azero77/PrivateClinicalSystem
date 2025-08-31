@@ -31,7 +31,7 @@ public class SessionController : ApiController
 
         if (!validation.IsValid)
             throw new ApplicationException();
-        var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst(ClaimTypes.Role)!.ToString());
+        var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst("role")!.Value.ToString());
         var command = new AddSessionCommand(
             TimeRange.Create(request.StartTime,request.EndTime).Value,
             request.SessionDescription,
