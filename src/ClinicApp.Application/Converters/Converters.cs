@@ -12,7 +12,7 @@ public static class Converters
         return new Doctor(doctordto.doctorId,
             doctordto.workingDays,
             WorkingHours.Create(doctordto.workingHoursStartTime,
-                                doctordto.workingHoursEndTime),
+                                doctordto.workingHoursEndTime).Value,
             doctordto.roomId,
             doctordto.Major);
     }

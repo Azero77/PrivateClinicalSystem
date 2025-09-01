@@ -20,9 +20,12 @@ public record WorkingTime
         {
             return ScheduleErrors.TimeValidationError;
         }
+        var workingHours = WorkingHours.Create(startTime, endTime);
+        if (workingHours.IsError)
+            return workingHours.Errors;
         return new WorkingTime()
         {
-            WorkingHours = WorkingHours.Create(startTime, endTime),
+            WorkingHours = workingHours.Value,
             WorkingDays = workingDays
         };
     }
