@@ -24,7 +24,9 @@ public class SessionController : ApiController
 
     [HttpPost("Add")]
     [Authorize]
-    public async Task<IActionResult> AddSession(AddSessionRequest request,CancellationToken token)
+    public async Task<IActionResult> AddSession(
+        [FromBody]
+        AddSessionRequest request,CancellationToken token)
     {
         var validation = _validator.Validate(request);
 
