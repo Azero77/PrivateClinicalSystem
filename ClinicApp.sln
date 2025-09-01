@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Shared", "src\Cli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "auth", "auth", "{C9BEB82A-FFD8-40CD-B0E8-FB2C0728B8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Identity.BFF", "auth\ClinicApp.Identity.Presentation\ClinicApp.Identity.BFF.csproj", "{97A63EEA-FB43-FB86-9394-D8A454615431}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Identity.BFF", "auth\ClinicApp.Identity.BFF\ClinicApp.Identity.BFF.csproj", "{97A63EEA-FB43-FB86-9394-D8A454615431}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Identity.Server", "auth\ClinicApp.Identity.Server\ClinicApp.Identity.Server.csproj", "{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A}"
 EndProject
