@@ -14,13 +14,13 @@ public record WorkingTime
     public IReadOnlyList<TimeOff> TimesOff => _timesOff;
     private WorkingTime() { }
     public static ErrorOr<WorkingTime> Create(TimeOnly startTime, TimeOnly endTime,
-        WorkingDays workingDays)
+        WorkingDays workingDays, string? timeZoneId = null)
     {
         if (startTime > endTime)
         {
             return ScheduleErrors.TimeValidationError;
         }
-        var workingHours = WorkingHours.Create(startTime, endTime);
+        var workingHours = WorkingHours.Create(startTime, endTime, timeZoneId);
         if (workingHours.IsError)
             return workingHours.Errors;
         return new WorkingTime()
@@ -36,18 +36,54 @@ public record WorkingTime
 
     internal ErrorOr<Success> CanAddBasedToSchedule(TimeRange sessionDate)
     {
-        WorkingDays sessionDay = (WorkingDays)(1 << ((int)sessionDate.StartTime.DayOfWeek));
+        TimeZoneInfo doctorTimeZone;
+        try
+        {
+            doctorTimeZone = TimeZoneInfo.FindSystemTimeZoneById(WorkingHours.TimeZoneId);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            doctorTimeZone = TimeZoneInfo.Local;
+        }
+        var sessionStartInDoctorTz = TimeZoneInfo.ConvertTime(sessionDate.StartTime, doctorTimeZone);
+
+        WorkingDays sessionDay = (WorkingDays)(1 << ((int)sessionStartInDoctorTz.DayOfWeek));
         var errors = new List<Error>();
         if ((sessionDay & WorkingDays) != sessionDay)
         {
-            errors.Add(DoctorErrors.SessionOutOfWorkingDay(sessionDate.StartTime.DayOfWeek, this.WorkingDays));
+            errors.Add(DoctorErrors.SessionOutOfWorkingDay(sessionStartInDoctorTz.DayOfWeek, this.WorkingDays));
         }
-        //write here
-        else if (!(TimeOnly.FromDateTime(sessionDate.StartTime) > WorkingHours.StartTime &&
-               TimeOnly.FromDateTime(sessionDate.EndTime) < WorkingHours.EndTime))
+        else
         {
-            errors.Add(DoctorErrors.SessionOutOfWorkingHours(sessionDate, this.WorkingHours));
+            var sessionEndInDoctorTz = TimeZoneInfo.ConvertTime(sessionDate.EndTime, doctorTimeZone);
+            var sessionStartTimeOnly = TimeOnly.FromDateTime(sessionStartInDoctorTz.DateTime);
+            var sessionEndTimeOnly = TimeOnly.FromDateTime(sessionEndInDoctorTz.DateTime);
+
+            bool isWithinHours;
+            if (WorkingHours.IsSameDayShift)
+            {
+                isWithinHours = sessionStartTimeOnly >= WorkingHours.StartTime &&
+                                sessionEndTimeOnly <= WorkingHours.EndTime;
+            }
+            else // Overnight shift
+            {
+                if (sessionStartTimeOnly <= sessionEndTimeOnly) // Session doesn't cross midnight
+                {
+                    isWithinHours = (sessionStartTimeOnly >= WorkingHours.StartTime && sessionEndTimeOnly <= TimeOnly.MaxValue) || 
+                                    (sessionStartTimeOnly >= TimeOnly.MinValue && sessionEndTimeOnly <= WorkingHours.EndTime);
+                }
+                else // Session crosses midnight
+                {
+                    isWithinHours = sessionStartTimeOnly >= WorkingHours.StartTime && sessionEndTimeOnly <= WorkingHours.EndTime;
+                }
+            }
+
+            if (!isWithinHours)
+            {
+                errors.Add(DoctorErrors.SessionOutOfWorkingHours(sessionDate, this.WorkingHours));
+            }
         }
+
         foreach (var timeoff in TimesOff)
         {
             if (TimeRange.IsOverlapping(TimeRange.Create(timeoff.StartDate, timeoff.EndDate).Value,
@@ -62,4 +98,4 @@ public record WorkingTime
 }
 
 
-public record TimeOff(DateTime StartDate,DateTime EndDate,string? reason);
+public record TimeOff(DateTimeOffset StartDate,DateTimeOffset EndDate,string? reason);

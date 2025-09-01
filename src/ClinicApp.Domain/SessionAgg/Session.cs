@@ -22,7 +22,7 @@ namespace ClinicApp.Domain.SessionAgg
                        SessionStatus session = SessionStatus.Pending
             )
         {
-            if (sessionDate.StartTime.Date < clock.UtcNow)
+            if (sessionDate.StartTime < clock.UtcNow)
             {
                 return SessionErrors.SessionTimeInThePast.error;
             }
@@ -81,7 +81,7 @@ namespace ClinicApp.Domain.SessionAgg
         public Guid DoctorId { get; private set; }
         public SessionStatus SessionStatus { get; private set; }
         public SessionHistory SessionHistory { get; private set; } = new();
-        public DateTime CreatedAt { get; private set; }
+        public DateTimeOffset CreatedAt { get; private set; }
 
         internal bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;
         internal bool IsFinished => (SessionStatus & SessionStatus.Finished) == SessionStatus.Finished;
@@ -179,3 +179,4 @@ namespace ClinicApp.Domain.SessionAgg
 
     public record SessionDescription(string? content);
 }
+

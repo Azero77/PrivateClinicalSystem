@@ -14,7 +14,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         private IClock clock;
         public SessionTests()
         {
-            clock = new FakerClock() { UtcNow = new DateTime(2025, 11, 2) };
+            clock = new FakerClock() { UtcNow = new DateTimeOffset(2025, 11, 2,0,0,0,TimeSpan.Zero) };
         }
         private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Secretary);
         [Fact]

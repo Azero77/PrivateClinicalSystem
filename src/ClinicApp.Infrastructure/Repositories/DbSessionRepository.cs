@@ -63,10 +63,10 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         throw new NotImplementedException();
     }
 
-    public async Task<IReadOnlyCollection<Session>> GetSessionsForDay(DateTime date)
+    public async Task<IReadOnlyCollection<Session>> GetSessionsForDay(DateTimeOffset date)
     {
-        date = date.Date;
-        var sessions = await _sessionsNotTracked.Where(s => s.SessionDate.StartTime.Date == date)
+        var targetDate = date.Date;
+        var sessions = await _sessionsNotTracked.Where(s => s.SessionDate.StartTime.Date == targetDate)
             .ToListAsync();
         return sessions.AsReadOnly();
     }
@@ -92,20 +92,20 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         return session;
     }
 
-    public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid, DateTime date)
+    public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid, DateTimeOffset date)
     {
-        date = date.Date;
-        List<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == date)
+        var targetDate = date.Date;
+        List<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == targetDate)
             .ToListAsync();
         return sessions.AsReadOnly();
     }
 
-    public async Task<IReadOnlyCollection<Session>> GetSesssionsForDoctorOnDayAndAfter(Guid doctorid, DateTime date)
+    public async Task<IReadOnlyCollection<Session>> GetSesssionsForDoctorOnDayAndAfter(Guid doctorid, DateTimeOffset date)
     {
         var day = date.Date;
         var dayAfter = day.AddDays(1);
         IReadOnlyCollection<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid 
-        && (s.SessionDate.StartTime.Date == date && s.SessionDate.StartTime.Date == dayAfter))
+        && (s.SessionDate.StartTime.Date == day || s.SessionDate.StartTime.Date == dayAfter))
             .ToListAsync();
         return sessions;
     }

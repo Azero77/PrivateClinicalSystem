@@ -20,7 +20,7 @@ namespace ClinicApp.Domain.DoctorAgg
             string? major = null) : base(id)
         {
             WorkingTime = WorkingTime.Create(workingHours.StartTime, workingHours.EndTime,
-                workingDays).Value;
+                workingDays, workingHours.TimeZoneId).Value;
             RoomId = roomId;
             Major = major;
         }

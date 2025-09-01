@@ -21,32 +21,32 @@ namespace ClinicApp.Domain.SessionAgg
         SessionStateMetaData metadata)
     {
         public static SessionState CreateSessionState(SessionStatus initialStatus) => new SessionState(initialStatus, new SessionCreatedMetadata());
-        public static SessionState SetSessionState(DateTime setTimeAt) => new SessionState(SessionStatus.Set, new SetSessionMetadata(setTimeAt));
-        public static SessionState UpdatedSessionState(TimeRange oldValue, TimeRange newValue, DateTime updateAt) =>
+        public static SessionState SetSessionState(DateTimeOffset setTimeAt) => new SessionState(SessionStatus.Set, new SetSessionMetadata(setTimeAt));
+        public static SessionState UpdatedSessionState(TimeRange oldValue, TimeRange newValue, DateTimeOffset updateAt) =>
        new(SessionStatus.Updated, new UpdatedSessionMetadata(oldValue, newValue, updateAt));
 
-        public static SessionState DeletedSessionState(DateTime deletedAt) =>
+        public static SessionState DeletedSessionState(DateTimeOffset deletedAt) =>
             new(SessionStatus.Deleted, new DeletedSessionMetadata(deletedAt));
 
-        public static SessionState RejectedSessionState(DateTime rejectedAt, string? execuse = null) =>
+        public static SessionState RejectedSessionState(DateTimeOffset rejectedAt, string? execuse = null) =>
             new(SessionStatus.Rejected, new RejectedSessionMetadata(rejectedAt, execuse));
 
-        public static SessionState StartedSessionState(DateTime startedAt) =>
+        public static SessionState StartedSessionState(DateTimeOffset startedAt) =>
         new(SessionStatus.Started, new StartedSessionMetadata(startedAt));
 
-        public static SessionState FinishedSessionState(DateTime finishedAt) =>
+        public static SessionState FinishedSessionState(DateTimeOffset finishedAt) =>
             new(SessionStatus.Finished, new FinishedSessionMetadata(finishedAt));
     };
 
 
     public abstract record SessionStateMetaData;
     public record SessionCreatedMetadata : SessionStateMetaData;
-    public record UpdatedSessionMetadata(TimeRange oldValue,TimeRange newValue,DateTime updateAt) : SessionStateMetaData;
-    public record DeletedSessionMetadata(DateTime deletedAt) : SessionStateMetaData;
-    public record SetSessionMetadata(DateTime setTimeAt) : SessionStateMetaData;
-    public record RejectedSessionMetadata(DateTime RejectedAt,string? execuse = null) : SessionStateMetaData;
-    public record StartedSessionMetadata(DateTime StartedAt) : SessionStateMetaData;
-    public record FinishedSessionMetadata(DateTime FinishedAt) : SessionStateMetaData;
+    public record UpdatedSessionMetadata(TimeRange oldValue,TimeRange newValue,DateTimeOffset updateAt) : SessionStateMetaData;
+    public record DeletedSessionMetadata(DateTimeOffset deletedAt) : SessionStateMetaData;
+    public record SetSessionMetadata(DateTimeOffset setTimeAt) : SessionStateMetaData;
+    public record RejectedSessionMetadata(DateTimeOffset RejectedAt,string? execuse = null) : SessionStateMetaData;
+    public record StartedSessionMetadata(DateTimeOffset StartedAt) : SessionStateMetaData;
+    public record FinishedSessionMetadata(DateTimeOffset FinishedAt) : SessionStateMetaData;
 }
 
 

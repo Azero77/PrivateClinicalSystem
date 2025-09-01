@@ -5,13 +5,13 @@ namespace ClinicApp.Domain.Common.ValueObjects
 {
     public record TimeRange
     {
-        private TimeRange(DateTime startTime, DateTime endTime)
+        private TimeRange(DateTimeOffset startTime, DateTimeOffset endTime)
         {
             StartTime = startTime;
             EndTime = endTime;
         }
 
-        public static ErrorOr<TimeRange> Create(DateTime startTime, DateTime endTime)
+        public static ErrorOr<TimeRange> Create(DateTimeOffset startTime, DateTimeOffset endTime)
         {
             if (startTime > endTime)
                 return SessionErrors.SessionTimeValidationError.error;
@@ -19,14 +19,18 @@ namespace ClinicApp.Domain.Common.ValueObjects
         }
         public TimeSpan Duration => EndTime - StartTime;
 
-        public DateTime StartTime { get; }
-        public DateTime EndTime { get; }
+        public DateTimeOffset StartTime { get; }
+        public DateTimeOffset EndTime { get; }
+
+
+        internal DateTimeOffset StartTimeUTC => StartTime.ToUniversalTime();
+        internal DateTimeOffset EndTimeUTC => EndTime.ToUniversalTime();
 
         public static bool IsOverlapping(TimeRange t1, TimeRange t2)
         {
-            return t1.StartTime < t2.EndTime
+            return t1.StartTimeUTC < t2.EndTimeUTC
                     &&
-                   t2.StartTime < t1.EndTime;
+                   t2.StartTimeUTC < t1.EndTimeUTC;
         }
 
 
