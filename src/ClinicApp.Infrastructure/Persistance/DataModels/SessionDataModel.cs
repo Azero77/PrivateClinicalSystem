@@ -5,6 +5,7 @@ namespace ClinicApp.Infrastructure.Persistance.DataModels;
 
 public class SessionDataModel
 {
+    public Guid Id { get; set; }
     public TimeRange SessionDate { get; set; } = null!;
     public SessionDescription SessionDescription { get; set; } = null!;
     public Guid RoomId { get; set; }

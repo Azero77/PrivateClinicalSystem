@@ -5,6 +5,7 @@ using ErrorOr;
 using System.Data;
 using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("ClinicApp.Domain.Tests.UnitTest")]
+[assembly: InternalsVisibleTo("ClinicApp.Infrastructure",AllInternalsVisible = false)]
 
 
 namespace ClinicApp.Domain.SessionAgg
@@ -74,6 +75,26 @@ namespace ClinicApp.Domain.SessionAgg
         }
 
         private Session() { } 
+
+        private Session(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
+        {
+            this.Id = id;
+            this.SessionDate = sessionDate;
+            this.SessionDescription = sessionDescription;
+            this.RoomId = roomId;
+            this.PatientId = patientId;
+            this.DoctorId = doctorId;
+            this.SessionStatus = sessionStatus;
+            this.SessionHistory = sessionHistory;
+            this.CreatedAt = createdAt;
+            this._clock = new SystemClock(); // Use a default clock for the reconstituted entity.
+        }
+
+        //Made for datamodels only for mapping
+        internal static Session Reconstitute(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
+        { 
+            return new Session(id, sessionDate, sessionDescription, roomId, patientId, doctorId, sessionStatus, sessionHistory, createdAt);
+        } 
         public TimeRange SessionDate { get; private set; } = null!;
         public SessionDescription SessionDescription { get; private set; } = null!;
         public Guid RoomId { get; private set; }

@@ -13,20 +13,21 @@ namespace ClinicApp.Domain.DoctorAgg
 {
     public class Doctor : Member
     {
-        public Doctor(Guid id, 
+        public Doctor(
+            Guid id, 
             WorkingDays workingDays, 
             WorkingHours workingHours,
             Guid roomId,
-            string? major = null) : base(id)
+            Guid userId,
+            string  firstName,
+            string lastName,
+            string? major = null
+            ) : base(id,userId,firstName,lastName)
         {
             WorkingTime = WorkingTime.Create(workingHours.StartTime, workingHours.EndTime,
                 workingDays, workingHours.TimeZoneId).Value;
             RoomId = roomId;
             Major = major;
-        }
-        private Doctor()
-        {
-
         }
         public WorkingTime WorkingTime { get; private set; } = null!;
         public string? Major { get; private set; } = null!;
