@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Trace;
 
@@ -26,6 +27,18 @@ public static class ErrorExtension
                 },
                 _ => StatusCodes.Status400BadRequest
             },
+            Extensions = new Dictionary<string, object?>
+            {
+                {"Errors",errors}
+            }
+        };
+    }
+
+    public static ProblemDetails ToProblemDetails(this List<ValidationFailure> errors)
+    {
+        return new ProblemDetails()
+        {
+            Status = StatusCodes.Status422UnprocessableEntity,
             Extensions = new Dictionary<string, object?>
             {
                 {"Errors",errors}

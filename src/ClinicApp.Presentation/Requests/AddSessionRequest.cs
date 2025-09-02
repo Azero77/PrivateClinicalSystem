@@ -1,8 +1,8 @@
 ﻿using ClinicApp.Domain.SessionAgg;
 
 public record AddSessionRequest(
-    DateTime StartTime,
-    DateTime EndTime,
+    DateTimeOffset StartTime,
+    DateTimeOffset EndTime,
     SessionDescription SessionDescription,
     Guid roomId,
     Guid patientId,

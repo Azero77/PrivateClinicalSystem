@@ -23,7 +23,6 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
         if (doctor is not null)
         {
             _context.Remove(doctor);
-            await _context.SaveChangesAsync();
         }
 
         return doctor;
@@ -47,13 +46,11 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
     public async Task<Doctor> UpdateDoctor(Doctor doctor)
     {
         _context.Doctors.Update(doctor);
-        await _context.SaveChangesAsync();
         return doctor;
     }
     public async Task<Doctor?> AddDoctor(Doctor doctor)
     {
         await _context.Doctors.AddAsync(doctor);
-        await _context.SaveChangesAsync();
         return doctor;
     }
 }
