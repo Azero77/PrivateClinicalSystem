@@ -3,7 +3,7 @@
 namespace ClinicApp.Application.DataQueryHelpers;
 
 public class DataQueryOptions<T>
-    where T : Entity
+    where T : class
 {
     private readonly List<IQueryCommand<T>> _commands;
 

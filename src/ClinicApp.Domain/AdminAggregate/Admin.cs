@@ -6,6 +6,10 @@ namespace ClinicApp.Domain.AdminAggregate;
 
 public class Admin : Member
 {
+    public Admin(Guid id, Guid userId, string firstName, string lastName) : base(id, userId, firstName, lastName)
+    {
+    }
+
     public List<Room> Rooms { get; private set; } = [];
 
     public ErrorOr<Success> AddRoom(Room room)

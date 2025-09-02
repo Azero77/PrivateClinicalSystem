@@ -23,7 +23,7 @@ namespace ClinicApp.Domain.Services.Sessions
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,
-                       Guid patientId,
+                       Guid? patientId,
                        Guid doctorId,
                        IClock clock,
                        UserRole role,
@@ -58,7 +58,7 @@ namespace ClinicApp.Domain.Services.Sessions
 
             //check the session repositories for the new session and check if it overlaps
             //if session is not in midnight we check for sessions for today only, but if it was we check for sessions for the day and the day after
-            IReadOnlyCollection<Session>? doctorSessions = await _repo.GetFutureSessionsDoctor(doctor);
+            IReadOnlyCollection<Session>? doctorSessions = await _repo.GetFutureSessionsDoctor(doctor.Id);
 
             if (session.SessionDate.IsMidnight)
             {

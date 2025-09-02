@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicApp.Application.DataQueryHelpers;
 
 public class PaginatedRepository<T> : IPaginatedRepository<T>
-    where T : Entity
+    where T : class
 {
     private readonly AppDbContext _context;
     protected int ItemsPerPage { get; set; } = 5;

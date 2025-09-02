@@ -6,8 +6,8 @@ namespace ClinicApp.Domain.Repositories;
 
 public interface ISessionRepository
 {
-    Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Doctor doctor);
-    Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Doctor doctor);
+    Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Guid doctorId);
+    Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Guid doctorId);
     Task<Session?> GetSessionById(Guid sessionId);
     Task<IReadOnlyCollection<Session>> GetSessionsForToday();
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid);

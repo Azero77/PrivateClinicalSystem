@@ -3,15 +3,17 @@ using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Infrastructure.Mappers;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbSessionRepository : PaginatedRepository<Session>,ISessionRepository
+public class DbSessionRepository : PaginatedRepository<Session>, ISessionRepository
 {
     private readonly AppDbContext _context;
-    private IQueryable<Session> _sessionsNotTracked => _context.Sessions.AsNoTracking();
+    private IQueryable<SessionDataModel> _sessionsNotTracked => _context.Sessions.AsNoTracking();
     private readonly IClock _clock;
 
     public DbSessionRepository(AppDbContext context, IClock clock)
@@ -23,37 +25,37 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
 
     public async Task<Session> AddSession(Session session)
     {
-        await _context.Sessions.AddAsync(session);
+        await _context.Sessions.AddAsync(session.ToDataModel());
         return session;
     }
 
     public async Task<Session?> DeleteSession(Guid sessionId)
     {
-
-        Session? session = await _context.Sessions.FirstOrDefaultAsync(d => d.Id == sessionId);
-        if (session is not null)
+        var sessionData = await _context.Sessions.FirstOrDefaultAsync(d => d.Id == sessionId);
+        if (sessionData is not null)
         {
-            _context.Remove(session);
+            _context.Remove(sessionData);
+            return sessionData.ToDomain();
         }
-        return session;
+        return null;
     }
 
-    public async Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Doctor doctor)
+    public async Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Guid doctorId)
     {
-        List<Session> sessions = await _sessionsNotTracked.Where(s => s.DoctorId == doctor.Id).ToListAsync();
+        List<Session> sessions = await _sessionsNotTracked.Where(s => s.DoctorId == doctorId).Select(s => s.ToDomain()).ToListAsync();
 
         return sessions.AsReadOnly();
     }
 
-    public async Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Doctor doctor)
+    public async Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Guid doctorId)
     {
-        var sessions = await _sessionsNotTracked.Where(s => (s.DoctorId == doctor.Id) && (s.SessionDate.StartTime > _clock.UtcNow)).ToListAsync();
+        var sessions = await _sessionsNotTracked.Where(s => (s.DoctorId == doctorId) && (s.SessionDate.StartTime > _clock.UtcNow)).Select(s => s.ToDomain()).ToListAsync();
         return sessions.AsReadOnly();
     }
 
-    public Task<Session?> GetSessionById(Guid sessionId)
+    public async Task<Session?> GetSessionById(Guid sessionId)
     {
-        return _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId);
+        return (await _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId))?.ToDomain();
     }
 
     public Task<IReadOnlyCollection<SessionState>> GetSessionHistory(Guid sessionId)
@@ -66,44 +68,44 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         var targetDate = date.Date;
         var sessions = await _sessionsNotTracked.Where(s => s.SessionDate.StartTime.Date == targetDate)
             .ToListAsync();
-        return sessions.AsReadOnly();
+        return sessions.Select(s => s.ToDomain()).ToList().AsReadOnly();
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid)
     {
         var sessions = await _sessionsNotTracked.Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == _clock.UtcNow.Date).ToListAsync();
-        return sessions.AsReadOnly();
+        return sessions.Select(s => s.ToDomain()).ToList().AsReadOnly();
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSessionsForToday()
     {
 
         var sessions = await _sessionsNotTracked.Where(s => s.SessionDate.StartTime.Date == _clock.UtcNow.Date).ToListAsync();
-        return sessions.AsReadOnly();
+        return sessions.Select(s => s.ToDomain()).ToList().AsReadOnly();
     }
 
 
-    public async Task<Session> UpdateSession(Session session)
+    public Task<Session> UpdateSession(Session session)
     {
-        _context.Update(session);
-        return session;
+        _context.Update(session.ToDataModel());
+        return Task.FromResult(session);
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid, DateTimeOffset date)
     {
         var targetDate = date.Date;
-        List<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == targetDate)
+        var sessionsData = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == targetDate)
             .ToListAsync();
-        return sessions.AsReadOnly();
+        return sessionsData.Select(s => s.ToDomain()).ToList().AsReadOnly();
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSesssionsForDoctorOnDayAndAfter(Guid doctorid, DateTimeOffset date)
     {
         var day = date.Date;
         var dayAfter = day.AddDays(1);
-        IReadOnlyCollection<Session> sessions = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid 
+        var sessionsData = await _context.Sessions.AsNoTracking().Where(s => s.DoctorId == doctorid 
         && (s.SessionDate.StartTime.Date == day || s.SessionDate.StartTime.Date == dayAfter))
             .ToListAsync();
-        return sessions;
+        return sessionsData.Select(s => s.ToDomain()).ToList();
     }
 }

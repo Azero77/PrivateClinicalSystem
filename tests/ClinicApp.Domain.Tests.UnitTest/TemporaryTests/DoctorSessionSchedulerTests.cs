@@ -34,7 +34,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 22), new DateTime(2025, 7, 22, 10, 30, 0)).Value; // Tuesday
             var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
-            _sessionRepoMock.Setup(repo => repo.GetAllSessionsForDoctor(doctor)).ReturnsAsync(new List<Session>());
+            _sessionRepoMock.Setup(repo => repo.GetAllSessionsForDoctor(doctor.Id)).ReturnsAsync(new List<Session>());
 
             // Act
             var result = await _scheduler.CreateSession(session.Id, session.SessionDate, session.SessionDescription, session.RoomId, session.PatientId, session.DoctorId, fakerClock, UserRole.Admin, doctor);

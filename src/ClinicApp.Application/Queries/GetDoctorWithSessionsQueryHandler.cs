@@ -26,7 +26,7 @@ public class GetDoctorWithSessionsQueryHandler : IRequestHandler<GetDoctorWithSe
             return Error.NotFound("Application.NotFound",
                 "Doctor with this id is not found");
 
-        var sessions = await _sessionRepo.GetAllSessionsForDoctor(doctor);
+        var sessions = await _sessionRepo.GetAllSessionsForDoctor(doctor.Id);
         return Converters.Converters.DTOFrom(doctor,sessions);
     }
 }

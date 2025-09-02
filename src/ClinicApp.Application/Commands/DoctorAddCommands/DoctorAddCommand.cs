@@ -13,6 +13,8 @@ namespace ClinicApp.Application.Commands.DoctorAddCommands;
 public record DoctorAddCommand(
     Guid doctorId,
     Guid userId,
+    string firstName,
+    string lastName,
     Guid roomId,
     WorkingDays workingDays,
     TimeOnly workingHoursStartTime,

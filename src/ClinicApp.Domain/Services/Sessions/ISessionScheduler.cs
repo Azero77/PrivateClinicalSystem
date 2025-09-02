@@ -14,7 +14,7 @@ namespace ClinicApp.Domain.Services.Sessions
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,
-                       Guid patientId,
+                       Guid? patientId,
                        Guid doctorId,
                        IClock clock,
                        UserRole role,

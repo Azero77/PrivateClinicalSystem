@@ -3,7 +3,7 @@
 namespace ClinicApp.Application.DataQueryHelpers;
 
 public interface IQueryCommand<T>
-    where T : Entity
+    where T : class
 {
     IQueryable<T> Apply(IQueryable<T> query);
 }

@@ -1,4 +1,5 @@
-﻿using ClinicApp.Domain.Common.ValueObjects;
+﻿using Bogus;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.DoctorAgg;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ namespace ClinicApp.Domain.Tests.UnitTest
                 WorkingDays.Monday | WorkingDays.Wednesday,
                 WorkingHours.Create(new TimeOnly(9, 0), new TimeOnly(17, 0),"UTC").Value,
                 Guid.NewGuid(),
+                Guid.NewGuid(),
+                "First",
+                "Last",
                 major : null);
     }
 }

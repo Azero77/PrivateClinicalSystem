@@ -15,3 +15,4 @@ public class PatientEntityConfiguration : MemberEntityConfiguration<PatientDataM
         builder.ToTable("Patients");
     }
 }
+

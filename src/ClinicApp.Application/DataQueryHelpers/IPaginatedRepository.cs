@@ -2,7 +2,7 @@
 
 namespace ClinicApp.Application.DataQueryHelpers;
 public interface IPaginatedRepository<T>
-    where T : Entity
+    where T : class
 {
     Task<IReadOnlyCollection<T>> GetAll(int pageNumber, int itemsPerPage);
     Task<IReadOnlyCollection<T>> GetAll(int pageNumber);
