@@ -10,7 +10,7 @@ public class SessionDataModel
     public SessionDescription SessionDescription { get; set; } = null!;
     public Guid RoomId { get; set; }
     public RoomDataModel Room { get; set; } = null!;
-    public Guid PatientId { get; set; }
+    public Guid? PatientId { get; set; }
     public PatientDataModel Patient { get; set; } = null!;
     public Guid DoctorId { get; set; }
     public DoctorDataModel Doctor { get; set; } = null!;

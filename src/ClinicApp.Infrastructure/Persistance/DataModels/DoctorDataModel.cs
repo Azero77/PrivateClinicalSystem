@@ -1,12 +1,8 @@
 ﻿using ClinicApp.Domain.DoctorAgg;
 
 namespace ClinicApp.Infrastructure.Persistance.DataModels;
-public class DoctorDataModel
+public class DoctorDataModel : MemberDataModel
 {
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
-    public string FirstName { get; set; } = null!;
-    public string LastName { get; set; } = null!;
     public WorkingTime WorkingTime { get; set; } = null!;
     public string? Major { get; set; }
     public Guid RoomId { get; set; }

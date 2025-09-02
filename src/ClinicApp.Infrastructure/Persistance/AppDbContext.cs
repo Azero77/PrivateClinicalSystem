@@ -3,6 +3,7 @@ using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Middlewares;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,9 @@ public class AppDbContext : DbContext
 {
     private readonly IHttpContextAccessor? _httpContextAccessor;
 
-    public DbSet<Doctor> Doctors { get; set; } = null!;
-    public DbSet<Session> Sessions { get; set; } = null!;
-    public DbSet<Room> Rooms { get; set; } = null!;
+    public DbSet<DoctorDataModel> Doctors { get; set; } = null!;
+    public DbSet<SessionDataModel> Sessions { get; set; } = null!;
+    public DbSet<RoomDataModel> Rooms { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)
     {
         _httpContextAccessor = httpContextAccessor;
@@ -22,12 +23,12 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("domain");
+        modelBuilder.HasDefaultSchema("data");
         modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         base.OnModelCreating(modelBuilder);
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    /*public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var newDomainEvents = ChangeTracker.Entries<AggregateRoot>()
             .Select(entry => entry.Entity.PopDomainEvents())
@@ -45,5 +46,5 @@ public class AppDbContext : DbContext
             _httpContextAccessor.HttpContext.Items[EventualConsistencyMiddleware.DomainEventsKey] = domainEventsQueue;
         }
         return result;
-    }
+    }*/
 }

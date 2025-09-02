@@ -1,33 +1,29 @@
 ﻿using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClinicApp.Infrastructure.Configurations;
 
 public class DoctorEntityConfiguration :
-    MemberEntityConfiguration<Doctor>
+    MemberEntityConfiguration<DoctorDataModel>
     
 {
-    public override void Configure(EntityTypeBuilder<Doctor> builder)
+    public override void Configure(EntityTypeBuilder<DoctorDataModel> builder)
     {
         base.Configure(builder);
         builder.ToTable("Doctors");
         builder.HasKey(e => e.Id);
 
-        builder.HasOne<Room>()
+        builder.HasOne<RoomDataModel>()
             .WithOne()
             .HasForeignKey<Doctor>(d => d.RoomId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.Property(e => e.Major)
             .HasMaxLength(255)
             .IsRequired(false);
-        builder.HasMany<Session>()
-            .WithOne()
-            .HasForeignKey(s => s.DoctorId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
         builder.OwnsOne(e => e.WorkingTime,eb =>
         {
             eb.Property(eb => eb.WorkingDays)

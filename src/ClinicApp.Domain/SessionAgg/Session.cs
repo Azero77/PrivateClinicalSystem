@@ -17,7 +17,7 @@ namespace ClinicApp.Domain.SessionAgg
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,
-                       Guid patientId,
+                       Guid? patientId,
                        Guid doctorId,
                        IClock clock,
                        SessionStatus session = SessionStatus.Pending
@@ -51,7 +51,7 @@ namespace ClinicApp.Domain.SessionAgg
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,
-                       Guid patientId,
+                       Guid? patientId,
                        Guid doctorId,
                        IClock clock,
                        UserRole role)
@@ -76,7 +76,7 @@ namespace ClinicApp.Domain.SessionAgg
 
         private Session() { } 
 
-        private Session(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
+        private Session(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid? patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
         {
             this.Id = id;
             this.SessionDate = sessionDate;
@@ -91,14 +91,14 @@ namespace ClinicApp.Domain.SessionAgg
         }
 
         //Made for datamodels only for mapping
-        internal static Session Reconstitute(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
+        internal static Session Reconstitute(Guid id, TimeRange sessionDate, SessionDescription sessionDescription, Guid roomId, Guid? patientId, Guid doctorId, SessionStatus sessionStatus, SessionHistory sessionHistory, DateTimeOffset createdAt)
         { 
             return new Session(id, sessionDate, sessionDescription, roomId, patientId, doctorId, sessionStatus, sessionHistory, createdAt);
         } 
         public TimeRange SessionDate { get; private set; } = null!;
         public SessionDescription SessionDescription { get; private set; } = null!;
         public Guid RoomId { get; private set; }
-        public Guid PatientId { get; private set; }
+        public Guid? PatientId { get; private set; }
         public Guid DoctorId { get; private set; }
         public SessionStatus SessionStatus { get; private set; }
         public SessionHistory SessionHistory { get; private set; } = new();
