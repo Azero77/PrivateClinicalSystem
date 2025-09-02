@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Trace;
 
@@ -33,8 +34,25 @@ public static class ErrorExtension
         };
     }
 
-    public static IActionResult ToProblemResult(this ProblemDetails problemDetails,HttpContext httpContext)
+    public static ProblemDetails ToProblemDetails(this List<ValidationFailure> errors)
     {
+        return new ProblemDetails()
+        {
+            Status = StatusCodes.Status422UnprocessableEntity,
+            Extensions = new Dictionary<string, object?>
+            {
+                {"Errors",errors}
+            }
+        };
+    }
+
+    public static IActionResult ToProblemResult(this ProblemDetails problemDetails, HttpContext httpContext)
+    {
+        if (problemDetails.Status is not null)
+        {
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+        }
+
         IProblemDetailsService service = httpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
 
         service.WriteAsync(new ProblemDetailsContext()
