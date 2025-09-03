@@ -12,7 +12,7 @@ namespace ClinicApp.Domain.SessionAgg
     public class Session : AggregateRoot
     {
         private IClock _clock = null!;
-        private static ErrorOr<Session> Create(Guid id,
+        public static ErrorOr<Session> Create(Guid id,
                        TimeRange sessionDate,
                        SessionDescription sessionDescription,
                        Guid roomId,

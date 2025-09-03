@@ -3,6 +3,7 @@ using ClinicApp.Domain;
 using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.Seeding;
 using ClinicApp.Presentation.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -96,7 +97,6 @@ namespace ClinicApp.Presentation
 
             builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
-
             app.MapDefaultEndpoints();
 
             // Configure the HTTP request pipeline.
@@ -108,6 +108,7 @@ namespace ClinicApp.Presentation
             if (app.Environment.IsDevelopment())
             {
                 app.RunMigrations();
+                app.SeedDataInDevelopment();
             }
 
             app.UseExceptionHandler();
@@ -121,5 +122,6 @@ namespace ClinicApp.Presentation
 
             app.Run();
         }
+
     }
 }

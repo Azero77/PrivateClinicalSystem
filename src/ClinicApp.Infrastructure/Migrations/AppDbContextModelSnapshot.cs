@@ -123,6 +123,28 @@ namespace ClinicApp.Infrastructure.Migrations
                     b.ToTable("Patients", "domain");
                 });
 
+            modelBuilder.Entity("ClinicApp.Domain.SecretaryAgg.Secretary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Secretaries", "domain");
+                });
+
             modelBuilder.Entity("ClinicApp.Domain.SessionAgg.Session", b =>
                 {
                     b.Property<Guid>("Id")

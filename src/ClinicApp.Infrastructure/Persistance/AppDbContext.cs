@@ -2,6 +2,8 @@
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.PatientAgg;
+using ClinicApp.Domain.SecretaryAgg;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +17,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Doctor> Doctors { get; set; } = null!;
     public DbSet<Session> Sessions { get; set; } = null!;
+    public DbSet<Patient> Patients { get; set; } = null!;
+    public DbSet<Secretary> Secretaries { get; set; } = null!;
     public DbSet<Room> Rooms { get; set; } = null!;
     public DbSet<OutBoxMessage> OutBoxMessages { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)

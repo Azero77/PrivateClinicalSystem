@@ -2,9 +2,11 @@
 
 public class Member : AggregateRoot
 {
-    public Member(Guid id) : base(id)
+    public Member(Guid id, Guid userId,string firstName, string lastName) : base(id)
     {
-        
+        FirstName = firstName;
+        LastName = lastName;
+        UserId = userId;
     }
     public Member()
     {

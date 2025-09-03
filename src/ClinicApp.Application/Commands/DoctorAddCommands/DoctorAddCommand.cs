@@ -14,6 +14,8 @@ public record DoctorAddCommand(
     Guid doctorId,
     Guid userId,
     Guid roomId,
+    string firstName,
+    string lastName,
     WorkingDays workingDays,
     TimeOnly workingHoursStartTime,
     TimeOnly workingHoursEndTime,

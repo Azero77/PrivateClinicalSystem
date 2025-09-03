@@ -10,10 +10,13 @@ public static class Converters
     public static Doctor ToDoctor(this DoctorAddCommand doctordto)
     {
         return new Doctor(doctordto.doctorId,
+            doctordto.userId,
+            doctordto.firstName,
+            doctordto.lastName,
+            doctordto.roomId,
             doctordto.workingDays,
             WorkingHours.Create(doctordto.workingHoursStartTime,
                                 doctordto.workingHoursEndTime).Value,
-            doctordto.roomId,
             doctordto.Major);
     }
 
