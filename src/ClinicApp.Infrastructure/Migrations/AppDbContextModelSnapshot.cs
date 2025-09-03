@@ -23,6 +23,33 @@ namespace ClinicApp.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ClinicApp.Application.Common.OutBoxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ManagedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("error")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutBoxMessages", "domain");
+                });
+
             modelBuilder.Entity("ClinicApp.Domain.Common.Entities.Room", b =>
                 {
                     b.Property<Guid>("Id")
@@ -102,7 +129,7 @@ namespace ClinicApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("DoctorId")
@@ -157,10 +184,10 @@ namespace ClinicApp.Infrastructure.Migrations
                                     b2.Property<Guid>("DoctorId")
                                         .HasColumnType("uuid");
 
-                                    b2.Property<DateTime>("StartDate")
+                                    b2.Property<DateTimeOffset>("StartDate")
                                         .HasColumnType("timestamp with time zone");
 
-                                    b2.Property<DateTime>("EndDate")
+                                    b2.Property<DateTimeOffset>("EndDate")
                                         .HasColumnType("timestamp with time zone");
 
                                     b2.Property<string>("reason")
@@ -187,6 +214,10 @@ namespace ClinicApp.Infrastructure.Migrations
                                     b2.Property<TimeOnly>("StartTime")
                                         .HasColumnType("time without time zone")
                                         .HasColumnName("StartTime");
+
+                                    b2.Property<string>("TimeZoneId")
+                                        .IsRequired()
+                                        .HasColumnType("text");
 
                                     b2.HasKey("WorkingTimeDoctorId");
 
@@ -231,11 +262,11 @@ namespace ClinicApp.Infrastructure.Migrations
                             b1.Property<Guid>("SessionId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<DateTime>("EndTime")
+                            b1.Property<DateTimeOffset>("EndTime")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("Endtime");
 
-                            b1.Property<DateTime>("StartTime")
+                            b1.Property<DateTimeOffset>("StartTime")
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("StartTime");
 

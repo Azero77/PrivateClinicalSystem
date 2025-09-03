@@ -18,19 +18,20 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         string connectionstring)
     {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<AppDbContext>((sp,opts)=>
         {
             opts.UseNpgsql(connectionstring)
             .AddInterceptors(
                 sp.GetRequiredService<InsertOutBoxMessagesInterceptor>());
         });
+        services.AddScoped<DbContext, AppDbContext>();
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
         services.AddScoped<IPaginatedRepository<Session>, DbSessionRepository>();
         services.AddScoped<IPaginatedRepository<Doctor>, DbDoctorRepository>();
         services.AddScoped<IPaginatedRepository<Room>, DbRoomRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<InsertOutBoxMessagesInterceptor>();
         services.AddSingleton<IClock, Clock>();
         return services;
