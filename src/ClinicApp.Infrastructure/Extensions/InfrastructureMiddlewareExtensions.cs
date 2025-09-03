@@ -10,6 +10,8 @@ public static class InfrastructureMiddlewareExtensions
         app.UseMiddleware<EventualConsistencyMiddleware>();
         return app;
     }
+
+    
 }
 
     

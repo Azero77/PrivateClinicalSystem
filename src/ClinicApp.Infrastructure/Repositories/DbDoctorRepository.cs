@@ -1,4 +1,5 @@
-﻿using ClinicApp.Application.DataQueryHelpers;
+﻿using ClinicApp.Application.Common;
+using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Mappers;
@@ -32,7 +33,7 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
 
     public async Task<Doctor?> GetByIdAsync(Guid id)
     {
-        DoctorDataModel? doctorDataModel = await _context.Doctors.AsNoTracking().SingleOrDefaultAsync(d => d.Id == id);
+        DoctorDataModel? doctorDataModel = await _context.Doctors.SingleOrDefaultAsync(d => d.Id == id);
         return doctorDataModel?.ToDomain();
     }
     public async Task<Doctor?> GetDoctorByRoom(Guid roomId)
@@ -40,6 +41,7 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
         return (await _context.Doctors.AsNoTracking().FirstOrDefaultAsync(d => d.RoomId == roomId))?.ToDomain();
     }
 
+    [AsNoTracking]
     public async Task<IReadOnlyCollection<Doctor>> GetDoctors()
     {
         var list = await _context.Doctors.AsNoTracking().Select(d => d.ToDomain()).ToListAsync();

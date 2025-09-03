@@ -17,9 +17,9 @@ public class DoctorEntityConfiguration :
         builder.ToTable("Doctors");
         builder.HasKey(e => e.Id);
 
-        builder.HasOne<RoomDataModel>()
-            .WithOne()
-            .HasForeignKey<Doctor>(d => d.RoomId)
+        builder.HasOne(d => d.Room)
+            .WithOne(r => r.Docotor)
+            .HasForeignKey<DoctorDataModel>(d => d.RoomId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.Property(e => e.Major)
             .HasMaxLength(255)

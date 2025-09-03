@@ -1,4 +1,6 @@
-﻿using ClinicApp.Application.DataQueryHelpers;
+﻿using ClinicApp.Application;
+using ClinicApp.Application.Common;
+using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
@@ -19,12 +21,15 @@ public static class DependencyInjection
         {
             opts.UseNpgsql(connectionstring);
         });
-        services.AddScoped<ISessionRepository, DbSessionRepository>();
-        services.AddScoped<IDoctorRepository, DbDoctorRepository>();
-        services.AddScoped<IRoomRepository, DbRoomRepository>();
+        services.AddProxidScoped<ISessionRepository, DbSessionRepository, AggregateTrackerInterceptor>();
+        services.AddProxidScoped<IDoctorRepository, DbDoctorRepository,AggregateTrackerInterceptor>();
+        services.AddProxidScoped<IRoomRepository, DbRoomRepository,AggregateTrackerInterceptor>();
+
+
         services.AddScoped<IPaginatedRepository<Session>, DbSessionRepository>();
         services.AddScoped<IPaginatedRepository<Doctor>, DbDoctorRepository>();
         services.AddScoped<IPaginatedRepository<Room>, DbRoomRepository>();
+        services.AddScoped<IUnitOfWork,UnitOfWork.UnitOfWork>();
         services.AddSingleton<IClock, Clock>();
         return services;
     }
