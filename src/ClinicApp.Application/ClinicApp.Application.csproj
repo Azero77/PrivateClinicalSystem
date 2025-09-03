@@ -17,4 +17,8 @@
     <ProjectReference Include="..\ClinicApp.Domain\ClinicApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interceptors\" />
+  </ItemGroup>
+
 </Project>
