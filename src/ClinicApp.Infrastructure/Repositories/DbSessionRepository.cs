@@ -24,7 +24,6 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
     public async Task<Session> AddSession(Session session)
     {
         await _context.Sessions.AddAsync(session);
-        await _context.SaveChangesAsync();
         return session;
     }
 
@@ -35,7 +34,6 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         if (session is not null)
         {
             _context.Remove(session);
-            await _context.SaveChangesAsync();
         }
         return session;
     }
@@ -85,11 +83,10 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
     }
 
 
-    public async Task<Session> UpdateSession(Session session)
+    public Task<Session> UpdateSession(Session session)
     {
         _context.Update(session);
-        await _context.SaveChangesAsync();
-        return session;
+        return Task.FromResult(session);
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid, DateTimeOffset date)

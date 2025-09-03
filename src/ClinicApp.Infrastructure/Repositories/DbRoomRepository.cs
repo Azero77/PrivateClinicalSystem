@@ -19,15 +19,14 @@ public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
     public async Task<Room?> AddRoom(Room room)
     {
         await _context.Rooms.AddAsync(room);
-        await _context.SaveChangesAsync();
         return room;
     }
 
     //TODO make the method take an id and ExecuteDeleteAsync() instead of the blocking one
-    public async Task DeleteRoom(Room deletedRoom)
+    public Task DeleteRoom(Room deletedRoom)
     {
         _context.Rooms.Remove(deletedRoom);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
 
     public async Task<IReadOnlyCollection<Room>> GetAllRooms()
@@ -39,10 +38,9 @@ public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
     {
         return await _context.Rooms.SingleOrDefaultAsync(r => r.Id == roomId);
     }
-    public async Task<Room> UpdateRoom(Room updatedRoom)
+    public Task<Room> UpdateRoom(Room updatedRoom)
     {
         _context.Rooms.Update(updatedRoom);
-        await _context.SaveChangesAsync();
-        return updatedRoom;
+        return Task.FromResult(updatedRoom);
     }
 }
