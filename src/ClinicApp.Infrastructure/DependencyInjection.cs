@@ -22,10 +22,8 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((sp,opts)=>
         {
             opts.UseNpgsql(connectionstring)
-            .AddInterceptors(
-                sp.GetRequiredService<InsertOutBoxMessagesInterceptor>());
+            .AddInterceptors(sp.GetRequiredService<InsertOutBoxMessagesInterceptor>());
         });
-        services.AddScoped<DbContext, AppDbContext>();
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();

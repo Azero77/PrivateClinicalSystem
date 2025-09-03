@@ -13,17 +13,19 @@ namespace ClinicApp.Infrastructure.Persistance;
 
 public class AppDbContext : DbContext
 {
-    private readonly IHttpContextAccessor? _httpContextAccessor;
-
     public DbSet<Doctor> Doctors { get; set; } = null!;
     public DbSet<Session> Sessions { get; set; } = null!;
     public DbSet<Patient> Patients { get; set; } = null!;
     public DbSet<Secretary> Secretaries { get; set; } = null!;
     public DbSet<Room> Rooms { get; set; } = null!;
     public DbSet<OutBoxMessage> OutBoxMessages { get; set; } = null!;
-    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContextAccessor = null) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        _httpContextAccessor = httpContextAccessor;
+    }
+
+    static AppDbContext()
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,4 +1,5 @@
-﻿using ClinicApp.Domain.Common.Interfaces;
+﻿using ClinicApp.Application.Common;
+using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.Services.Sessions;
 using ClinicApp.Domain.SessionAgg;
@@ -12,12 +13,15 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
     private readonly IDoctorRepository _doctorRepo;
     private readonly IScheduler _scheduler;
     private readonly IClock _clock;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AddSessionCommandHandler(IDoctorRepository doctorRepo, IScheduler scheduler, IClock clock)
+
+    public AddSessionCommandHandler(IDoctorRepository doctorRepo, IScheduler scheduler, IClock clock, IUnitOfWork unitOfWork)
     {
         _doctorRepo = doctorRepo;
         _scheduler = scheduler;
         _clock = clock;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<Session>> Handle(AddSessionCommand request, CancellationToken cancellationToken)
@@ -37,6 +41,9 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
             request.role,
             doctor
             );
+
+        
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
         return session;
     }
 }

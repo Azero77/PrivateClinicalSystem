@@ -8,7 +8,7 @@ namespace ClinicApp.Domain.SessionAgg
        
         public void AddNewState(SessionState state)
         {
-            States.Append(state);
+            States.Enqueue(state);
         }
 
         public void RemoveLastState()

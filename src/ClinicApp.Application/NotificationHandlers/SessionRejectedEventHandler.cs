@@ -7,6 +7,6 @@ public class SessionRejectedEventHandler : INotificationHandler<SessionRejectedE
 {
     public Task Handle(SessionRejectedEvent notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

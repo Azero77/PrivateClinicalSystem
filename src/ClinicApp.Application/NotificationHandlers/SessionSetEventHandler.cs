@@ -6,6 +6,6 @@ public class SessionSetEventHandler : INotificationHandler<SessionSetEvent>
 {
     public Task Handle(SessionSetEvent notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }
