@@ -7,8 +7,7 @@ var postgresClinic = builder.AddPostgres("postgres")
     .WithImage("postgres:16.1-alpine3.19")
     .WithPgAdmin(configureContainer =>
     {
-        configureContainer.WithImage("dpage/pgadmin4:snapshot")
-        .WithLifetime(ContainerLifetime.Persistent);
+        configureContainer.WithImage("dpage/pgadmin4:snapshot");
     })
     .WithDataVolume(isReadOnly : false);
 
@@ -21,7 +20,9 @@ var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
     .WithReference(identityServer);
 
 var seq = builder.AddSeq("seq")
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithImage("datalust/seq:2025")
+    .WithEnvironment("ACCEPT_EULA", "Y")
+    .WithEnvironment("SEQ_FIRSTRUN_NOAUTHENTICATION", "true");
 
 var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)

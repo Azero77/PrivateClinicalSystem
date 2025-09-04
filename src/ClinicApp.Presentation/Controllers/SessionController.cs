@@ -7,6 +7,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Controllers;
@@ -44,7 +45,10 @@ public class SessionController : ApiController
             );
 
         var result = await _mediator.Send(command,token);
-
+        if (!result.IsError)
+        {
+            Log.Debug("Added {Session} In {TimeStamp}",new object[] { result.Value,DateTime.UtcNow});
+        }
         return result.Match(
             Ok,
             ProblemResult);
