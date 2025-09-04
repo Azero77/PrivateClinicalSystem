@@ -7,7 +7,8 @@ var postgresClinic = builder.AddPostgres("postgres")
     .WithImage("postgres:16.1-alpine3.19")
     .WithPgAdmin(configureContainer =>
     {
-        configureContainer.WithImage("dpage/pgadmin4:snapshot");
+        configureContainer.WithImage("dpage/pgadmin4:snapshot")
+        .WithLifetime(ContainerLifetime.Persistent);
     })
     .WithDataVolume(isReadOnly : false);
 
@@ -19,8 +20,14 @@ var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("ide
 var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
     .WithReference(identityServer);
 
+var seq = builder.AddSeq("seq")
+    .WithLifetime(ContainerLifetime.Persistent);
+
 var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)
+    .WaitFor(db)
+    .WithReference(seq)
+    .WaitFor(seq)
     .WithReference(identityServer)
     .WithReference(bff)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT","Development");
@@ -29,6 +36,7 @@ var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-pre
 ApplyConfigurationToResource(identityServer, builder.Configuration.GetSection("Identity"));
 ApplyConfigurationToResource(bff, builder.Configuration.GetSection("BFF"));
 ApplyConfigurationToResource(mainapi, builder.Configuration.GetSection("JWT"));
+ApplyConfigurationToResource(mainapi, builder.Configuration.GetSection("Serilog"));
 
 builder.Build().Run();
 

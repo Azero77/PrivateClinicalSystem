@@ -20,8 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<Room> Rooms { get; set; } = null!;
     public DbSet<OutBoxMessage> OutBoxMessages { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
+    {}
 
     static AppDbContext()
     {

@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Core;
 using System.Diagnostics;
 using System.Text;
 
@@ -82,6 +84,7 @@ namespace ClinicApp.Presentation
 
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly,includeInternalTypes:true);
 
+            AddSerilog(builder);
             builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
@@ -99,7 +102,8 @@ namespace ClinicApp.Presentation
             var app = builder.Build();
             app.MapDefaultEndpoints();
 
-            // Configure the HTTP request pipeline.
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -123,5 +127,11 @@ namespace ClinicApp.Presentation
             app.Run();
         }
 
+        private static void AddSerilog(WebApplicationBuilder builder)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+        }
     }
 }
