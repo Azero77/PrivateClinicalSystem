@@ -9,6 +9,8 @@ namespace ClinicApp.Domain.Services.Sessions
             code: "Schedule.SessionAlreadyExists",
             description: "Can't add a session that is already added.");
 
+
+        public static string ConflictingSessionCode = "ScheduleConflict";
         public static Error ConflictingSession(object newSession, object existingSession) => Error.Conflict(
             code: "Schedule.Conflict",
             description: "Can't book this time due to a conflict.",
