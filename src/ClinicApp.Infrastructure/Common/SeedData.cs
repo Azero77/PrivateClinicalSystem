@@ -1,6 +1,7 @@
 using ClinicApp.Application.Common;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.Entities;
+using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.PatientAgg;
@@ -72,22 +73,29 @@ namespace ClinicApp.Infrastructure.Persistance.Seeding
             )
         };
 
-        public static IReadOnlyList<Session> Sessions => new[]
+        public static IReadOnlyList<Session> Sessions(IClock? clock = null)
         {
-           Session.Create(
-                id: Session1Id,
-                sessionDate: TimeRange.Create(
-                    startTime: DateTimeOffset.UtcNow.AddDays(1).AddHours(10),
-                    endTime: DateTimeOffset.UtcNow.AddDays(1).AddHours(11)
-                ).Value,
-                sessionDescription: new SessionDescription("Initial Consultation"),
-                roomId: Room1Id,
-                patientId: Patient1Id,
-                doctorId: Doctor1Id,
-                clock: new SystemClock(),
-                session: SessionStatus.Set
-            ).Value
-        };
+            if (clock is null)
+                clock = new Clock();
+
+            var day = clock.UtcNow.AddDays(1).Date;
+            return new[]
+            {
+               Session.Create(
+                    id: Session1Id,
+                    sessionDate: TimeRange.Create(
+                        startTime: new DateTimeOffset(DateOnly.FromDateTime(day),new TimeOnly(10,30),TimeSpan.FromHours(0)),
+                        endTime: new DateTimeOffset(DateOnly.FromDateTime(day),new TimeOnly(11,30),TimeSpan.FromHours(0))
+                    ).Value,
+                    sessionDescription: new SessionDescription("Initial Consultation"),
+                    roomId: Room1Id,
+                    patientId: Patient1Id,
+                    doctorId: Doctor1Id,
+                    clock: new SystemClock(),
+                    session: SessionStatus.Set
+                ).Value
+            };
+        }
 
         public static IReadOnlyList<OutBoxMessage> OutboxMessages => new[]
         {

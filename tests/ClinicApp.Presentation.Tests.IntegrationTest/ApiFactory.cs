@@ -1,4 +1,6 @@
 ﻿
+using ClinicApp.Domain.Common.Interfaces;
+using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -26,7 +28,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
         .WithPassword("TestMe")
         .WithDatabase("ClinicDb")
         .Build();
-    private readonly HttpClient _client;
+    private HttpClient _client = null!;
     public HttpClient Client => _client;
 
     private AppDbContext GetDbContext()
@@ -34,11 +36,6 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
         var scope = this.Services.CreateScope();
         var dbcontext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         return dbcontext;
-    }
-    public ApiFactory()
-    {
-        _client = CreateClient();
-        AttachJwtTokenToClient();
     }
     private void AttachJwtTokenToClient()
     {
@@ -50,6 +47,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", Serilog.Events.LogEventLevel.Debug)
             .WriteTo.Console()
             //.WriteTo.TestOutput(_outputHelper)
             .CreateLogger();
@@ -62,11 +60,21 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
 
         builder.ConfigureTestServices(services =>
         {
+            // Remove the default exception handler to see detailed errors in tests
+            var exceptionHandlerDescriptor = services.SingleOrDefault(d => d.ServiceType.FullName == "Microsoft.AspNetCore.Diagnostics.IExceptionHandler");
+            if (exceptionHandlerDescriptor != null)
+            {
+                services.Remove(exceptionHandlerDescriptor);
+            }
+
             services.RemoveAll<AppDbContext>();
             services.AddDbContext<AppDbContext>(opts =>
             {
                 opts.UseNpgsql(database.GetConnectionString());
             });
+
+            services.RemoveAll<IClock>();
+            services.AddSingleton<IClock, TestClock>();
         });
         base.ConfigureWebHost(builder);
     }
@@ -86,8 +94,10 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
 
     public async Task InitializeAsync()
     {
+        
         await database.StartAsync();
-
+        _client = CreateClient();
+        AttachJwtTokenToClient();
         //Seed Data
         await Seed();
     }
@@ -96,7 +106,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
     {
         using var context = GetDbContext();
         await context.Database.EnsureCreatedAsync();
-        DbExtensions.SeedDataToDbContext(context);
+        InfrastructureMiddlewareExtensions.SeedDataToDbContext(context,TestClock.Clock());
     }
 }
 
@@ -105,4 +115,14 @@ public class ApiCollection
     : ICollectionFixture<ApiFactory>
 {
 
+}
+
+public class TestClock : IClock
+{
+    public DateTimeOffset UtcNow => new DateTimeOffset(2024,11,5,9,30,00,TimeSpan.FromHours(0));
+
+    public static TestClock Clock()
+    {
+        return new TestClock();
+    }
 }

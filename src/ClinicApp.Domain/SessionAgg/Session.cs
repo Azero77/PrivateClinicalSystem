@@ -22,11 +22,6 @@ namespace ClinicApp.Domain.SessionAgg
                        SessionStatus session = SessionStatus.Pending
             )
         {
-            if (sessionDate.StartTime < clock.UtcNow)
-            {
-                return SessionErrors.SessionTimeInThePast.error;
-            }
-
             
             var result = new Session()
             {
