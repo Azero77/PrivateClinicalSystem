@@ -13,7 +13,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             // Arrange
             var doctor = Factories.DoctorFactory;
             var fakerClock = new FakerClock { UtcNow = new DateTime(2025,7,21) };
-            var sessionTime = TimeRange.Create(new DateTime(2025, 7, 22), new DateTime(2025, 7, 22, 10, 30, 0)).Value; // Tuesday
+            var sessionTime = TimeRange.Create(new DateTimeOffset(new DateTime(2025, 7, 22),TimeSpan.FromHours(0)),new DateTimeOffset(new DateTime(2025, 7, 22, 10, 30, 0),TimeSpan.FromHours(0))).Value; // Tuesday
             var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             // Act

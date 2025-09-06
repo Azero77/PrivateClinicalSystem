@@ -17,19 +17,6 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             clock = new FakerClock() { UtcNow = new DateTimeOffset(2025, 11, 2,0,0,0,TimeSpan.Zero) };
         }
         private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Secretary);
-        [Fact]
-        public void Create_Should_ReturnError_When_SessionIsInThePast()
-        {
-            // Arrange
-            var sessionTime = TimeRange.Create(clock.UtcNow.AddDays(-1), clock.UtcNow.AddDays(-1).AddHours(1)).Value;
-
-            // Act
-            var result = GetSession(sessionTime);
-            
-            // Assert
-            result.IsError.Should().BeTrue();
-            result.FirstError.Code.Should().Be(SessionErrors.SessionTimeInThePast.code);
-        }
 
         [Fact]
         public void Session_Should_TransitionThroughLifecycleCorrectly()

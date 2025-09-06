@@ -22,7 +22,6 @@ namespace ClinicApp.Domain.SessionAgg
                        SessionStatus session = SessionStatus.Pending
             )
         {
-            
             var result = new Session()
             {
                 Id = id,
