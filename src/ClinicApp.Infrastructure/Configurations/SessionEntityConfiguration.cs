@@ -11,6 +11,7 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
     public void Configure(EntityTypeBuilder<Session> builder)
     {
         builder.ToTable("Sessions");
+        //builder.HasQueryFilter(s => !s.IsDeleted);
         builder.HasKey(s => s.Id);
 
         builder.OwnsOne(s => s.SessionDate,

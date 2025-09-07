@@ -1,13 +1,21 @@
+using ClinicApp.Application.Commands.ModifySession;
+using ClinicApp.Application.Common;
+using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.DeleteSessionCommands;
 
-public class DeleteSessionCommandHandler : IRequestHandler<DeleteSessionCommand, ErrorOr<Deleted>>
+public class DeleteSessionCommandHandler : ModifySessionCommandHandler
 {
-    public Task<ErrorOr<Deleted>> Handle(DeleteSessionCommand request, CancellationToken cancellationToken)
+    public DeleteSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
-        return Task.FromResult(request.Session.DeleteSession());
+    }
+
+    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    {
+        IErrorOr result = session.DeleteSession();
+        return Task.FromResult(result);
     }
 }

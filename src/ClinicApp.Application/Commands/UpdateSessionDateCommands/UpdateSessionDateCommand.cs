@@ -4,4 +4,4 @@ using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.UpdateSessionDateCommands;
-public record UpdateSessionDateCommand(Session Session, TimeRange NewTimeRange) : IRequest<ErrorOr<Success>>;
+public record UpdateSessionDateCommand(Guid SessionId, TimeRange NewTimeRange) : IRequest<ErrorOr<Success>>;

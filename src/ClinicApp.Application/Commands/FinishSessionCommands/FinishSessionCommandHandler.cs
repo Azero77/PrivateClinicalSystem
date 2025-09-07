@@ -1,13 +1,21 @@
+using ClinicApp.Application.Commands.ModifySession;
+using ClinicApp.Application.Common;
+using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.FinishSessionCommands;
 
-public class FinishSessionCommandHandler : IRequestHandler<FinishSessionCommand, ErrorOr<Success>>
+public class FinishSessionCommandHandler : ModifySessionCommandHandler
 {
-    public Task<ErrorOr<Success>> Handle(FinishSessionCommand request, CancellationToken cancellationToken)
+    public FinishSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
-        return Task.FromResult(request.Session.FinishSession());
+    }
+
+    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    {
+        IErrorOr result = session.FinishSession();
+        return Task.FromResult(result);
     }
 }

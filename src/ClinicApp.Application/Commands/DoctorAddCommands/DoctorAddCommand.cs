@@ -1,4 +1,5 @@
-﻿using ClinicApp.Application.Converters;
+﻿using ClinicApp.Application.Common;
+using ClinicApp.Application.Converters;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ErrorOr;
@@ -25,19 +26,19 @@ public record DoctorAddCommand(
 public class DoctorAddCommandHandler : IRequestHandler<DoctorAddCommand, ErrorOr<Doctor>>
 {
     private readonly IDoctorRepository _repo;
-
-    public DoctorAddCommandHandler(IDoctorRepository repo)
+    private readonly IUnitOfWork _unitOfWork;
+    public DoctorAddCommandHandler(IDoctorRepository repo, IUnitOfWork unitOfWork)
     {
         _repo = repo;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<ErrorOr<Doctor>> Handle(DoctorAddCommand request, CancellationToken cancellationToken)
     {
         var doctor = await _repo.AddDoctor(request.ToDoctor());
-
-        if (doctor is null)
-            return Error.Validation("Doctor.Validation","Something Error Occured");
-
+        var num = await _unitOfWork.SaveChangesAsync();
+        if (num != 1)
+            return Error.Validation("Application.Validation", "Something Went Wrong,No Doctor Created");
         return doctor;
     }
 }

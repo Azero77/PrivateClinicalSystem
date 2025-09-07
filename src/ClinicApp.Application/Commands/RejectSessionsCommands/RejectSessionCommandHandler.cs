@@ -1,13 +1,21 @@
+using ClinicApp.Application.Commands.ModifySession;
+using ClinicApp.Application.Common;
+using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.RejectSessionsCommands;
 
-public class RejectSessionCommandHandler : IRequestHandler<RejectSessionCommand, ErrorOr<Success>>
+public class RejectSessionCommandHandler : ModifySessionCommandHandler
 {
-    public Task<ErrorOr<Success>> Handle(RejectSessionCommand request, CancellationToken cancellationToken)
+    public RejectSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
-        return Task.FromResult(request.Session.RejectSession());
+    }
+
+    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    {
+        IErrorOr result = session.RejectSession();
+        return Task.FromResult(result);
     }
 }

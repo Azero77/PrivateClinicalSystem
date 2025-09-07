@@ -48,7 +48,7 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
         _context.Doctors.Update(doctor);
         return Task.FromResult(doctor);
     }
-    public async Task<Doctor?> AddDoctor(Doctor doctor)
+    public async Task<Doctor> AddDoctor(Doctor doctor)
     {
         await _context.Doctors.AddAsync(doctor);
         return doctor;

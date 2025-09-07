@@ -1,13 +1,21 @@
+using ClinicApp.Application.Commands.ModifySession;
+using ClinicApp.Application.Common;
+using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.StartSessionCommands;
 
-public class StartSessionCommandHandler : IRequestHandler<StartSessionCommand, ErrorOr<Success>>
+public class StartSessionCommandHandler : ModifySessionCommandHandler
 {
-    public Task<ErrorOr<Success>> Handle(StartSessionCommand request, CancellationToken cancellationToken)
+    public StartSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
-        return Task.FromResult(request.Session.StartSession());
+    }
+
+    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    {
+        IErrorOr result = session.StartSession();
+        return Task.FromResult(result);
     }
 }
