@@ -3,9 +3,8 @@ using ClinicApp.Domain.SessionAgg;
 
 namespace ClinicApp.Infrastructure.Persistance.DataModels;
 
-public class SessionDataModel
+public class SessionDataModel : DataModel
 {
-    public Guid Id { get; set; }
     public TimeRange SessionDate { get; set; } = null!;
     public SessionDescription SessionDescription { get; set; } = null!;
     public Guid RoomId { get; set; }

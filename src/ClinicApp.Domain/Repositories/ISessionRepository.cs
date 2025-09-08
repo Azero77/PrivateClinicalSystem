@@ -4,11 +4,10 @@ using ErrorOr;
 
 namespace ClinicApp.Domain.Repositories;
 
-public interface ISessionRepository
+public interface ISessionRepository : IRepository<Session>
 {
     Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Doctor doctor);
     Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Doctor doctor);
-    Task<Session?> GetById(Guid sessionId);
     Task<IReadOnlyCollection<Session>> GetSessionsForToday();
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid);
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid,DateTimeOffset date);

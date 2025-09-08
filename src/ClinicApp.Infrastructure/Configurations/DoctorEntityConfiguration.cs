@@ -1,16 +1,17 @@
 ﻿using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClinicApp.Infrastructure.Configurations;
 
 public class DoctorEntityConfiguration :
-    MemberEntityConfiguration<Doctor>
+    MemberEntityConfiguration<DoctorDataModel>
     
 {
-    public override void Configure(EntityTypeBuilder<Doctor> builder)
+    public override void Configure(EntityTypeBuilder<DoctorDataModel> builder)
     {
         base.Configure(builder);
         builder.ToTable("Doctors");

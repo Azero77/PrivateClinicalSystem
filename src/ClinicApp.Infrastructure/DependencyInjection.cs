@@ -3,11 +3,13 @@ using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.PatientAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Common;
-using ClinicApp.Infrastructure.Interceptors;
+using ClinicApp.Infrastructure.Converters;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,17 +23,21 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<AppDbContext>((sp,opts)=>
         {
-            opts.UseNpgsql(connectionstring)
-            .AddInterceptors(sp.GetRequiredService<InsertOutBoxMessagesInterceptor>());
+            opts.UseNpgsql(connectionstring);
         });
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
-        services.AddScoped<IPaginatedRepository<Session>, DbSessionRepository>();
-        services.AddScoped<IPaginatedRepository<Doctor>, DbDoctorRepository>();
-        services.AddScoped<IPaginatedRepository<Room>, DbRoomRepository>();
-        services.AddSingleton<InsertOutBoxMessagesInterceptor>();
+        services.AddScoped<IPaginatedRepository<Session>, PaginatedRepository<Session>>();
+        services.AddScoped<IPaginatedRepository<Doctor>, PaginatedRepository<Doctor>>();
+        services.AddScoped<IPaginatedRepository<Room>, PaginatedRepository<Room>>();
         services.AddSingleton<IClock, Clock>();
+
+        services.AddSingleton<IConverter<Doctor, DoctorDataModel>, DoctorConverter>();
+        services.AddSingleton<IConverter<Room, RoomDataModel>, RoomConverter>();
+        services.AddSingleton<IConverter<Session, SessionDataModel>, SessionConverter>();
+        services.AddSingleton<IConverter<Patient, PatientDataModel>, PatientConverter>();
+
         return services;
     }
 }

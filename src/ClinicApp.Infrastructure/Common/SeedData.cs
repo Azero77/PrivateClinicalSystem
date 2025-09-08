@@ -1,12 +1,10 @@
 using ClinicApp.Application.Common;
 using ClinicApp.Domain.Common;
-using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.DoctorAgg;
-using ClinicApp.Domain.PatientAgg;
 using ClinicApp.Domain.SessionAgg;
-using Microsoft.AspNetCore.Http;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using System;
 using System.Collections.Generic;
 
@@ -24,56 +22,55 @@ namespace ClinicApp.Infrastructure.Persistance.Seeding
         public static readonly Guid Session1Id = Guid.Parse("77777777-7777-7777-7777-777777777777");
         public static readonly Guid OutboxMsg1Id = Guid.Parse("88888888-8888-8888-8888-888888888888");
 
-        public static IReadOnlyList<Room> Rooms => new[]
+        public static IReadOnlyList<RoomDataModel> Rooms => new[]
         {
-            new Room ( Room1Id,"Room A" ),
-            new Room (Room2Id,"Room B" )
+            new RoomDataModel { Id = Room1Id, Name = "Room A" },
+            new RoomDataModel { Id = Room2Id, Name = "Room B" }
         };
 
-        public static IReadOnlyList<Doctor> Doctors => new[]
+        public static IReadOnlyList<DoctorDataModel> Doctors => new[]
         {
-            new Doctor
-            (
-                Doctor1Id,
-                Guid.Parse("11111111-2222-2222-2222-111111111111"),
-                "Alice",
-                "Smith",
-                Room1Id,
-                (WorkingDays) 62,
-                WorkingHours.Create(new TimeOnly(9, 0),endTime: new TimeOnly(17, 0),"UTC").Value,
-                "Cardiology"
-            ),
-            new Doctor
-            (
-                Doctor2Id,
-                Guid.Parse("11111111-3333-3333-3333-111111111111"), // UserId for Doctor2
-                "Bob",
-                "Johnson",
-                Room2Id,
-                (WorkingDays)124, // Tue–Sat bitmask
-                WorkingHours.Create(new TimeOnly(10, 0), new TimeOnly(18, 0), "UTC").Value,
-                "Dermatology"
-            )
-
+            new DoctorDataModel
+            {
+                Id = Doctor1Id,
+                UserId = Guid.Parse("11111111-2222-2222-2222-111111111111"),
+                FirstName = "Alice",
+                LastName = "Smith",
+                RoomId = Room1Id,
+                WorkingTime = WorkingTime.Create(new TimeOnly(9, 0),new TimeOnly(17, 0),(WorkingDays) 62,"UTC").Value,
+                Major = "Cardiology"
+            },
+            new DoctorDataModel
+            {
+                Id = Doctor2Id,
+                UserId = Guid.Parse("11111111-3333-3333-3333-111111111111"),
+                FirstName = "Bob",
+                LastName = "Johnson",
+                RoomId = Room2Id,
+                WorkingTime = WorkingTime.Create(new TimeOnly(10, 0),new TimeOnly(18, 0),(WorkingDays) 124,"UTC").Value,
+                Major = "Dermatology"
+            }
         };
 
-        public static IReadOnlyList<Patient> Patients => new[]
+        public static IReadOnlyList<PatientDataModel> Patients => new[]
         {
-            new Patient(
-                Patient1Id,
-                Guid.Parse("55555555-aaaa-aaaa-aaaa-555555555555"), // deterministic UserId
-                "Charlie",
-                "Brown"
-            ),
-            new Patient(
-                Patient2Id,
-                Guid.Parse("66666666-bbbb-bbbb-bbbb-666666666666"), // deterministic UserId
-                "Diana",
-                "Prince"
-            )
+            new PatientDataModel
+            {
+                Id = Patient1Id,
+                UserId = Guid.Parse("55555555-aaaa-aaaa-aaaa-555555555555"),
+                FirstName = "Charlie",
+                LastName = "Brown"
+            },
+            new PatientDataModel
+            {
+                Id = Patient2Id,
+                UserId = Guid.Parse("66666666-bbbb-bbbb-bbbb-666666666666"),
+                FirstName = "Diana",
+                LastName = "Prince"
+            }
         };
 
-        public static IReadOnlyList<Session> Sessions(IClock? clock = null)
+        public static IReadOnlyList<SessionDataModel> Sessions(IClock? clock = null)
         {
             if (clock is null)
                 clock = new Clock();
@@ -81,19 +78,20 @@ namespace ClinicApp.Infrastructure.Persistance.Seeding
             var day = clock.UtcNow.AddDays(1).Date;
             return new[]
             {
-               Session.Create(
-                    id: Session1Id,
-                    sessionDate: TimeRange.Create(
-                        startTime: new DateTimeOffset(DateOnly.FromDateTime(day),new TimeOnly(10,30),TimeSpan.FromHours(0)),
-                        endTime: new DateTimeOffset(DateOnly.FromDateTime(day),new TimeOnly(11,30),TimeSpan.FromHours(0))
+                new SessionDataModel
+                {
+                    Id = Session1Id,
+                    SessionDate = TimeRange.Create(
+                        startTime: new DateTimeOffset(DateOnly.FromDateTime(day), new TimeOnly(10, 30), TimeSpan.FromHours(0)),
+                        endTime: new DateTimeOffset(DateOnly.FromDateTime(day), new TimeOnly(11, 30), TimeSpan.FromHours(0))
                     ).Value,
-                    sessionDescription: new SessionDescription("Initial Consultation"),
-                    roomId: Room1Id,
-                    patientId: Patient1Id,
-                    doctorId: Doctor1Id,
-                    clock: new SystemClock(),
-                    session: SessionStatus.Set
-                ).Value
+                    SessionDescription = new SessionDescription("Initial Consultation"),
+                    RoomId = Room1Id,
+                    PatientId = Patient1Id,
+                    DoctorId = Doctor1Id,
+                    SessionStatus = SessionStatus.Set,
+                    CreatedAt = clock.UtcNow
+                }
             };
         }
 

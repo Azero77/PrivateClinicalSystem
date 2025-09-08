@@ -1,17 +1,15 @@
-﻿using ClinicApp.Domain.DoctorAgg;
-using ClinicApp.Domain.SessionAgg;
+﻿using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ClinicApp.Infrastructure.Configurations;
 
-public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
+public class SessionEntityConfiguration : IEntityTypeConfiguration<SessionDataModel>
 {
-    public void Configure(EntityTypeBuilder<Session> builder)
+    public void Configure(EntityTypeBuilder<SessionDataModel> builder)
     {
         builder.ToTable("Sessions");
-        builder.HasQueryFilter(s => !s.IsDeleted);
+        //builder.HasQueryFilter(s => !s.IsDeleted);
         builder.HasKey(s => s.Id);
         builder.OwnsOne(s => s.SessionDate,
             sd =>

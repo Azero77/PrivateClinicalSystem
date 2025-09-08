@@ -1,43 +1,33 @@
 ﻿using ClinicApp.Domain.Common;
-using ClinicApp.Infrastructure.Middlewares;
+using ClinicApp.Domain.Repositories;
+using ClinicApp.Infrastructure.Converters;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Threading;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-internal interface IRepository<T>
-    where T: AggregateRoot
-{
-    Task<T?> GetById(Guid id);
-    Task Save(T entity,CancellationToken token = default);
-}
-
-
-internal class Repository<T, TData>
+public class Repository<T, TData>
     : IRepository<T>
     where T : AggregateRoot
-    where TData : class
+    where TData : DataModel
 {
-    private readonly AppDbContext _context;
+    protected readonly AppDbContext _context;
     private readonly IPublisher _publisher;
-
-    public Repository(AppDbContext context, IPublisher publisher)
+    protected readonly IConverter<T, TData> _converter;
+    public Repository(AppDbContext context, IPublisher publisher, IConverter<T, TData> converter)
     {
         _context = context;
         _publisher = publisher;
+        _converter = converter;
     }
-
-    public Task<T?> GetById(Guid id)
+    public async Task<T?> GetById(Guid id)
     {
-        return _context.Set<T>()
+        TData? datamodel = await _context.Set<TData>()
             .SingleOrDefaultAsync(t => t.Id == id);
+        return datamodel is null ? null : _converter.MapToEntity(datamodel);
     }
-
-
     public async Task Save(T entity,CancellationToken token = default)
     {
         var events = entity.PopDomainEvents();
