@@ -3,10 +3,10 @@
 namespace ClinicApp.Infrastructure.Repositories;
 
 internal interface IRepository<T, TData>
-    where T: AggregateRoot
+    where T: Entity
     where TData : class 
 {
-    T GetById(Guid id);
+    Task<T?> GetById(Guid id);
     Task Save(T entity);
 }
 

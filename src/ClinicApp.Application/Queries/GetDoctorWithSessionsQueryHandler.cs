@@ -20,7 +20,7 @@ public class GetDoctorWithSessionsQueryHandler : IRequestHandler<GetDoctorWithSe
     public async Task<ErrorOr<DoctorWithSessionsDTO>> Handle(GetDoctorWithSessionsQuery request, CancellationToken cancellationToken)
     {
 
-        Doctor? doctor = await _doctorRepo.GetByIdAsync(request.doctorId);
+        Doctor? doctor = await _doctorRepo.GetById(request.doctorId);
 
         if (doctor is null)
             return Error.NotFound("Application.NotFound",

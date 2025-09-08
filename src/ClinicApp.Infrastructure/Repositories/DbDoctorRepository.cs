@@ -2,11 +2,13 @@
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
+public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository,
+    IRepository<Doctor,DoctorDataModel>
 {
     private readonly AppDbContext _context;
     private const int InitialPageNumber = 5;
@@ -16,6 +18,33 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
         : base(context)
     {
         _context = context;
+    }
+    public Task<Doctor?> GetById(Guid id)
+    {
+        return _context.Doctors.AsNoTracking().SingleOrDefaultAsync(d => d.Id == id);
+    }
+    public Task Save(Doctor entity)
+    {
+        throw new NotImplementedException();
+    }
+    public Task<Doctor?> GetDoctorByRoom(Guid roomId)
+    {
+        return _context.Doctors.AsNoTracking().FirstOrDefaultAsync(d => d.RoomId == roomId);
+    }
+    public async Task<IReadOnlyCollection<Doctor>> GetDoctors()
+    {
+        var list = await _context.Doctors.AsNoTracking().ToListAsync();
+        return list.AsReadOnly();
+    }
+    public Task<Doctor> UpdateDoctor(Doctor doctor)
+    {
+        _context.Doctors.Update(doctor);
+        return Task.FromResult(doctor);
+    }
+    public async Task<Doctor> AddDoctor(Doctor doctor)
+    {
+        await _context.Doctors.AddAsync(doctor);
+        return doctor;
     }
     public async Task<Doctor?> DeleteDoctor(Guid doctorId)
     {
@@ -28,29 +57,6 @@ public class DbDoctorRepository : PaginatedRepository<Doctor>,IDoctorRepository
         return doctor;
     }
 
-    public Task<Doctor?> GetByIdAsync(Guid id)
-    {
-        return _context.Doctors.AsNoTracking().SingleOrDefaultAsync(d => d.Id == id);
-    }
-    public Task<Doctor?> GetDoctorByRoom(Guid roomId)
-    {
-        return _context.Doctors.AsNoTracking().FirstOrDefaultAsync(d => d.RoomId == roomId);
-    }
 
-    public async Task<IReadOnlyCollection<Doctor>> GetDoctors()
-    {
-        var list = await _context.Doctors.AsNoTracking().ToListAsync();
-        return list.AsReadOnly();
-    }
 
-    public Task<Doctor> UpdateDoctor(Doctor doctor)
-    {
-        _context.Doctors.Update(doctor);
-        return Task.FromResult(doctor);
-    }
-    public async Task<Doctor> AddDoctor(Doctor doctor)
-    {
-        await _context.Doctors.AddAsync(doctor);
-        return doctor;
-    }
 }

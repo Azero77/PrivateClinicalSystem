@@ -26,7 +26,7 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
 
     public async Task<ErrorOr<Session>> Handle(AddSessionCommand request, CancellationToken cancellationToken)
     {
-        var doctor = await _doctorRepo.GetByIdAsync(request.doctorId);
+        var doctor = await _doctorRepo.GetById(request.doctorId);
 
         if (doctor is null)
             return Error.NotFound("Application.Doctor.NotFound","Doctor with id not found");

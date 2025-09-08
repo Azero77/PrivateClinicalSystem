@@ -4,11 +4,14 @@ using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbSessionRepository : PaginatedRepository<Session>,ISessionRepository
+public class DbSessionRepository : PaginatedRepository<Session>,
+    ISessionRepository,
+    IRepository<Session, SessionDataModel>
 {
     private readonly AppDbContext _context;
     private IQueryable<Session> _sessionsNotTracked => _context.Sessions.AsNoTracking();
@@ -19,6 +22,16 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
     {
         _context = context;
         _clock = clock;
+    }
+
+    public Task<Session?> GetById(Guid sessionId)
+    {
+        return _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId);
+    }
+
+    public Task Save(Session entity)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Session> AddSession(Session session)
@@ -49,11 +62,6 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
     {
         var sessions = await _sessionsNotTracked.Where(s => (s.DoctorId == doctor.Id) && (s.SessionDate.StartTime > _clock.UtcNow)).ToListAsync();
         return sessions.AsReadOnly();
-    }
-
-    public Task<Session?> GetById(Guid sessionId)
-    {
-        return _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId);
     }
 
     public Task<IReadOnlyCollection<SessionState>> GetSessionHistory(Guid sessionId)
@@ -106,4 +114,5 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
             .ToListAsync();
         return sessions;
     }
+
 }

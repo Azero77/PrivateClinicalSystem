@@ -2,11 +2,12 @@ using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Repositories;
 
-public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
+public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository,IRepository<Room,RoomDataModel>
 {
     private readonly AppDbContext _context;
 
@@ -14,6 +15,15 @@ public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
         :  base(context)
     {
         _context = context;
+    }
+    public async Task<Room?> GetById(Guid roomId)
+    {
+        return await _context.Rooms.SingleOrDefaultAsync(r => r.Id == roomId);
+    }
+
+    public Task Save(Room entity)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Room?> AddRoom(Room room)
@@ -34,10 +44,6 @@ public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
         return await _context.Rooms.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Room?> GetById(Guid roomId)
-    {
-        return await _context.Rooms.SingleOrDefaultAsync(r => r.Id == roomId);
-    }
     public Task<Room> UpdateRoom(Room updatedRoom)
     {
         _context.Rooms.Update(updatedRoom);
