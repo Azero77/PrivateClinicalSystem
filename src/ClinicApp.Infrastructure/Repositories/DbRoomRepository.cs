@@ -11,7 +11,7 @@ namespace ClinicApp.Infrastructure.Repositories;
 
 public class DbRoomRepository : Repository<Room,RoomDataModel>,IRoomRepository
 {
-    public DbRoomRepository(AppDbContext context, IPublisher publisher, IConverter<Room, RoomDataModel> converter) : base(context, publisher, converter)
+    public DbRoomRepository(AppDbContext context, IConverter<Room, RoomDataModel> converter) : base(context, converter)
     {
     }
 

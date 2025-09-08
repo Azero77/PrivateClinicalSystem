@@ -13,8 +13,8 @@ public class PatientEntityConfiguration : MemberEntityConfiguration<PatientDataM
     {
         base.Configure(builder);
         builder.ToTable("Patients");
-        builder.HasMany<Session>()
-            .WithOne()
+        builder.HasMany<SessionDataModel>()
+            .WithOne(s => s.Patient)
             .HasForeignKey(s => s.PatientId)
             .IsRequired()
             .OnDelete(DeleteBehavior.ClientNoAction);

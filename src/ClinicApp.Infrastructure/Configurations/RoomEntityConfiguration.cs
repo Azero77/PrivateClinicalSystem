@@ -11,8 +11,8 @@ public class RoomEntityConfiguration : IEntityTypeConfiguration<RoomDataModel>
     public void Configure(EntityTypeBuilder<RoomDataModel> builder)
     {
         builder.ToTable("Rooms");
-        builder.HasMany<Session>()
-            .WithOne()
+        builder.HasMany<SessionDataModel>()
+            .WithOne(s => s.Room)
             .HasForeignKey(s => s.RoomId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);

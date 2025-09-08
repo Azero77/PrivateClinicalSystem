@@ -8,7 +8,7 @@ public class DoctorDataModel : MemberDataModel
     public Guid RoomId { get; set; }
     public RoomDataModel Room { get; set; } = null!;
 
-    public IReadOnlyCollection<SessionDataModel> Sessions = new List<SessionDataModel>();
+    public IReadOnlyCollection<SessionDataModel> Sessions { get; set; } = new List<SessionDataModel>();
 }
 
 public abstract class DataModel

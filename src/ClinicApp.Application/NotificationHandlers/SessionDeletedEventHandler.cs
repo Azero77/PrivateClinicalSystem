@@ -8,17 +8,14 @@ namespace ClinicApp.Application.NotificationHandlers;
 public class SessionDeletedEventHandler : INotificationHandler<SessionDeletedEvent>
 {
     ISessionRepository _repo;
-    IUnitOfWork _unitOfWork;
 
-    public SessionDeletedEventHandler(ISessionRepository repo, IUnitOfWork unitOfWork)
+    public SessionDeletedEventHandler(ISessionRepository repo)
     {
         _repo = repo;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task Handle(SessionDeletedEvent notification, CancellationToken cancellationToken)
     {
         await _repo.DeleteSession(notification.Metadata.sessionId);
-        await _unitOfWork.SaveChangesAsync();
     }
 }

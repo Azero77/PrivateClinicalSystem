@@ -29,7 +29,7 @@ public abstract class ModifySessionCommandHandler : IRequestHandler<ModifySessio
         var result = await ApplySessionAction(session);
         if (result.IsError)
             return result.Errors!;
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken,session);
 
         return Result.Success;
     }

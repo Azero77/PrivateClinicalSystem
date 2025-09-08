@@ -41,9 +41,9 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
             request.role,
             doctor
             );
-
-        
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        if (session.IsError)
+            return session;
+        await _unitOfWork.SaveChangesAsync(cancellationToken,session.Value);
         return session;
     }
 }

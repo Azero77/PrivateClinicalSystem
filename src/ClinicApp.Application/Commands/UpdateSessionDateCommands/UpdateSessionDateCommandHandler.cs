@@ -25,7 +25,7 @@ public class UpdateSessionDateCommandHandler : IRequestHandler<UpdateSessionDate
         var result = session.UpdateDate(request.NewTimeRange);
         if (result.IsError)
             return result;
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken,session);
         return Result.Success;
     }
 }

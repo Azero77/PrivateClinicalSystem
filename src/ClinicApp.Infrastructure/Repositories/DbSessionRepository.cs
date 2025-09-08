@@ -15,18 +15,11 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     private readonly IClock _clock;
     private IQueryable<SessionDataModel> _sessionsNotTracked => _context.Sessions.AsNoTracking();
 
-    public DbSessionRepository(AppDbContext context, IPublisher publisher, IConverter<Session, SessionDataModel> converter, IClock clock)
-        : base(context,publisher,converter)
+    public DbSessionRepository(AppDbContext context, IConverter<Session, SessionDataModel> converter, IClock clock)
+        : base(context,converter)
     {
         _clock = clock;
     }
-
-    public async Task<Session?> GetById(Guid sessionId)
-    {
-        var sessionData = await _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId);
-        return sessionData is null ? null : _converter.MapToEntity(sessionData);
-    }
-
     public async Task<Session> AddSession(Session session)
     {
         var sessionData = _converter.MapToData(session);

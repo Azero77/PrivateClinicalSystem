@@ -16,16 +16,15 @@ public class DoctorEntityConfiguration :
         base.Configure(builder);
         builder.ToTable("Doctors");
         builder.HasKey(e => e.Id);
-
-        builder.HasOne<Room>()
-            .WithOne()
-            .HasForeignKey<Doctor>(d => d.RoomId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(d => d.Room)
+                .WithOne(r => r.Docotor)
+                .HasForeignKey<DoctorDataModel>(d => d.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
         builder.Property(e => e.Major)
             .HasMaxLength(255)
             .IsRequired(false);
-        builder.HasMany<Session>()
-            .WithOne()
+        builder.HasMany(d => d.Sessions)
+            .WithOne(s => s.Doctor)
             .HasForeignKey(s => s.DoctorId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
