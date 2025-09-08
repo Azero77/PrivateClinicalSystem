@@ -11,16 +11,14 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<Session>
     public void Configure(EntityTypeBuilder<Session> builder)
     {
         builder.ToTable("Sessions");
-        //builder.HasQueryFilter(s => !s.IsDeleted);
+        builder.HasQueryFilter(s => !s.IsDeleted);
         builder.HasKey(s => s.Id);
-
         builder.OwnsOne(s => s.SessionDate,
             sd =>
             {
                 sd.Property(sd => sd.StartTime).HasColumnName("StartTime").IsRequired();
                 sd.Property(sd => sd.EndTime).HasColumnName("Endtime").IsRequired();
             });
-
         builder.Property(s => s.SessionStatus)
             .HasConversion<byte>()
             .IsRequired();

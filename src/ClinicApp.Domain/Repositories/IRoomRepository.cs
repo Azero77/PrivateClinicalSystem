@@ -9,5 +9,4 @@ public interface IRoomRepository
     Task<Room?> AddRoom(Room room);
     Task DeleteRoom(Room deletedRoom);
     Task<Room> UpdateRoom(Room updatedRoom);
-
 }

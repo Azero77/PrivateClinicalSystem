@@ -77,9 +77,9 @@ namespace ClinicApp.Domain.SessionAgg
         public SessionHistory SessionHistory { get; private set; } = new();
         public DateTimeOffset CreatedAt { get; private set; }
 
-        internal bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;
-        internal bool IsFinished => (SessionStatus & SessionStatus.Finished) == SessionStatus.Finished;
-        internal bool IsPaid => (SessionStatus & SessionStatus.Paid) == SessionStatus.Paid;
+        public bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;
+        public bool IsFinished => (SessionStatus & SessionStatus.Finished) == SessionStatus.Finished;
+        public bool IsPaid => (SessionStatus & SessionStatus.Paid) == SessionStatus.Paid;
         public ErrorOr<Success> SetSession() //From Pending To Set
         {
             AddStatus(SessionStatus.Set);
@@ -93,7 +93,7 @@ namespace ClinicApp.Domain.SessionAgg
             if (HasStatus(SessionStatus.Deleted))
                 return SessionErrors.CantDeleteADeletedSession;
             AddStatus(SessionStatus.Deleted);
-            PushChanges(SessionState.DeletedSessionState(_clock.UtcNow));
+            PushChanges(SessionState.DeletedSessionState(Id,_clock.UtcNow));
             return Result.Deleted;
         }
 

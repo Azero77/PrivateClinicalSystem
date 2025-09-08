@@ -25,8 +25,8 @@ namespace ClinicApp.Domain.SessionAgg
         public static SessionState UpdatedSessionState(TimeRange oldValue, TimeRange newValue, DateTimeOffset updateAt) =>
        new(SessionStatus.Updated, new UpdatedSessionMetadata(oldValue, newValue, updateAt));
 
-        public static SessionState DeletedSessionState(DateTimeOffset deletedAt) =>
-            new(SessionStatus.Deleted, new DeletedSessionMetadata(deletedAt));
+        public static SessionState DeletedSessionState(Guid sessionId,DateTimeOffset deletedAt) =>
+            new(SessionStatus.Deleted, new DeletedSessionMetadata(sessionId,deletedAt));
 
         public static SessionState RejectedSessionState(DateTimeOffset rejectedAt, string? execuse = null) =>
             new(SessionStatus.Rejected, new RejectedSessionMetadata(rejectedAt, execuse));
@@ -42,7 +42,7 @@ namespace ClinicApp.Domain.SessionAgg
     public abstract record SessionStateMetaData;
     public record SessionCreatedMetadata : SessionStateMetaData;
     public record UpdatedSessionMetadata(TimeRange oldValue,TimeRange newValue,DateTimeOffset updateAt) : SessionStateMetaData;
-    public record DeletedSessionMetadata(DateTimeOffset deletedAt) : SessionStateMetaData;
+    public record DeletedSessionMetadata(Guid sessionId,DateTimeOffset deletedAt) : SessionStateMetaData;
     public record SetSessionMetadata(DateTimeOffset setTimeAt) : SessionStateMetaData;
     public record RejectedSessionMetadata(DateTimeOffset RejectedAt,string? execuse = null) : SessionStateMetaData;
     public record StartedSessionMetadata(DateTimeOffset StartedAt) : SessionStateMetaData;

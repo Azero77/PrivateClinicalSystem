@@ -33,7 +33,7 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         Session? session = await _context.Sessions.FirstOrDefaultAsync(d => d.Id == sessionId);
         if (session is not null)
         {
-            _context.Remove(session);
+            _context.Entry(session).Property("IsDeleted").CurrentValue = true;
         }
         return session;
     }
