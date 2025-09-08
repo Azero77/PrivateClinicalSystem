@@ -8,7 +8,7 @@ public interface ISessionRepository
 {
     Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Doctor doctor);
     Task<IReadOnlyCollection<Session>> GetAllSessionsForDoctor(Doctor doctor);
-    Task<Session?> GetSessionById(Guid sessionId);
+    Task<Session?> GetById(Guid sessionId);
     Task<IReadOnlyCollection<Session>> GetSessionsForToday();
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid);
     Task<IReadOnlyCollection<Session>> GetSessionsForDoctorOnDay(Guid doctorid,DateTimeOffset date);

@@ -34,7 +34,7 @@ public class DbRoomRepository : PaginatedRepository<Room>,IRoomRepository
         return await _context.Rooms.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Room?> GetRoomById(Guid roomId)
+    public async Task<Room?> GetById(Guid roomId)
     {
         return await _context.Rooms.SingleOrDefaultAsync(r => r.Id == roomId);
     }

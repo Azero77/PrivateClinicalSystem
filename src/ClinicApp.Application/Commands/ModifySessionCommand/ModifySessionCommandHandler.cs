@@ -21,7 +21,7 @@ public abstract class ModifySessionCommandHandler : IRequestHandler<ModifySessio
 
     public async Task<ErrorOr<Success>> Handle(ModifySessionCommand request, CancellationToken cancellationToken)
     {
-        var session = await _repo.GetSessionById(request.SessionId);
+        var session = await _repo.GetById(request.SessionId);
         if (session is null)
             return Error.NotFound();
 

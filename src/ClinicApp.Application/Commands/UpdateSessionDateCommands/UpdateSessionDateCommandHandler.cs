@@ -19,7 +19,7 @@ public class UpdateSessionDateCommandHandler : IRequestHandler<UpdateSessionDate
 
     public async Task<ErrorOr<Success>> Handle(UpdateSessionDateCommand request, CancellationToken cancellationToken)
     {
-        var session = await _repo.GetSessionById(request.SessionId);
+        var session = await _repo.GetById(request.SessionId);
         if (session is null)
             return Error.NotFound();
         var result = session.UpdateDate(request.NewTimeRange);

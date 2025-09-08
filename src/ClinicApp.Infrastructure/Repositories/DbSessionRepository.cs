@@ -51,7 +51,7 @@ public class DbSessionRepository : PaginatedRepository<Session>,ISessionReposito
         return sessions.AsReadOnly();
     }
 
-    public Task<Session?> GetSessionById(Guid sessionId)
+    public Task<Session?> GetById(Guid sessionId)
     {
         return _sessionsNotTracked.FirstOrDefaultAsync(s => s.Id == sessionId);
     }
