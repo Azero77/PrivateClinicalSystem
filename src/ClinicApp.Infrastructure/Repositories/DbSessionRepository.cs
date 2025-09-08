@@ -11,7 +11,7 @@ namespace ClinicApp.Infrastructure.Repositories;
 
 public class DbSessionRepository : PaginatedRepository<Session>,
     ISessionRepository,
-    IRepository<Session, SessionDataModel>
+    IRepository<Session>
 {
     private readonly AppDbContext _context;
     private IQueryable<Session> _sessionsNotTracked => _context.Sessions.AsNoTracking();

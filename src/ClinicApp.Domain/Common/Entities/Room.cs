@@ -1,6 +1,6 @@
 ﻿namespace ClinicApp.Domain.Common.Entities;
 
-public class Room : Entity
+public class Room : AggregateRoot
 {
     public Room(Guid id , string name) : base(id)
     {
