@@ -5,7 +5,6 @@ using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.PatientAgg;
 using ClinicApp.Domain.SecretaryAgg;
 using ClinicApp.Domain.SessionAgg;
-using ClinicApp.Infrastructure.Middlewares;
 using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

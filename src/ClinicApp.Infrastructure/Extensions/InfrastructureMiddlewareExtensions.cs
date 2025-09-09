@@ -1,7 +1,6 @@
 ﻿namespace ClinicApp.Infrastructure.Extensions;
 
 using ClinicApp.Domain.Common.Interfaces;
-using ClinicApp.Infrastructure.Middlewares;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.Seeding;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +10,6 @@ public static class InfrastructureMiddlewareExtensions
 {
     public static IApplicationBuilder  UseInfrastructure(this IApplicationBuilder app)
     {
-        app.UseMiddleware<EventualConsistencyMiddleware>();
         return app;
     }
 
