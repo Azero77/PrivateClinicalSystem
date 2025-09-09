@@ -34,7 +34,7 @@ namespace ClinicApp.Domain.SessionAgg
                 CreatedAt = clock.UtcNow,
                 _clock = clock
             };
-            result.PushChanges(SessionState.CreateSessionState(result));
+            result._domainEvents.Add(new SessionCreatedDomainEvent(result));
             return result;
         }
 
@@ -84,7 +84,7 @@ namespace ClinicApp.Domain.SessionAgg
         {
             AddStatus(SessionStatus.Set);
             RemoveStatus(SessionStatus.Pending);
-            PushChanges(SessionState.SetSessionState(Id,_clock.UtcNow));
+            _domainEvents.Add(new SetSessionDomainEvent(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -93,7 +93,7 @@ namespace ClinicApp.Domain.SessionAgg
             if (HasStatus(SessionStatus.Deleted))
                 return SessionErrors.CantDeleteADeletedSession;
             AddStatus(SessionStatus.Deleted);
-            PushChanges(SessionState.DeletedSessionState(Id,_clock.UtcNow));
+            _domainEvents.Add(new DeletedSessionDomainEvent(Id,_clock.UtcNow));
             return Result.Deleted;
         }
 
@@ -102,7 +102,7 @@ namespace ClinicApp.Domain.SessionAgg
             if(HasStatus(SessionStatus.Deleted))
                 return SessionErrors.CantStartADeletedSession;
             AddStatus(SessionStatus.Started);
-            PushChanges(SessionState.StartedSessionState(Id,_clock.UtcNow));
+            _domainEvents.Add(new StartedSessionDomainEvent(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -114,7 +114,7 @@ namespace ClinicApp.Domain.SessionAgg
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Finish a session in the future");*/
             AddStatus(SessionStatus.Finished);
-            PushChanges(SessionState.FinishedSessionState(Id,_clock.UtcNow));
+            _domainEvents.Add(new FinishedSessionDomainEvent(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -126,7 +126,7 @@ namespace ClinicApp.Domain.SessionAgg
                 return SessionErrors.CantRejectASessionInTheFuture;
             AddStatus(SessionStatus.Pending);
             RemoveStatus(SessionStatus.Pending);
-            PushChanges(SessionState.RejectedSessionState(Id,_clock.UtcNow));
+            _domainEvents.Add(new RejectedSessionDomainEvent(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -142,19 +142,10 @@ namespace ClinicApp.Domain.SessionAgg
                 return SessionErrors.CantUpdateFinishedSessions;
             }
             AddStatus(SessionStatus.Updated);
-            PushChanges(SessionState.UpdatedSessionState(Id,this.SessionDate, newTimeRange, _clock.UtcNow));
             this.SessionDate = newTimeRange;
+            _domainEvents.Add(new UpdatedSessionDomainEvent(Id,this.SessionDate, newTimeRange, _clock.UtcNow));
             return Result.Success;
         }
-
-
-        //For dealing with domain events and session history at the same time
-        private void PushChanges(SessionState state)
-        {
-            _domainEvents.Add(SessionDomainEventFactory.From(state));
-            SessionHistory.AddNewState(state);
-        }
-
         private void AddStatus(SessionStatus status)
         {
             SessionStatus |= status;
