@@ -1,0 +1,39 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
+  <diagram name="Page-1" id="0nGK6oB3CFvSjH_BTdJx">
+    <mxGraphModel dx="1704" dy="431" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-1" value="&lt;div&gt;GET /sessions?filter::doctorId::eq::3&amp;amp;filter::workingTime_startTime::gt::&quot;9:00&quot;&amp;amp;order::firstName::desc&amp;amp;pagination::pageNumber::10&amp;amp;pagination::pageSize::5&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="250" width="830" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-2" value="Query String" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="210" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-4" value="ICompiler&amp;lt;T&amp;gt;&lt;div&gt;here we are using a doctor as example&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-122.5" y="350" width="255" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-6" value="Doctor" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-620" y="210" width="195" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-7" value="+ doctorId:uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="wONwnX8xnfEjbuY0eT6S-6">
+          <mxGeometry y="26" width="195" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-8" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="wONwnX8xnfEjbuY0eT6S-6">
+          <mxGeometry y="52" width="195" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-9" value="+ workingTime:WorkingTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="wONwnX8xnfEjbuY0eT6S-6">
+          <mxGeometry y="60" width="195" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-11" value="+ firstName:string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="wONwnX8xnfEjbuY0eT6S-6">
+          <mxGeometry y="86" width="195" height="26" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -62,12 +62,12 @@ public partial class SessionController : ApiController
         [FromQuery] GetSessionsRequest request)
     {
         GetSessionsQuery query = new GetSessionsQuery(
-            DoctorId: request.DoctorId,
-            FromDatetime: request.FromDatetime,
-            ToDateTime: request.ToDateTime,
-            roomId: request.RoomId,
-            patientId: request.PatientId,
-            status: request.Status,
+            FilterDoctorId: request.DoctorId,
+            FilterFromDatetime: request.FromDatetime,
+            FilterToDateTime: request.ToDateTime,
+            FilterRoomId: request.RoomId,
+            FilterPatientId: request.PatientId,
+            FilterStatus: request.Status,
             pageNumber: request.pageNumber,
             pageSize: request.pageSize,
             sortOptions: request.sortOptions ?? Array.Empty<string>()
