@@ -11,6 +11,7 @@ using ClinicApp.Infrastructure.Converters;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.Repositories;
+using ClinicApp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,6 +39,8 @@ public static class DependencyInjection
         services.AddSingleton<IConverter<Session, SessionDataModel>, SessionConverter>();
         services.AddSingleton<IConverter<Patient, PatientDataModel>, PatientConverter>();
 
+
+        services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         return services;
     }
 }

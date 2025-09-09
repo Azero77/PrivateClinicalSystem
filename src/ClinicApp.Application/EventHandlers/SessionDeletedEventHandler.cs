@@ -1,21 +1,14 @@
 using ClinicApp.Application.Common;
+using ClinicApp.Application.EventHandlers;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using MediatR;
 
 namespace ClinicApp.Application.NotificationHandlers;
 
-public class SessionDeletedEventHandler : INotificationHandler<SessionDeletedEvent>
+public class SessionDeletedEventHandler : SessionModifiedEventHandler<DeletedSessionDomainEvent>
 {
-    ISessionRepository _repo;
-
-    public SessionDeletedEventHandler(ISessionRepository repo)
+    public SessionDeletedEventHandler(IEventAdderService<SessionDomainEvent> eventAdderService) : base(eventAdderService)
     {
-        _repo = repo;
-    }
-
-    public async Task Handle(SessionDeletedEvent notification, CancellationToken cancellationToken)
-    {
-        await _repo.DeleteSession(notification.Metadata.SessionId);
     }
 }

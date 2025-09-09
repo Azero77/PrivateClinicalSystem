@@ -14,6 +14,5 @@ public class SessionDataModel : DataModel
     public Guid DoctorId { get; set; }
     public DoctorDataModel Doctor { get; set; } = null!;
     public SessionStatus SessionStatus { get; set; }
-    public SessionHistory SessionHistory { get; set; } = new();
     public DateTimeOffset CreatedAt { get; set; }
 }

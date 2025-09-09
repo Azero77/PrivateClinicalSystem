@@ -1,11 +1,11 @@
-﻿using ClinicApp.Domain.SessionAgg;
+﻿using ClinicApp.Application.EventHandlers;
+using ClinicApp.Domain.SessionAgg;
 using MediatR;
 
 namespace ClinicApp.Application.NotificationHandlers;
-public class SessionSetEventHandler : INotificationHandler<SessionSetEvent>
+public class SessionSetEventHandler : SessionModifiedEventHandler<SetSessionDomainEvent>
 {
-    public Task Handle(SessionSetEvent notification, CancellationToken cancellationToken)
+    public SessionSetEventHandler(IEventAdderService<SessionDomainEvent> eventAdderService) : base(eventAdderService)
     {
-        return Task.CompletedTask;
     }
 }

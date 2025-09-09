@@ -33,7 +33,6 @@ public class SessionConverter : IConverter<Session, SessionDataModel>
             PatientId = entity.PatientId,
             DoctorId = entity.DoctorId,
             SessionStatus = entity.SessionStatus,
-            SessionHistory = entity.SessionHistory,
             CreatedAt = entity.CreatedAt
         };
     }

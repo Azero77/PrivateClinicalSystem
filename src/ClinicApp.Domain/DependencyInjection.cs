@@ -7,6 +7,7 @@ public static class DependencyInjection
     public static IServiceCollection AddDomainServices(this IServiceCollection services)
     {
         services.AddScoped<IScheduler, DoctorScheduler>();
+
         return services;
     }
 }

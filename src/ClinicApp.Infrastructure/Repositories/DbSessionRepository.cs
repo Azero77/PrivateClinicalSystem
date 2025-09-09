@@ -52,9 +52,13 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
 
-    public Task<IReadOnlyCollection<SessionState>> GetSessionHistory(Guid sessionId)
+    public async Task<IReadOnlyCollection<SessionState>> GetSessionHistory(Guid sessionId)
     {
-        throw new NotImplementedException();
+        var states = await _context.SessionStates.AsNoTracking()
+            .Where(s => s.SessionId == sessionId)
+            .ToListAsync();
+
+        return states.AsReadOnly();
     }
 
     public async Task<IReadOnlyCollection<Session>> GetSessionsForDay(DateTimeOffset date)

@@ -26,7 +26,6 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<SessionDataMo
             nb.Property(nb => nb.content).HasColumnName("Content").IsRequired(false);
         });
 
-        //Before adding history management (temporary)
-        builder.Ignore(s => s.SessionHistory);
+        //Before adding history management (temporary
     }
 }

@@ -1,12 +1,6 @@
 ﻿using ClinicApp.Application.Common;
-using ClinicApp.Domain.Common;
-using ClinicApp.Domain.Common.Entities;
-using ClinicApp.Domain.DoctorAgg;
-using ClinicApp.Domain.PatientAgg;
-using ClinicApp.Domain.SecretaryAgg;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Persistance.DataModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicApp.Infrastructure.Persistance;
@@ -18,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<PatientDataModel> Patients { get; set; } = null!;
     public DbSet<SecretaryDataModel> Secretaries { get; set; } = null!;
     public DbSet<RoomDataModel> Rooms { get; set; } = null!;
+    public DbSet<SessionState> SessionStates { get; set; } = null!;
     public DbSet<OutBoxMessage> OutBoxMessages { get; set; } = null!;
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {}

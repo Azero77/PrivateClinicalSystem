@@ -74,7 +74,6 @@ namespace ClinicApp.Domain.SessionAgg
         public Guid PatientId { get; private set; }
         public Guid DoctorId { get; private set; }
         public SessionStatus SessionStatus { get; private set; }
-        public SessionHistory SessionHistory { get; private set; } = new();
         public DateTimeOffset CreatedAt { get; private set; }
 
         public bool IsDeleted => (SessionStatus & SessionStatus.Deleted) == SessionStatus.Deleted;

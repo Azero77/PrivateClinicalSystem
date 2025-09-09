@@ -1,8 +1,7 @@
-﻿using ClinicApp.Domain.SessionAgg;
-using System.Text.Json;
+﻿using System.Text.Json;
 
-namespace ClinicApp.Infrastructure.DataModels;
-internal record SessionState(Guid Id,
+namespace ClinicApp.Domain.SessionAgg;
+public record SessionState(Guid Id,
                             Guid SessionId,
                             string EventType,
                             string content,
