@@ -3,6 +3,7 @@ using ClinicApp.Domain.Common;
 using ClinicApp.Infrastructure.Persistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Threading;
 
 namespace ClinicApp.Infrastructure.Common;
@@ -18,6 +19,7 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task<int> SaveChangesAsync(CancellationToken token = default,params AggregateRoot[] entities)
     {
+        int result = 0;
         var events =
             entities.SelectMany(e => e.PopDomainEvents());
         var eventQueue = new Queue<IDomainEvent>(events);
@@ -29,6 +31,7 @@ public class UnitOfWork : IUnitOfWork
                 await _publisher.Publish(domainEvent, token);
             }
             await transaction.CommitAsync();
+            result = await _context.SaveChangesAsync(token);
         }
         catch (Exception e)
         {
@@ -38,6 +41,7 @@ public class UnitOfWork : IUnitOfWork
         {
             await transaction.DisposeAsync();
         }
-        return await _context.SaveChangesAsync(token);
+        return result;
     }
+
 }

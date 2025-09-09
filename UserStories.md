@@ -1,5 +1,5 @@
 1. Authentication & Authorization
-1.1 User Registration
+1.1 User Registration(Done)
 Story:
 As a patient, I want to sign up using my email and password, so that I can access the clinic system.
 
@@ -11,7 +11,7 @@ On success, store user with role = Patient.
 
 Show confirmation that registration succeeded.
 
-1.2 Login
+1.2 Login(Done)
 Story:
 As any user, I want to log in with my credentials, so that I can securely access my account.
 
@@ -23,7 +23,7 @@ Failed login attempts return clear error.
 
 Enforce lockout after X failed attempts.
 
-1.3 Role-based Access
+1.3 Role-based Access(Till Api Done we will write permissions)
 Story:
 As an admin, I want to restrict actions based on role, so that users can only perform allowed operations.
 
@@ -35,7 +35,7 @@ Doctors can only access their own schedules.
 
 Admins can perform all actions.
 
-2. Session Booking
+2. Session Booking(done)
 2.1 Book Session
 Story:
 As a sercretary, I want to select a doctor, date, and time from their available schedule, so that I can book a Session without calling the doctor.

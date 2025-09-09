@@ -20,14 +20,10 @@ namespace ClinicApp.Domain.SessionAgg
 
     public record SessionCreatedEvent(SessionCreatedMetadata session) : IDomainEvent;
     public record SessionSetEvent(SetSessionMetadata Metadata) : IDomainEvent;
-
     public record SessionUpdatedEvent(UpdatedSessionMetadata Metadata) : IDomainEvent;
-
     public record SessionDeletedEvent(DeletedSessionMetadata Metadata) : IDomainEvent;
-
     public record SessionRejectedEvent(RejectedSessionMetadata Metadata) : IDomainEvent;
     public record SessionStartedEvent(StartedSessionMetadata Metadata) : IDomainEvent;
-
     public record SessionFinishedEvent(FinishedSessionMetadata Metadata) : IDomainEvent;
 
 }

@@ -40,13 +40,13 @@ namespace ClinicApp.Domain.SessionAgg
 
 
     public abstract record SessionStateMetaData;
-    public record SessionCreatedMetadata : SessionStateMetaData;
-    public record UpdatedSessionMetadata(TimeRange oldValue,TimeRange newValue,DateTimeOffset updateAt) : SessionStateMetaData;
-    public record DeletedSessionMetadata(Guid sessionId,DateTimeOffset deletedAt) : SessionStateMetaData;
-    public record SetSessionMetadata(DateTimeOffset setTimeAt) : SessionStateMetaData;
-    public record RejectedSessionMetadata(DateTimeOffset RejectedAt,string? execuse = null) : SessionStateMetaData;
-    public record StartedSessionMetadata(DateTimeOffset StartedAt) : SessionStateMetaData;
-    public record FinishedSessionMetadata(DateTimeOffset FinishedAt) : SessionStateMetaData;
+    public record SessionCreatedMetadata(Session session) : SessionStateMetaData;
+    public record UpdatedSessionMetadata(Guid SessionId,TimeRange OldValue,TimeRange NewValue,DateTimeOffset UpdateAt) : SessionStateMetaData;
+    public record DeletedSessionMetadata(Guid SessionId,DateTimeOffset DeletedAt) : SessionStateMetaData;
+    public record SetSessionMetadata(Guid SessionId,DateTimeOffset SetTimeAt) : SessionStateMetaData;
+    public record RejectedSessionMetadata(Guid SessionId,DateTimeOffset RejectedAt,string? Execuse = null) : SessionStateMetaData;
+    public record StartedSessionMetadata(Guid SessionId,DateTimeOffset StartedAt) : SessionStateMetaData;
+    public record FinishedSessionMetadata(Guid SessionId,DateTimeOffset FinishedAt) : SessionStateMetaData;
 }
 
 
