@@ -1,18 +1,18 @@
 ﻿using ClinicApp.Application.Commands.AddSessionsCommands;
+using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Domain.Common;
-using ClinicApp.Domain.Common.ValueObjects;
-using ClinicApp.Presentation.Extensions;
-using ErrorOr;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using ClinicApp.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.Security.Claims;
+using ClinicApp.Application.Queries.Sessions;
+using ClinicApp.Presentation.Requests;
+using ClinicApp.Application.Converters;
 
 namespace ClinicApp.Presentation.Controllers;
 
-public class SessionController : ApiController
+public partial class SessionController : ApiController
 {
     private readonly IMediator _mediator;
 
@@ -46,5 +46,35 @@ public class SessionController : ApiController
         return result.Match(
             Ok,
             ProblemResult);
+    }
+
+    [HttpGet("Sessions/History/{id}")]
+    public async Task<IActionResult> SessionHistory(
+        [FromQuery] GetSessionHistoryRequest request)
+    {
+        GetSessionHistoryQuery query = new(request.id);
+        var result = await _mediator.Send(query);
+        return result.Match(value => Ok(value),errors => ProblemResult(errors));
+    }
+
+    [HttpGet("Sessions")]
+    public async Task<IActionResult> GetSessions(
+        [FromQuery] GetSessionsRequest request)
+    {
+        GetSessionsQuery query = new GetSessionsQuery(
+            DoctorId: request.DoctorId,
+            FromDatetime: request.FromDatetime,
+            ToDateTime: request.ToDateTime,
+            roomId: request.RoomId,
+            patientId: request.PatientId,
+            status: request.Status,
+            pageNumber: request.pageNumber,
+            pageSize: request.pageSize,
+            sortOptions: request.sortOptions ?? Array.Empty<string>()
+        ); ;
+
+        var result = await _mediator.Send(query);
+
+        return result.Match(Ok, ProblemResult);
     }
 }

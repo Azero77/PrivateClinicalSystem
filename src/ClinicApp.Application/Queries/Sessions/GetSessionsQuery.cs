@@ -4,7 +4,17 @@ using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Queries.Sessions;
-public record GetSessionsQuery(DataQueryOptions<Session> QueryOpts) : IRequest<ErrorOr<IReadOnlyCollection<Session>>>;
+public record GetSessionsQuery(
+    string? DoctorId,
+    DateTimeOffset? FromDatetime,
+    DateTimeOffset? ToDateTime,
+    string? roomId,
+    string? patientId,
+    SessionStatus? status,
+    int pageNumber,
+    int pageSize,
+    string[] sortOptions //would look something like this ?sortOptions=startTime:ASC
+                                ) : IRequest<ErrorOr<IReadOnlyCollection<Session>>>;
 
 
 public class GetSessionQueryHandler : IRequestHandler<GetSessionsQuery, ErrorOr<IReadOnlyCollection<Session>>>
@@ -18,11 +28,8 @@ public class GetSessionQueryHandler : IRequestHandler<GetSessionsQuery, ErrorOr<
 
     public async Task<ErrorOr<IReadOnlyCollection<Session>>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<Session>? result = await _repo.GetItems(request.QueryOpts);
-
-        if (result is null)
-            return Error.Validation();
-
-        return result.ToErrorOr();
+        //we need to validate each filter command to have the type matched
+        //for order command
+        throw new Exception();
     }
 }
