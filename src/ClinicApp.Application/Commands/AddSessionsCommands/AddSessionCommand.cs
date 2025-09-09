@@ -7,7 +7,8 @@ using MediatR;
 
 namespace ClinicApp.Application.Commands.AddSessionsCommands;
 public record AddSessionCommand(
-                       TimeRange sessionDate,
+                       DateTimeOffset StartTime,
+                       DateTimeOffset EndTime,
                        SessionDescription sessionDescription,
                        Guid roomId,
                        Guid patientId,

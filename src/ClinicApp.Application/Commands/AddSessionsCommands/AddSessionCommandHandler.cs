@@ -1,14 +1,18 @@
-﻿using ClinicApp.Application.Common;
+﻿using ClinicApp.Application.Commands.Common;
+using ClinicApp.Application.Common;
+using ClinicApp.Application.Converters;
 using ClinicApp.Domain.Common.Interfaces;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.Services.Sessions;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
+using FluentValidation;
 using MediatR;
 
 namespace ClinicApp.Application.Commands.AddSessionsCommands;
 
-public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand, ErrorOr<Session>>
+public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessionCommand,Session>
 {
     private readonly IDoctorRepository _doctorRepo;
     private readonly IScheduler _scheduler;
@@ -16,7 +20,8 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
     private readonly IUnitOfWork _unitOfWork;
 
 
-    public AddSessionCommandHandler(IDoctorRepository doctorRepo, IScheduler scheduler, IClock clock, IUnitOfWork unitOfWork)
+    public AddSessionCommandHandler(IDoctorRepository doctorRepo, IScheduler scheduler, IClock clock, IUnitOfWork unitOfWork, IValidator<AddSessionCommand> validator)
+        : base(validator)
     {
         _doctorRepo = doctorRepo;
         _scheduler = scheduler;
@@ -24,15 +29,17 @@ public sealed class AddSessionCommandHandler : IRequestHandler<AddSessionCommand
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ErrorOr<Session>> Handle(AddSessionCommand request, CancellationToken cancellationToken)
+    public override async Task<ErrorOr<Session>> GetResponse(AddSessionCommand request, CancellationToken cancellationToken)
     {
         var doctor = await _doctorRepo.GetById(request.doctorId);
 
         if (doctor is null)
             return Error.NotFound("Application.Doctor.NotFound","Doctor with id not found");
-
+        var timerange = TimeRange.Create(request.StartTime, request.EndTime);
+        if (timerange.IsError)
+            return timerange.Errors;
         ErrorOr<Session> session =  await _scheduler.CreateSession(Guid.NewGuid(),
-            request.sessionDate,
+            timerange.Value,
             request.sessionDescription,
             request.roomId,
             request.patientId,

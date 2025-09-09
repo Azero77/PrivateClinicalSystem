@@ -14,12 +14,10 @@ namespace ClinicApp.Presentation.Controllers;
 
 public class SessionController : ApiController
 {
-    private readonly IValidator<AddSessionRequest> _validator;
     private readonly IMediator _mediator;
 
-    public SessionController(IValidator<AddSessionRequest> validator, IMediator mediator)
+    public SessionController(IMediator mediator)
     {
-        _validator = validator;
         _mediator = mediator;
     }
 
@@ -29,14 +27,10 @@ public class SessionController : ApiController
         [FromBody]
         AddSessionRequest request,CancellationToken token)
     {
-        var validation = _validator.Validate(request);
-
-
-        if (!validation.IsValid)
-            return ProblemResult(validation.Errors);
         var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst("role")!.Value.ToString());
         var command = new AddSessionCommand(
-            TimeRange.Create(request.StartTime,request.EndTime).Value,
+            request.StartTime,
+            request.EndTime,
             request.SessionDescription,
             request.roomId,
             request.patientId,

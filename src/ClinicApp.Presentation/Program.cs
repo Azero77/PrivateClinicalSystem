@@ -81,7 +81,6 @@ namespace ClinicApp.Presentation
                     }
                 });
 
-            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly,includeInternalTypes:true);
 
             AddSerilog(builder);
             builder.Services.AddAuthorization();
