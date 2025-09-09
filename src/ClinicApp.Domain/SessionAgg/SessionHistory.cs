@@ -20,22 +20,22 @@ namespace ClinicApp.Domain.SessionAgg
     public record SessionState(SessionStatus newstate,
         SessionStateMetaData metadata)
     {
-        public static SessionState CreateSessionState(SessionStatus initialStatus) => new SessionState(initialStatus, new SessionCreatedMetadata());
-        public static SessionState SetSessionState(DateTimeOffset setTimeAt) => new SessionState(SessionStatus.Set, new SetSessionMetadata(setTimeAt));
-        public static SessionState UpdatedSessionState(TimeRange oldValue, TimeRange newValue, DateTimeOffset updateAt) =>
-       new(SessionStatus.Updated, new UpdatedSessionMetadata(oldValue, newValue, updateAt));
+        public static SessionState CreateSessionState(Session session) => new SessionState(session.SessionStatus, new SessionCreatedMetadata(session));
+        public static SessionState SetSessionState(Guid sessionId,DateTimeOffset setTimeAt) => new SessionState(SessionStatus.Set, new SetSessionMetadata(sessionId,setTimeAt));
+        public static SessionState UpdatedSessionState(Guid sessionId,TimeRange oldValue, TimeRange newValue, DateTimeOffset updateAt) =>
+       new(SessionStatus.Updated, new UpdatedSessionMetadata(sessionId,oldValue, newValue, updateAt));
 
         public static SessionState DeletedSessionState(Guid sessionId,DateTimeOffset deletedAt) =>
             new(SessionStatus.Deleted, new DeletedSessionMetadata(sessionId,deletedAt));
 
-        public static SessionState RejectedSessionState(DateTimeOffset rejectedAt, string? execuse = null) =>
-            new(SessionStatus.Rejected, new RejectedSessionMetadata(rejectedAt, execuse));
+        public static SessionState RejectedSessionState(Guid sessionId,DateTimeOffset rejectedAt, string? execuse = null) =>
+            new(SessionStatus.Rejected, new RejectedSessionMetadata(sessionId,rejectedAt, execuse));
 
-        public static SessionState StartedSessionState(DateTimeOffset startedAt) =>
-        new(SessionStatus.Started, new StartedSessionMetadata(startedAt));
+        public static SessionState StartedSessionState(Guid sessionId,DateTimeOffset startedAt) =>
+        new(SessionStatus.Started, new StartedSessionMetadata(sessionId,startedAt));
 
-        public static SessionState FinishedSessionState(DateTimeOffset finishedAt) =>
-            new(SessionStatus.Finished, new FinishedSessionMetadata(finishedAt));
+        public static SessionState FinishedSessionState(Guid sessionId,DateTimeOffset finishedAt) =>
+            new(SessionStatus.Finished, new FinishedSessionMetadata(sessionId,finishedAt));
     };
 
 

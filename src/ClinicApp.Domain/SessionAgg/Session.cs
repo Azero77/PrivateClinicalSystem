@@ -34,7 +34,7 @@ namespace ClinicApp.Domain.SessionAgg
                 CreatedAt = clock.UtcNow,
                 _clock = clock
             };
-            result.PushChanges(SessionState.CreateSessionState(result.SessionStatus));
+            result.PushChanges(SessionState.CreateSessionState(result));
             return result;
         }
 
@@ -84,7 +84,7 @@ namespace ClinicApp.Domain.SessionAgg
         {
             AddStatus(SessionStatus.Set);
             RemoveStatus(SessionStatus.Pending);
-            PushChanges(SessionState.SetSessionState(_clock.UtcNow));
+            PushChanges(SessionState.SetSessionState(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -102,7 +102,7 @@ namespace ClinicApp.Domain.SessionAgg
             if(HasStatus(SessionStatus.Deleted))
                 return SessionErrors.CantStartADeletedSession;
             AddStatus(SessionStatus.Started);
-            PushChanges(SessionState.StartedSessionState(_clock.UtcNow));
+            PushChanges(SessionState.StartedSessionState(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -114,7 +114,7 @@ namespace ClinicApp.Domain.SessionAgg
                 return Error.Validation(code: "Session.Validation",
                     description: "Can't Finish a session in the future");*/
             AddStatus(SessionStatus.Finished);
-            PushChanges(SessionState.FinishedSessionState(_clock.UtcNow));
+            PushChanges(SessionState.FinishedSessionState(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -126,7 +126,7 @@ namespace ClinicApp.Domain.SessionAgg
                 return SessionErrors.CantRejectASessionInTheFuture;
             AddStatus(SessionStatus.Pending);
             RemoveStatus(SessionStatus.Pending);
-            PushChanges(SessionState.RejectedSessionState(_clock.UtcNow));
+            PushChanges(SessionState.RejectedSessionState(Id,_clock.UtcNow));
             return Result.Success;
         }
 
@@ -142,7 +142,7 @@ namespace ClinicApp.Domain.SessionAgg
                 return SessionErrors.CantUpdateFinishedSessions;
             }
             AddStatus(SessionStatus.Updated);
-            PushChanges(SessionState.UpdatedSessionState(this.SessionDate, newTimeRange, _clock.UtcNow));
+            PushChanges(SessionState.UpdatedSessionState(Id,this.SessionDate, newTimeRange, _clock.UtcNow));
             this.SessionDate = newTimeRange;
             return Result.Success;
         }

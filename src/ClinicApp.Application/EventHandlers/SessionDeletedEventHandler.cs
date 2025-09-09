@@ -16,6 +16,6 @@ public class SessionDeletedEventHandler : INotificationHandler<SessionDeletedEve
 
     public async Task Handle(SessionDeletedEvent notification, CancellationToken cancellationToken)
     {
-        await _repo.DeleteSession(notification.Metadata.sessionId);
+        await _repo.DeleteSession(notification.Metadata.SessionId);
     }
 }
