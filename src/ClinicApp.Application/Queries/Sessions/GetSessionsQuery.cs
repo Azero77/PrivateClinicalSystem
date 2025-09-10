@@ -5,21 +5,15 @@ using ErrorOr;
 using MediatR;
 
 namespace ClinicApp.Application.Queries.Sessions;
-public record GetSessionsQuery() : IRequest<ErrorOr<IReadOnlyCollection<SessionQueryType>>>;
+public record GetSessionsQuery() : IRequest<IQueryable<SessionQueryType>>;
 
 
-public class GetSessionQueryHandler : IRequestHandler<GetSessionsQuery, ErrorOr<IReadOnlyCollection<Session>>>
+public class GetSessionQueryHandler(IQueryService<SessionQueryType> queryService) : IRequestHandler<GetSessionsQuery, IQueryable<SessionQueryType>>
 {
-    public GetSessionQueryHandler()
+    public Task<IQueryable<SessionQueryType>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {
+        return Task.FromResult(queryService.GetItems());
     }
-
-    public async Task<ErrorOr<IReadOnlyCollection<Session>>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
-    {
-        
-        throw new Exception();
-    }
-
 }
 
 
