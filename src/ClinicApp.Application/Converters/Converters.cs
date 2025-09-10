@@ -2,6 +2,7 @@
 using ClinicApp.Application.DTOs;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
+using Microsoft.AspNetCore.Http;
 
 namespace ClinicApp.Application.Converters;
 public static class Converters
@@ -32,6 +33,4 @@ public static class Converters
             Sessions = sessions
         };
     }
-
-
 }
