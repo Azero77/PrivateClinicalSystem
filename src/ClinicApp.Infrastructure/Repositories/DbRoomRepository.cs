@@ -1,4 +1,3 @@
-using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Converters;

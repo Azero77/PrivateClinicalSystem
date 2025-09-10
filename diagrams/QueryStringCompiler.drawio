@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
   <diagram name="Page-1" id="0nGK6oB3CFvSjH_BTdJx">
-    <mxGraphModel dx="3781" dy="1051" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2651" dy="481" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -18,6 +18,16 @@
         <mxCell id="wONwnX8xnfEjbuY0eT6S-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-4" target="wONwnX8xnfEjbuY0eT6S-15">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-4" target="wONwnX8xnfEjbuY0eT6S-65">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-330" y="750" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="5" y="670" />
+              <mxPoint x="-329" y="670" />
+              <mxPoint x="-329" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-4" value="ICompiler&amp;lt;T&amp;gt;&lt;div&gt;here we are using a doctor as example&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-122.5" y="350" width="255" height="60" as="geometry" />
         </mxCell>
@@ -25,7 +35,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-42" value="IR(intermediate representation)&lt;br&gt;&lt;br&gt;will take the tokens from the tokenizer (nodes)&lt;div&gt;and return IR (Commands)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-470" y="560" width="255" height="60" as="geometry" />
+          <mxGeometry x="-470" y="830" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-6" value="Doctor" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-620" y="210" width="195" height="112" as="geometry" />
@@ -67,6 +77,9 @@
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-18" value="Tokenizer&lt;div&gt;Seperate queryString into nodes&lt;/div&gt;&lt;div&gt;where each node has a&amp;nbsp; defining element&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="-470" y="450" width="255" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wONwnX8xnfEjbuY0eT6S-65" value="Semantic&lt;div&gt;Will check the propertis if they exist or not ,&lt;/div&gt;&lt;div&gt;if the value of each element in the node is valid&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-457.5" y="620" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.987;entryY=0.462;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-22" target="wONwnX8xnfEjbuY0eT6S-26">
           <mxGeometry relative="1" as="geometry">
@@ -118,18 +131,17 @@
         <mxCell id="wONwnX8xnfEjbuY0eT6S-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.003;entryY=0.596;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-4" target="wONwnX8xnfEjbuY0eT6S-42">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="5" y="596" />
-              <mxPoint x="-169" y="596" />
+              <mxPoint x="5" y="866" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-44">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-677.5" y="730" as="targetPoint" />
+            <mxPoint x="-677.5" y="1000" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-44" value="and now each node will have different validation" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-805" y="560" width="255" height="60" as="geometry" />
+          <mxGeometry x="-805" y="830" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-47" target="wONwnX8xnfEjbuY0eT6S-52">
           <mxGeometry relative="1" as="geometry" />
@@ -138,32 +150,32 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-47" value="and now each node will have different validation" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-805" y="730" width="255" height="60" as="geometry" />
+          <mxGeometry x="-805" y="1000" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.016;entryY=0.604;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-50" target="wONwnX8xnfEjbuY0eT6S-58">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-150" y="840" as="targetPoint" />
+            <mxPoint x="-150" y="1110" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-50" value="orderCommand" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-510" y="810" width="255" height="60" as="geometry" />
+          <mxGeometry x="-510" y="1080" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.009;entryY=0.589;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-51" target="wONwnX8xnfEjbuY0eT6S-58">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-150" y="750" as="targetPoint" />
+            <mxPoint x="-150" y="1020" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-51" value="filterCommand" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-510" y="720" width="255" height="60" as="geometry" />
+          <mxGeometry x="-510" y="990" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-60" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-58" target="wONwnX8xnfEjbuY0eT6S-59">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-58" value="will check if the property is found" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-160" y="760" width="255" height="60" as="geometry" />
+          <mxGeometry x="-160" y="1030" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-52" value="pagination Command will consider the pageSize to not exceed the limit" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-510" y="640" width="255" height="60" as="geometry" />
+          <mxGeometry x="-510" y="910" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.017;entryY=0.541;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-47" target="wONwnX8xnfEjbuY0eT6S-51">
           <mxGeometry relative="1" as="geometry" />
@@ -172,10 +184,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-59" value="Will use reflection to create expressions for the ef to convert to sql queries" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="175" y="760" width="255" height="60" as="geometry" />
+          <mxGeometry x="175" y="1030" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-61" value="and now DataQueryOptions&amp;lt;T&amp;gt; will just append the command query to the query root and then executes" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="510" y="760" width="255" height="60" as="geometry" />
+          <mxGeometry x="510" y="1030" width="255" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wONwnX8xnfEjbuY0eT6S-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.551;entryY=-0.072;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="wONwnX8xnfEjbuY0eT6S-52" target="wONwnX8xnfEjbuY0eT6S-61">
           <mxGeometry relative="1" as="geometry" />

@@ -3,7 +3,6 @@ using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using ClinicApp.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using ClinicApp.Application.Queries.Sessions;

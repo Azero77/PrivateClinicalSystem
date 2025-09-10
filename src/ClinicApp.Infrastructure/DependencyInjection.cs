@@ -1,5 +1,4 @@
 ﻿using ClinicApp.Application.Common;
-using ClinicApp.Application.DataQueryHelpers;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
@@ -29,9 +28,6 @@ public static class DependencyInjection
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
-        services.AddScoped<IPaginatedRepository<Session>, PaginatedRepository<Session>>();
-        services.AddScoped<IPaginatedRepository<Doctor>, PaginatedRepository<Doctor>>();
-        services.AddScoped<IPaginatedRepository<Room>, PaginatedRepository<Room>>();
         services.AddSingleton<IClock, Clock>();
 
         services.AddSingleton<IConverter<Doctor, DoctorDataModel>, DoctorConverter>();

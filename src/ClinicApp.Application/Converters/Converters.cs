@@ -1,6 +1,5 @@
 ﻿using ClinicApp.Application.Commands.DoctorAddCommands;
 using ClinicApp.Application.DTOs;
-using ClinicApp.Application.Queries.Sessions;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
 
@@ -34,20 +33,5 @@ public static class Converters
         };
     }
 
-    public static GetSessionsQuery ToQuery(this GetSessionsRequest request)
-    {
-        return new GetSessionsQuery(
-            DoctorId: request.DoctorId,
-            FromDatetime: request.FromDatetime,
-            ToDateTime: request.ToDateTime,
-            roomId: request.RoomId,
-            patientId: request.PatientId,
-            status: request.Status,
-            pageNumber: request.pageNumber,
-            pageSize: request.pageSize,
-            sortOptions: request.sortOptions ?? Array.Empty<string>()
-        );
-
-    }
 
 }

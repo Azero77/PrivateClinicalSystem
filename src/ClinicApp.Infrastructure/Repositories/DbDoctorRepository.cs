@@ -1,5 +1,4 @@
-﻿using ClinicApp.Application.DataQueryHelpers;
-using ClinicApp.Domain.DoctorAgg;
+﻿using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Infrastructure.Converters;
 using ClinicApp.Infrastructure.Persistance;
