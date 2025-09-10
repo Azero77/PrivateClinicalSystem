@@ -8,7 +8,7 @@ namespace ClinicApp.Application.Queries.Sessions;
 public record GetSessionsQuery() : IRequest<IQueryable<SessionQueryType>>;
 
 
-public class GetSessionQueryHandler(IQueryService<SessionQueryType> queryService) : IRequestHandler<GetSessionsQuery, IQueryable<SessionQueryType>>
+public class GetSessionsQueryHandler(IQueryService<SessionQueryType> queryService) : IRequestHandler<GetSessionsQuery, IQueryable<SessionQueryType>>
 {
     public Task<IQueryable<SessionQueryType>> Handle(GetSessionsQuery request, CancellationToken cancellationToken)
     {

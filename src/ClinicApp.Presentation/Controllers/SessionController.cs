@@ -5,9 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using ClinicApp.Application.Queries.Sessions;
-using ClinicApp.Presentation.Requests;
-using ClinicApp.Application.Converters;
 
 namespace ClinicApp.Presentation.Controllers;
 
@@ -54,26 +51,5 @@ public partial class SessionController : ApiController
         GetSessionHistoryQuery query = new(request.id);
         var result = await _mediator.Send(query);
         return result.Match(value => Ok(value),errors => ProblemResult(errors));
-    }
-
-    [HttpGet("Sessions")]
-    public async Task<IActionResult> GetSessions(
-        [FromQuery] GetSessionsRequest request)
-    {
-        GetSessionsQuery query = new GetSessionsQuery(
-            FilterDoctorId: request.DoctorId,
-            FilterFromDatetime: request.FromDatetime,
-            FilterToDateTime: request.ToDateTime,
-            FilterRoomId: request.RoomId,
-            FilterPatientId: request.PatientId,
-            FilterStatus: request.Status,
-            pageNumber: request.pageNumber,
-            pageSize: request.pageSize,
-            sortOptions: request.sortOptions ?? Array.Empty<string>()
-        ); ;
-
-        var result = await _mediator.Send(query);
-
-        return result.Match(Ok, ProblemResult);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using ClinicApp.Application.Common;
+using ClinicApp.Application.QueryServices;
+using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
@@ -9,6 +11,7 @@ using ClinicApp.Infrastructure.Common;
 using ClinicApp.Infrastructure.Converters;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.DataModels;
+using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +37,7 @@ public static class DependencyInjection
         services.AddSingleton<IConverter<Room, RoomDataModel>, RoomConverter>();
         services.AddSingleton<IConverter<Session, SessionDataModel>, SessionConverter>();
         services.AddSingleton<IConverter<Patient, PatientDataModel>, PatientConverter>();
-
-
+        services.AddScoped<IQueryService<SessionQueryType>, SessionQueryService>();
         services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         return services;
     }

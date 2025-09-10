@@ -8,7 +8,7 @@ namespace ClinicApp.Presentation.Controllers;
 public abstract class ApiController : ControllerBase
 {
 
-    internal IActionResult ProblemResult(List<Error> errors)
+    internal IActionResult ProblemResult(List<ErrorOr.Error> errors)
     {
         return errors.ToProblemDetails().ToProblemResult(HttpContext);
     }

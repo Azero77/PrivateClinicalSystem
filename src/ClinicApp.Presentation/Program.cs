@@ -5,6 +5,7 @@ using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.Seeding;
 using ClinicApp.Presentation.Exceptions;
+using ClinicApp.Presentation.QueryService;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
@@ -44,7 +45,7 @@ namespace ClinicApp.Presentation
                     //but in prod we will not use symmetric keys and we will move to assymetric
                     //in prod we don't need to provide key because while providng authority claim it will check .well-know/configuration to get the public key to validate issued token
                     //without the need to know the private key
-                    
+
                     if (builder.Environment.IsDevelopment())
                     {
                         jwtoptions.RequireHttpsMetadata = false;
@@ -83,12 +84,13 @@ namespace ClinicApp.Presentation
 
 
             AddSerilog(builder);
+            AddGraphQL(builder);
             builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -99,7 +101,6 @@ namespace ClinicApp.Presentation
             builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
             app.MapDefaultEndpoints();
-
 
 
             if (app.Environment.IsDevelopment())
@@ -117,12 +118,20 @@ namespace ClinicApp.Presentation
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseInfrastructure();
 
             app.MapControllers();
+            app.MapGraphQL();
 
             app.Run();
+        }
+
+        private static void AddGraphQL(WebApplicationBuilder builder)
+        {
+            builder.Services.AddGraphQLServer().AddQueryType<Query>()
+                            .AddFiltering()
+                            .AddSorting()
+                            .AddProjections();
         }
 
         private static void AddSerilog(WebApplicationBuilder builder)
