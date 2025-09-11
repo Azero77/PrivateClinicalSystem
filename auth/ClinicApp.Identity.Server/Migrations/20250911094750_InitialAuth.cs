@@ -6,10 +6,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ClinicApp.Identity.Server.Infrastructure.Persistance.Migrations
+namespace ClinicApp.Identity.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityInit : Migration
+    public partial class InitialAuth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

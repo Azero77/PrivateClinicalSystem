@@ -70,7 +70,8 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
             services.RemoveAll<AppDbContext>();
             services.AddDbContext<AppDbContext>(opts =>
             {
-                opts.UseNpgsql(database.GetConnectionString());
+                opts.UseNpgsql(database.GetConnectionString(),
+                    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
             });
 
             services.RemoveAll<IClock>();
@@ -105,8 +106,9 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
     private async Task Seed()
     {
         using var context = GetDbContext();
-        await context.Database.EnsureCreatedAsync();
-        InfrastructureMiddlewareExtensions.SeedDataToDbContext(context,TestClock.Clock());
+        if (context.Database.GetPendingMigrations().Any())
+            await context.Database.MigrateAsync();
+        //InfrastructureMiddlewareExtensions.SeedDataToDbContext(context,TestClock.Clock());
     }
 }
 

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ClinicApp.Identity.Server.Infrastructure.Persistance.Migrations
+namespace ClinicApp.Identity.Server.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
     partial class UsersDbContextModelSnapshot : ModelSnapshot
