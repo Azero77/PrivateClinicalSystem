@@ -6,7 +6,8 @@ using MediatR;
 
 namespace ClinicApp.Application.Commands.ModifySession;
 
-public abstract class ModifySessionCommandHandler : IRequestHandler<ModifySessionCommand, ErrorOr<Success>>
+public abstract class ModifySessionCommandHandler<TCommand> : IRequestHandler<TCommand, ErrorOr<Success>>
+    where TCommand : ModifySessionCommand
 {
     private readonly ISessionRepository _repo;
     private readonly IUnitOfWork _unitOfWork;
@@ -17,16 +18,16 @@ public abstract class ModifySessionCommandHandler : IRequestHandler<ModifySessio
         _unitOfWork = unitOfWork;
     }
 
-    protected abstract Task<IErrorOr> ApplySessionAction(Session session);
+    protected abstract Task<IErrorOr> ApplySessionAction(Session session,TCommand command);
 
-    public async Task<ErrorOr<Success>> Handle(ModifySessionCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(TCommand command, CancellationToken cancellationToken)
     {
-        var session = await _repo.GetById(request.SessionId);
+        var session = await _repo.GetById(command.SessionId);
         if (session is null)
             return Error.NotFound();
 
 
-        var result = await ApplySessionAction(session);
+        var result = await ApplySessionAction(session,command);
         if (result.IsError)
             return result.Errors!;
         await _repo.SaveAsync(session);

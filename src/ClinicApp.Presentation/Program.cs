@@ -122,11 +122,6 @@ namespace ClinicApp.Presentation
 
             app.MapControllers();
             app.MapGraphQL();
-            app.MapGet("/test", async (HttpContext httpcontext, AppDbContext dbContext) =>
-            {
-                var zones = await dbContext.Doctors.Select(d => d.TimeZoneId).ToListAsync();
-                return zones;
-            });
             app.Run();
         }
 

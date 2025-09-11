@@ -1,4 +1,5 @@
 using ClinicApp.Application.Common;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
@@ -19,12 +20,16 @@ public class UpdateSessionDateCommandHandler : IRequestHandler<UpdateSessionDate
 
     public async Task<ErrorOr<Success>> Handle(UpdateSessionDateCommand request, CancellationToken cancellationToken)
     {
+        var timerange = TimeRange.Create(request.StartTime, request.EndTime);
+        if (timerange.IsError)
+            return timerange.Errors;
         var session = await _repo.GetById(request.SessionId);
         if (session is null)
             return Error.NotFound();
-        var result = session.UpdateDate(request.NewTimeRange);
+        var result = session.UpdateDate(timerange.Value);
         if (result.IsError)
             return result;
+        await _repo.SaveAsync(session);
         await _unitOfWork.SaveChangesAsync(cancellationToken,session);
         return Result.Success;
     }

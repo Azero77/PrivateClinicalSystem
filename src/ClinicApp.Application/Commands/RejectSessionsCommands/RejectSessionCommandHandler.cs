@@ -7,15 +7,17 @@ using MediatR;
 
 namespace ClinicApp.Application.Commands.RejectSessionsCommands;
 
-public class RejectSessionCommandHandler : ModifySessionCommandHandler
+public class RejectSessionCommandHandler : ModifySessionCommandHandler<RejectSessionCommand>
 {
     public RejectSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
     }
 
-    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    protected override Task<IErrorOr> ApplySessionAction(Session session, RejectSessionCommand command)
     {
         IErrorOr result = session.RejectSession();
         return Task.FromResult(result);
     }
 }
+
+public record RejectSessionCommand(Guid Id) : ModifySessionCommand(Id);

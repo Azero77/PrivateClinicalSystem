@@ -10,19 +10,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Core;
 using Testcontainers.PostgreSql;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace ClinicApp.Presentation.Tests.IntegrationTest;
 
-
-public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
-
+public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
     public const string ApiCollectionTests = "ApiCollectionTests";
-    private readonly PostgreSqlContainer database = new PostgreSqlBuilder()
+    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder()
         .WithImage("postgres:16.1-alpine3.19")
         .WithUsername("TestUser")
         .WithPassword("TestMe")
@@ -31,25 +26,28 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
     private HttpClient _client = null!;
     public HttpClient Client => _client;
 
-    private AppDbContext GetDbContext()
+    private AppDbContext CreateDbContext()
     {
-        var scope = this.Services.CreateScope();
-        var dbcontext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        return dbcontext;
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(_database.GetConnectionString())
+            .Options;
+        // This assumes AppDbContext has a constructor that accepts DbContextOptions<AppDbContext>
+        return new AppDbContext(options);
     }
+
     private void AttachJwtTokenToClient()
     {
         string jwt = Environment.GetEnvironmentVariable("Test_ClinicApp_Token")!;
         _client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
     }
+
     protected override IHost CreateHost(IHostBuilder builder)
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", Serilog.Events.LogEventLevel.Debug)
             .WriteTo.Console()
-            //.WriteTo.TestOutput(_outputHelper)
             .CreateLogger();
         builder.UseSerilog();
         return base.CreateHost(builder);
@@ -57,21 +55,18 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-
         builder.ConfigureTestServices(services =>
         {
-            // Remove the default exception handler to see detailed errors in tests
             var exceptionHandlerDescriptor = services.SingleOrDefault(d => d.ServiceType.FullName == "Microsoft.AspNetCore.Diagnostics.IExceptionHandler");
             if (exceptionHandlerDescriptor != null)
             {
                 services.Remove(exceptionHandlerDescriptor);
             }
 
-            services.RemoveAll<AppDbContext>();
+            services.RemoveAll<DbContextOptions<AppDbContext>>();
             services.AddDbContext<AppDbContext>(opts =>
             {
-                opts.UseNpgsql(database.GetConnectionString(),
-                    b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
+                opts.UseNpgsql(_database.GetConnectionString());
             });
 
             services.RemoveAll<IClock>();
@@ -79,36 +74,39 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>,IAsyncLifetime
         });
         base.ConfigureWebHost(builder);
     }
-    public new async Task DisposeAsync()
-    {
-        await database.DisposeAsync();
-
-        //When tests are finished database is deleted
-        await DeleteDatabase();
-    }
-
-    private async Task DeleteDatabase()
-    {
-        using var context = GetDbContext();
-        await context.Database.EnsureDeletedAsync();
-    }
 
     public async Task InitializeAsync()
     {
+        await _database.StartAsync();
         
-        await database.StartAsync();
+        // Seed the database BEFORE the client is created. This prevents the app
+        // from holding active DB connections which would block schema changes.
+        await SeedAsync();
+
         _client = CreateClient();
         AttachJwtTokenToClient();
-        //Seed Data
-        await Seed();
     }
 
-    private async Task Seed()
+    public new async Task DisposeAsync()
     {
-        using var context = GetDbContext();
-        if (context.Database.GetPendingMigrations().Any())
-            await context.Database.MigrateAsync();
-        //InfrastructureMiddlewareExtensions.SeedDataToDbContext(context,TestClock.Clock());
+        // Ensure the database is cleaned up before we stop the container.
+        await DeleteDatabaseAsync();
+        await _database.DisposeAsync();
+    }
+
+    private async Task DeleteDatabaseAsync()
+    {
+        await using var context = CreateDbContext();
+        await context.Database.EnsureDeletedAsync();
+    }
+
+    private async Task SeedAsync()
+    {
+        await using var context = CreateDbContext();
+
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.MigrateAsync(); 
+        InfrastructureMiddlewareExtensions.SeedDataToDbContext(context, TestClock.Clock());
     }
 }
 

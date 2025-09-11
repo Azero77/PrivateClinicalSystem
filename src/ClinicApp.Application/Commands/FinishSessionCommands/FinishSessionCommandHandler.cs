@@ -7,15 +7,17 @@ using MediatR;
 
 namespace ClinicApp.Application.Commands.FinishSessionCommands;
 
-public class FinishSessionCommandHandler : ModifySessionCommandHandler
+public class FinishSessionCommandHandler : ModifySessionCommandHandler<FinishSessionCommand>
 {
     public FinishSessionCommandHandler(ISessionRepository repo, IUnitOfWork unitOfWork) : base(repo, unitOfWork)
     {
     }
 
-    protected override Task<IErrorOr> ApplySessionAction(Session session)
+    protected override Task<IErrorOr> ApplySessionAction(Session session,FinishSessionCommand command)
     {
         IErrorOr result = session.FinishSession();
         return Task.FromResult(result);
     }
 }
+
+public record FinishSessionCommand(Guid Id) : ModifySessionCommand(Id); 

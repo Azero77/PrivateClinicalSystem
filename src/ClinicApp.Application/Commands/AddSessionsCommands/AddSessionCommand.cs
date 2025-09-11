@@ -9,7 +9,7 @@ namespace ClinicApp.Application.Commands.AddSessionsCommands;
 public record AddSessionCommand(
                        DateTimeOffset StartTime,
                        DateTimeOffset EndTime,
-                       SessionDescription sessionDescription,
+                       string SessionDescriptionContent,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,

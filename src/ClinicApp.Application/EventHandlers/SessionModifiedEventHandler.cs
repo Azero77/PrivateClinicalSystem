@@ -2,7 +2,7 @@
 using MediatR;
 
 namespace ClinicApp.Application.EventHandlers;
-public class SessionModifiedEventHandler
+public abstract class SessionModifiedEventHandler
     <TDomainEvent>
     : INotificationHandler<TDomainEvent>
     where TDomainEvent : SessionDomainEvent
