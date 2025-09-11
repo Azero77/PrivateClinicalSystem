@@ -1,4 +1,5 @@
 using ClinicApp.Domain.Common;
+using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Domain.SessionAgg;
 
@@ -10,8 +11,8 @@ public class SessionConverter : IConverter<Session, SessionDataModel>
     {
         var session = Session.Create(
             model.Id,
-            model.SessionDate,
-            model.SessionDescription,
+            TimeRange.Create(model.StartTime, model.EndTime).Value,
+            new SessionDescription(model.Content),
             model.RoomId,
             model.PatientId,
             model.DoctorId,
@@ -27,8 +28,9 @@ public class SessionConverter : IConverter<Session, SessionDataModel>
         return new SessionDataModel
         {
             Id = entity.Id,
-            SessionDate = entity.SessionDate,
-            SessionDescription = entity.SessionDescription,
+            StartTime = entity.SessionDate.StartTime,
+            EndTime = entity.SessionDate.EndTime,
+            Content = entity.SessionDescription.content,
             RoomId = entity.RoomId,
             PatientId = entity.PatientId,
             DoctorId = entity.DoctorId,

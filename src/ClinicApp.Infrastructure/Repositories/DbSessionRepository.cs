@@ -47,7 +47,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     public async Task<IReadOnlyCollection<Session>> GetFutureSessionsDoctor(Doctor doctor)
     {
         var sessionsData = await _sessionsNotTracked
-            .Where(s => s.DoctorId == doctor.Id && s.SessionDate.StartTime > _clock.UtcNow)
+            .Where(s => s.DoctorId == doctor.Id && s.StartTime > _clock.UtcNow)
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
@@ -65,7 +65,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     {
         var targetDate = date.Date;
         var sessionsData = await _sessionsNotTracked
-            .Where(s => s.SessionDate.StartTime.Date == targetDate)
+            .Where(s => s.StartTime.Date == targetDate)
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
@@ -73,7 +73,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     public async Task<IReadOnlyCollection<Session>> GetSessionsForDoctorToday(Guid doctorid)
     {
         var sessionsData = await _sessionsNotTracked
-            .Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == _clock.UtcNow.Date)
+            .Where(s => s.DoctorId == doctorid && s.StartTime.Date == _clock.UtcNow.Date)
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
@@ -81,7 +81,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     public async Task<IReadOnlyCollection<Session>> GetSessionsForToday()
     {
         var sessionsData = await _sessionsNotTracked
-            .Where(s => s.SessionDate.StartTime.Date == _clock.UtcNow.Date)
+            .Where(s => s.StartTime.Date == _clock.UtcNow.Date)
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
@@ -97,7 +97,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
     {
         var targetDate = date.Date;
         var sessionsData = await _context.Sessions.AsNoTracking()
-            .Where(s => s.DoctorId == doctorid && s.SessionDate.StartTime.Date == targetDate)
+            .Where(s => s.DoctorId == doctorid && s.StartTime.Date == targetDate)
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }
@@ -107,7 +107,7 @@ public class DbSessionRepository : Repository<Session, SessionDataModel>, ISessi
         var day = date.Date;
         var dayAfter = day.AddDays(1);
         var sessionsData = await _context.Sessions.AsNoTracking()
-            .Where(s => s.DoctorId == doctorid && (s.SessionDate.StartTime.Date == day || s.SessionDate.StartTime.Date == dayAfter))
+            .Where(s => s.DoctorId == doctorid && (s.StartTime.Date == day || s.StartTime.Date == dayAfter))
             .ToListAsync();
         return sessionsData.Select(_converter.MapToEntity).ToList().AsReadOnly();
     }

@@ -11,20 +11,13 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<SessionDataMo
         builder.ToTable("Sessions");
         //builder.HasQueryFilter(s => !s.IsDeleted);
         builder.HasKey(s => s.Id);
-        builder.OwnsOne(s => s.SessionDate,
-            sd =>
-            {
-                sd.Property(sd => sd.StartTime).HasColumnName("StartTime").IsRequired();
-                sd.Property(sd => sd.EndTime).HasColumnName("Endtime").IsRequired();
-            });
+        builder.Property(s => s.StartTime).HasColumnName("StartTime").IsRequired();
+        builder.Property(s => s.EndTime).HasColumnName("Endtime").IsRequired();
+        builder.Property(s => s.Content).HasColumnName("Content").IsRequired(false);
+
         builder.Property(s => s.SessionStatus)
             .HasConversion<byte>()
             .IsRequired();
-
-        builder.OwnsOne(s => s.SessionDescription,nb =>
-        {
-            nb.Property(nb => nb.content).HasColumnName("Content").IsRequired(false);
-        });
 
         //Before adding history management (temporary
     }

@@ -1,6 +1,7 @@
 ﻿using ClinicApp.Application.Commands.AddSessionsCommands;
 using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Domain.Common;
+using ClinicApp.Domain.SessionAgg;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,15 +25,13 @@ public partial class SessionController : ApiController
         AddSessionRequest request,CancellationToken token)
     {
         var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst("role")!.Value.ToString());
-        var command = new AddSessionCommand(
-            request.StartTime,
-            request.EndTime,
-            request.SessionDescription,
-            request.roomId,
-            request.patientId,
-            request.doctorId,
-            userRole
-            );
+        var command = new AddSessionCommand(request.StartTime,
+                                            request.EndTime,
+                                            new SessionDescription(request.SessionDescriptionContent),
+                                            request.RoomId,
+                                            request.PatientId,
+                                            request.DoctorId,
+                                            userRole);
 
         var result = await _mediator.Send(command,token);
         if (!result.IsError)

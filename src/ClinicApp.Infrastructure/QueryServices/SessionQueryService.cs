@@ -1,9 +1,9 @@
-﻿using ClinicApp.Application.QueryServices;
+using ClinicApp.Application.QueryServices;
 using ClinicApp.Application.QueryTypes;
-using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.DataModels;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ClinicApp.Infrastructure.QueryServices;
 
@@ -13,47 +13,92 @@ public class SessionQueryService(AppDbContext context) : IQueryService<SessionQu
     public IQueryable<SessionQueryType> GetItemById(Guid id)
     {
         return context.Sessions
+            .AsNoTracking()
             .Where(e => e.Id == id)
-            .Select(e => ConvertToQueryType(e));
+            .Select(e =>
+                 new SessionQueryType
+                {
+                    Id = e.Id,
+                    StartTime = e.StartTime,
+                    EndTime = e.EndTime,
+                    Content = e.Content,
+                    RoomId = e.RoomId,
+                    Room = e.Room == null ? null : new RoomQueryType
+                    {
+                        Id = e.Room.Id,
+                        Name = e.Room.Name
+                    },
+                    PatientId = e.PatientId,
+                    Patient = e.Patient == null ? null : new PatientQueryType
+                    {
+                        Id = e.Patient.Id,
+                        FirstName = e.Patient.FirstName,
+                        LastName = e.Patient.LastName,
+                        UserId = e.Patient.UserId
+                    },
+                    DoctorId = e.DoctorId,
+                    Doctor = e.Doctor == null ? null : new DoctorQueryType
+                    {
+                        Id = e.Doctor.Id,
+                        FirstName = e.Doctor.FirstName,
+                        LastName = e.Doctor.LastName,
+                        Major = e.Doctor.Major,
+                        RoomId = e.Doctor.RoomId,
+                        UserId = e.Doctor.UserId,
+                        WorkingDays = e.Doctor.WorkingDays,
+                        StartTime = e.Doctor.StartTime,
+                        EndTime = e.Doctor.EndTime,
+                        TimeZoneId = e.Doctor.TimeZoneId,
+                        TimesOff = e.Doctor.TimesOff.Select(t => new TimeOffQueryType { StartDate = t.StartDate, EndDate = t.EndDate, reason = t.reason }).ToList()
+                    },
+                    SessionStatus = e.SessionStatus,
+                    CreatedAt = e.CreatedAt
+                }
+            );
     }
 
     public IQueryable<SessionQueryType> GetItems()
     {
-        return context.Sessions.Select(e => ConvertToQueryType(e));
+        return context.Sessions.AsNoTracking().Select(e =>
+                 new SessionQueryType
+                 {
+                     Id = e.Id,
+                     StartTime = e.StartTime,
+                     EndTime = e.EndTime,
+                     Content = e.Content,
+                     RoomId = e.RoomId,
+                     Room = e.Room == null ? null : new RoomQueryType
+                     {
+                         Id = e.Room.Id,
+                         Name = e.Room.Name
+                     },
+                     PatientId = e.PatientId,
+                     Patient = e.Patient == null ? null : new PatientQueryType
+                     {
+                         Id = e.Patient.Id,
+                         FirstName = e.Patient.FirstName,
+                         LastName = e.Patient.LastName,
+                         UserId = e.Patient.UserId
+                     },
+                     DoctorId = e.DoctorId,
+                     Doctor = e.Doctor == null ? null : new DoctorQueryType
+                     {
+                         Id = e.Doctor.Id,
+                         FirstName = e.Doctor.FirstName,
+                         LastName = e.Doctor.LastName,
+                         Major = e.Doctor.Major,
+                         RoomId = e.Doctor.RoomId,
+                         UserId = e.Doctor.UserId,
+                         WorkingDays = e.Doctor.WorkingDays,
+                         StartTime = e.Doctor.StartTime,
+                         EndTime = e.Doctor.EndTime,
+                         TimeZoneId = e.Doctor.TimeZoneId,
+                         TimesOff = e.Doctor.TimesOff.Select(t => new TimeOffQueryType { StartDate = t.StartDate, EndDate = t.EndDate, reason = t.reason }).ToList()
+                     },
+                     SessionStatus = e.SessionStatus,
+                     CreatedAt = e.CreatedAt
+                 }
+            );
     }
 
-    private static SessionQueryType ConvertToQueryType(SessionDataModel e)
-    {
-        return new SessionQueryType
-        {
-            SessionDate = e.SessionDate,
-            SessionDescription = e.SessionDescription,
-            RoomId = e.RoomId,
-            Room = new RoomQueryType
-            {
-                Id = e.Room.Id,
-                Name = e.Room.Name
-            },
-            PatientId = e.PatientId,
-            Patient = new PatientQueryType
-            {
-                Id = e.Patient.Id,
-                FirstName = e.Patient.FirstName,
-                LastName = e.Patient.LastName
-            },
-            DoctorId = e.DoctorId,
-            Doctor = new DoctorQueryType
-            {
-                Id = e.Doctor.Id,
-                FirstName = e.Doctor.FirstName,
-                LastName = e.Doctor.LastName,
-                Major = e.Doctor.Major,
-                RoomId = e.Doctor.RoomId,
-                UserId = e.Doctor.UserId,
-                WorkingTime = e.Doctor.WorkingTime
-            },
-            SessionStatus = e.SessionStatus,
-            CreatedAt = e.CreatedAt
-        };
-    }
 }

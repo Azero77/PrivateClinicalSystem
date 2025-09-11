@@ -1,17 +1,17 @@
-﻿using ClinicApp.Domain.Common.ValueObjects;
-using ClinicApp.Domain.SessionAgg;
+﻿using ClinicApp.Domain.SessionAgg;
 
 namespace ClinicApp.Application.QueryTypes;
 public class SessionQueryType : QueryType
 {
-    public TimeRange SessionDate { get; set; } = null!;
-    public SessionDescription SessionDescription { get; set; } = null!;
+    public DateTimeOffset StartTime { get; set; }
+    public DateTimeOffset EndTime { get; set; }
+    public string? Content { get; set; }
     public Guid RoomId { get; set; }
-    public RoomQueryType Room { get; set; } = null!;
+    public RoomQueryType? Room { get; set; }
     public Guid PatientId { get; set; }
-    public PatientQueryType Patient { get; set; } = null!;
+    public PatientQueryType? Patient { get; set; }
     public Guid DoctorId { get; set; }
-    public DoctorQueryType Doctor { get; set; } = null!;
+    public DoctorQueryType? Doctor { get; set; }
     public SessionStatus SessionStatus { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }

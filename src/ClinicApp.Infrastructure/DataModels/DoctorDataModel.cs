@@ -3,12 +3,15 @@
 namespace ClinicApp.Infrastructure.Persistance.DataModels;
 public class DoctorDataModel : MemberDataModel
 {
-    public WorkingTime WorkingTime { get; set; } = null!;
     public string? Major { get; set; }
     public Guid RoomId { get; set; }
-    public RoomDataModel Room { get; set; } = null!;
-
-    public IReadOnlyCollection<SessionDataModel> Sessions { get; set; } = new List<SessionDataModel>();
+    public RoomDataModel? Room { get; set; }
+    public ICollection<SessionDataModel>? Sessions { get; set; } = new List<SessionDataModel>();
+    public WorkingDays WorkingDays { get; set; }
+    public TimeOnly StartTime { get; set; }
+    public TimeOnly EndTime { get; set; }
+    public string TimeZoneId { get; set; } = string.Empty;
+    public ICollection<TimeOffDataModel> TimesOff { get; set; } = new List<TimeOffDataModel>();
 }
 
 public abstract class DataModel

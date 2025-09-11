@@ -3,8 +3,8 @@
 public record AddSessionRequest(
     DateTimeOffset StartTime,
     DateTimeOffset EndTime,
-    SessionDescription SessionDescription,
-    Guid roomId,
-    Guid patientId,
-    Guid doctorId
+    string SessionDescriptionContent,
+    Guid RoomId,
+    Guid PatientId,
+    Guid DoctorId
     );

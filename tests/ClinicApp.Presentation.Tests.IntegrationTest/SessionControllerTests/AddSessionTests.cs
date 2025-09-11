@@ -44,7 +44,7 @@ public class AddSessionTests
         var addSessionRequest = new AddSessionRequest(
             starttime,
             endtime,
-            new SessionDescription("Test content"),
+            "Test content",
             SeedData.Room1Id,
             SeedData.Patient1Id,
             SeedData.Doctor1Id
@@ -64,9 +64,9 @@ public class AddSessionTests
         var alreadyExistedSession = SeedData.Sessions(_clock).First();
         //will add the same session from the test before to check conflicts
         var addSessionRequest = new AddSessionRequest(
-            alreadyExistedSession.SessionDate.StartTime,
-            alreadyExistedSession.SessionDate.EndTime,
-            new SessionDescription("Test content"),
+            alreadyExistedSession.StartTime,
+            alreadyExistedSession.EndTime,
+            "Test Content",
             SeedData.Room1Id,
             SeedData.Patient1Id,
             SeedData.Doctor1Id

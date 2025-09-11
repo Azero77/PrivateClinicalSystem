@@ -7,16 +7,24 @@ public class DoctorConverter : IConverter<Doctor, DoctorDataModel>
 {
     public Doctor MapToEntity(DoctorDataModel model)
     {
-        return new Doctor(
+        var workingHours = WorkingHours.Create(model.StartTime, model.EndTime, model.TimeZoneId).Value;
+        var doctor = new Doctor(
             model.Id,
             model.UserId,
             model.FirstName,
             model.LastName,
             model.RoomId,
-            model.WorkingTime.WorkingDays,
-            model.WorkingTime.WorkingHours,
+            model.WorkingDays,
+            workingHours,
             model.Major
         );
+
+        foreach (var timeOff in model.TimesOff)
+        {
+            doctor.AddTimeOff(new TimeOff(timeOff.StartDate, timeOff.EndDate, timeOff.reason));
+        }
+
+        return doctor;
     }
 
     public DoctorDataModel MapToData(Doctor entity)
@@ -28,8 +36,12 @@ public class DoctorConverter : IConverter<Doctor, DoctorDataModel>
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             RoomId = entity.RoomId,
-            WorkingTime = entity.WorkingTime,
-            Major = entity.Major
+            Major = entity.Major,
+            WorkingDays = entity.WorkingTime.WorkingDays,
+            StartTime = entity.WorkingTime.WorkingHours.StartTime,
+            EndTime = entity.WorkingTime.WorkingHours.EndTime,
+            TimeZoneId = entity.WorkingTime.WorkingHours.TimeZoneId,
+            TimesOff = entity.WorkingTime.TimesOff.Select(t => new TimeOffDataModel { StartDate = t.StartDate, EndDate = t.EndDate, reason = t.reason }).ToList()
         };
     }
 }
