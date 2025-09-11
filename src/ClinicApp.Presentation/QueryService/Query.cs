@@ -1,4 +1,4 @@
-﻿using ClinicApp.Application.Queries.Sessions;
+﻿using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryTypes;
 using MediatR;
 
@@ -12,11 +12,20 @@ public class Query
     [UseSorting]
     public async Task<IQueryable<SessionQueryType>> GetSessions(IMediator mediator)
     {
-        return await mediator.Send(new GetSessionsQuery());
+        return await mediator.Send(new QueryRequest<SessionQueryType>());
     }
 
-    public async Task<IQueryable<SessionQueryType>> GetSession(Guid id,IMediator mediator)
+    [UseProjection]
+    public async Task<SessionQueryType?> GetSession(Guid id,IMediator mediator)
     {
-        return await mediator.Send(new GetSessionQuery(id));
+        return await mediator.Send(new QuerySingleRequest<SessionQueryType>(id));
+    }
+
+
+
+    [UseProjection]
+    public async Task<DoctorQueryType?> GetDoctor(Guid doctorId, IMediator mediator)
+    {
+        return await mediator.Send(new QuerySingleRequest<DoctorQueryType>(doctorId));
     }
 }

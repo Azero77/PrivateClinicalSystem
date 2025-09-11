@@ -1,9 +1,8 @@
-﻿using ClinicApp.Application.QueryTypes;
-
+﻿
 namespace ClinicApp.Application.QueryServices;
 public interface IQueryService<T>
-    where T : QueryType
+    where T : class
 {
     IQueryable<T> GetItems();
-    IQueryable<T> GetItemById(Guid id);
+    Task<T?> GetItemById(Guid id);
 }

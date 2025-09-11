@@ -34,7 +34,6 @@ namespace ClinicApp.Domain.SessionAgg
                 CreatedAt = clock.UtcNow,
                 _clock = clock
             };
-            result._domainEvents.Add(new SessionCreatedDomainEvent(result));
             return result;
         }
 
@@ -64,7 +63,12 @@ namespace ClinicApp.Domain.SessionAgg
                 default:
                     return SessionErrors.CantCreateSessionWithUserRole;
             }
-            return Create(id,sessionDate,sessionDescription,roomId,patientId,doctorId,clock,state);
+            var result = Create(id,sessionDate,sessionDescription,roomId,patientId,doctorId,clock,state);
+            return result.Then(value =>
+            {
+                value._domainEvents.Add(new SessionCreatedDomainEvent(value));
+                return result.Value;
+            });
         }
 
         private Session() { } 

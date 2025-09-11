@@ -24,6 +24,7 @@ public class Repository<T, TData>
     public async Task<T?> GetById(Guid id)
     {
         TData? datamodel = await _context.Set<TData>()
+            .AsNoTracking()
             .SingleOrDefaultAsync(t => t.Id == id);
         return datamodel is null ? null : _converter.MapToEntity(datamodel);
     }

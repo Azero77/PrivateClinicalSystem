@@ -16,14 +16,4 @@ public class DoctorsController : ApiController
         _mediator = mediator;
     }
 
-    [HttpGet("{id}/with-sessions")]
-    public async Task<IActionResult> GetDoctorWithSessions(Guid id)
-    {
-        var query = await _mediator.Send(new GetDoctorWithSessionsQuery(id));
-        return query.Match(
-            Ok,
-            ProblemResult
-            );
-    }
-
 }

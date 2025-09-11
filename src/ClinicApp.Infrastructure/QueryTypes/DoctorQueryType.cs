@@ -7,6 +7,9 @@ public class DoctorQueryType : MemberQueryType
     public string? Major { get; set; }
     public Guid RoomId { get; set; }
     public RoomQueryType? Room { get; set; }
+    [UsePaging]                     
+    [UseFiltering]                  
+    [UseSorting] 
     public IReadOnlyCollection<SessionQueryType>? Sessions { get; set; } = new List<SessionQueryType>();
     public WorkingDays WorkingDays { get; set; }
     public TimeOnly StartTime { get; set; }

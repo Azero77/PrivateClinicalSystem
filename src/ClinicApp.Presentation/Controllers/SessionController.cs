@@ -6,9 +6,13 @@ using ClinicApp.Application.Commands.RejectSessionsCommands;
 using ClinicApp.Application.Commands.SetSessionsCommands;
 using ClinicApp.Application.Commands.StartSessionCommands;
 using ClinicApp.Application.Commands.UpdateSessionDateCommands;
+using ClinicApp.Application.Queries.Common;
+using ClinicApp.Application.Queries.Sessions;
 using ClinicApp.Application.Queries.Sessions.SessionHistory;
+using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Presentation.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
@@ -48,9 +52,21 @@ public partial class SessionController : ApiController
         {
             Log.Debug("Added {Session} In {TimeStamp}",new object[] { result.Value,DateTime.UtcNow});
         }
-        return result.Match(
-            Ok,
+        return result.Match(value => 
+            CreatedAtAction(
+            nameof(GetSession),
+            new { id = value.Id },
+            value),
             ProblemResult);
+    }
+
+    [HttpGet("sessions/{id}")]
+    public async Task<IActionResult> GetSession(
+        [FromRoute] Guid id)
+    {
+        var query = new QuerySingleRequest<SessionQueryType>(id);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     [HttpGet("sessions/history/{id}")]
@@ -63,56 +79,53 @@ public partial class SessionController : ApiController
     }
     [HttpDelete("sessions/{id}/delete")]
     public async Task<IActionResult> SessionDelete(
-        [FromBody] ModifySessionRequest request)
+        [FromRoute] ModifySessionRequest request)
     {
         var command = new DeleteSessionCommand(request.id);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value),ProblemResult);
+        return result.Match(value => NoContent(),ProblemResult);
     }
     [HttpPatch("sessions/{id}/reject")]
     public async Task<IActionResult> SessionReject(
-        [FromBody] ModifySessionRequest request)
+        [FromRoute] ModifySessionRequest request)
     {
         var command = new RejectSessionCommand(request.id);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value), ProblemResult);
+        return result.Match(value => NoContent(), ProblemResult);
     }
     [HttpPatch("sessions/{id}/finish")]
     public async Task<IActionResult> SessionFinish(
-        [FromBody] ModifySessionRequest request)
+        [FromRoute] ModifySessionRequest request)
     {
         var command = new FinishSessionCommand(request.id);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value), ProblemResult);
+        return result.Match(value => NoContent(), ProblemResult);
     }
     [HttpPatch("sessions/{id}/set")]
     public async Task<IActionResult> SessionSet(
-        [FromBody] ModifySessionRequest request)
+        [FromRoute] ModifySessionRequest request)
     {
         var command = new SetSessionCommand(request.id);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value), ProblemResult);
+        return result.Match(value => NoContent(), ProblemResult);
     }
 
     [HttpPatch("sessions/{id}/start")]
     public async Task<IActionResult> SessionStart(
-        [FromBody] ModifySessionRequest request)
+        [FromRoute] ModifySessionRequest request)
     {
         var command = new StartSessionCommand(request.id);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value), ProblemResult);
+        return result.Match(value => NoContent(), ProblemResult);
     }
 
     [HttpPatch("sessions/{id}/update-time")]
     public async Task<IActionResult> SessionUpdateTime(
-        [FromBody] UpdateSessionTimeRequest request)
+        [FromRoute] UpdateSessionTimeRequest request)
     {
         var command = new UpdateSessionDateCommand(request.SessionId,request.StartTime,request.EndTime);
         var result = await _mediator.Send(command);
-        return result.Match(value => Ok(value), ProblemResult);
+        return result.Match(value => NoContent(), ProblemResult);
     }
 
 }
-
-public record ModifySessionRequest(Guid id);
-public record UpdateSessionTimeRequest(Guid SessionId,DateTimeOffset StartTime,DateTimeOffset EndTime);
