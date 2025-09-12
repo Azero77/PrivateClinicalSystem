@@ -85,6 +85,7 @@ namespace ClinicApp.Presentation
 
             AddSerilog(builder);
             AddGraphQL(builder);
+            ConfigurationOptionsConfigure(builder);
             builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
@@ -125,12 +126,26 @@ namespace ClinicApp.Presentation
             app.Run();
         }
 
+        private static void ConfigurationOptionsConfigure(WebApplicationBuilder builder)
+        {
+            builder.Services.Configure<QueryOptions>(builder.Configuration.GetSection("QueryOptions"));
+        }
+
         private static void AddGraphQL(WebApplicationBuilder builder)
         {
             builder.Services.AddGraphQLServer().AddQueryType<Query>()
                             .AddFiltering()
                             .AddSorting()
-                            .AddProjections();
+                            .AddProjections()
+                            .ModifyPagingOptions(opts =>
+                            {
+                                var qoptions = builder.Configuration.GetSection("QueryOptions").Get<QueryOptions>();
+                                if (qoptions is null)
+                                    throw new ArgumentException("Please Configure QueryOptions");
+                                opts.MaxPageSize = qoptions.MaxPageSize;
+                                opts.IncludeTotalCount = qoptions.IncludeTotalCount;
+                                opts.DefaultPageSize = qoptions.DefaultPageSize;
+                            });
         }
 
         private static void AddSerilog(WebApplicationBuilder builder)

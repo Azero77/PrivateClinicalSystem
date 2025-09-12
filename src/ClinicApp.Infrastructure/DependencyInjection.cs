@@ -51,6 +51,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IRequestHandler<QueryRequest<SessionQueryType>, IQueryable<SessionQueryType>>, QueryRequestHandler<SessionQueryType>>();
         services.AddScoped<IRequestHandler<QueryRequest<DoctorQueryType>, IQueryable<DoctorQueryType>>, QueryRequestHandler<DoctorQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<SessionQueryType>,SessionQueryType?>, QuerySingleRequestHandler<SessionQueryType?>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<SessionQueryType>,SessionQueryType?>, QuerySingleRequestHandler<SessionQueryType>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<DoctorQueryType>,DoctorQueryType?>, QuerySingleRequestHandler<DoctorQueryType>>();
     }
 }
