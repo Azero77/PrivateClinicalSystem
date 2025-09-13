@@ -85,7 +85,6 @@ namespace ClinicApp.Presentation
 
             AddSerilog(builder);
             AddGraphQL(builder);
-            ConfigurationOptionsConfigure(builder);
             builder.Services.AddAuthorization();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
@@ -124,11 +123,6 @@ namespace ClinicApp.Presentation
             app.MapControllers();
             app.MapGraphQL();
             app.Run();
-        }
-
-        private static void ConfigurationOptionsConfigure(WebApplicationBuilder builder)
-        {
-            builder.Services.Configure<QueryOptions>(builder.Configuration.GetSection("QueryOptions"));
         }
 
         private static void AddGraphQL(WebApplicationBuilder builder)
