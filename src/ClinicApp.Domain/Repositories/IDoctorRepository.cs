@@ -13,8 +13,5 @@ namespace ClinicApp.Domain.Repositories
         Task<Doctor?> GetDoctorByUsedId(Guid userId);
     }
 
-    public interface IPatientRepository : IRepository<Patient>
-    {
-        Task<Patient?> GetPatientByUserId(Guid userId);
-    }
+    
 }

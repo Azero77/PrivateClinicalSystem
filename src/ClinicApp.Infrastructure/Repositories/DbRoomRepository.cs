@@ -21,11 +21,15 @@ public class DbRoomRepository : Repository<Room,RoomDataModel>,IRoomRepository
         return room;
     }
 
-    public Task DeleteRoom(Room deletedRoom)
+    public async Task<Room?> DeleteRoom(Guid roomId)
     {
-        var roomData = _converter.MapToData(deletedRoom);
+        var roomData = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == roomId);
+        if (roomData is null)
+        {
+            return null;
+        }
         _context.Rooms.Remove(roomData);
-        return Task.CompletedTask;
+        return _converter.MapToEntity(roomData);
     }
 
     public async Task<IReadOnlyCollection<Room>> GetAllRooms()

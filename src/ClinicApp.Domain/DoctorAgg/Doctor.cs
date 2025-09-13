@@ -49,5 +49,20 @@ namespace ClinicApp.Domain.DoctorAgg
 
             }
         }
+
+        public void UpdateMajor(string? major)
+        {
+            Major = major;
+        }
+
+        public void UpdateRoom(Guid roomId)
+        {
+            RoomId = roomId;
+        }
+
+        public void UpdateWorkingTime(WorkingTime workingTime)
+        {
+            WorkingTime = workingTime;
+        }
     }
 }

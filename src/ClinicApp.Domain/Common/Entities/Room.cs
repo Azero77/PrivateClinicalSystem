@@ -7,4 +7,9 @@ public class Room : AggregateRoot
         Name = name;
     }
     public string Name { get; private set; } = null!;
+
+    public void UpdateName(string name)
+    {
+        Name = name;
+    }
 }

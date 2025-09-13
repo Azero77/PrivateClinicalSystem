@@ -33,14 +33,18 @@ public static class DependencyInjection
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<IDoctorRepository, DbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
+        services.AddScoped<IPatientRepository, DbPatientRepository>();
         services.AddSingleton<IClock, Clock>();
 
         services.AddSingleton<IConverter<Doctor, DoctorDataModel>, DoctorConverter>();
         services.AddSingleton<IConverter<Room, RoomDataModel>, RoomConverter>();
         services.AddSingleton<IConverter<Session, SessionDataModel>, SessionConverter>();
         services.AddSingleton<IConverter<Patient, PatientDataModel>, PatientConverter>();
+        services.AddSingleton<IConverter<Secretary, SecretaryDataModel>, SecretaryConverter>();
         services.AddScoped<IQueryService<SessionQueryType>, SessionQueryService>();
         services.AddScoped<IQueryService<DoctorQueryType>, DoctorQueryService>();
+        services.AddScoped<IQueryService<RoomQueryType>, RoomQueryService>();
+        services.AddScoped<IQueryService<SecretaryQueryType>, SecretaryQueryService>();
         services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         //Mediatr is unable to register generic requestHandlers because DI with MSDI can support this kind of stuff
         RegisterMediatrGenericHandlers(services);
@@ -55,5 +59,13 @@ public static class DependencyInjection
         services.AddScoped<IRequestHandler<QuerySingleRequest<DoctorQueryType>,DoctorQueryType?>, QuerySingleRequestHandler<DoctorQueryType>>();
         services.AddScoped<IRequestHandler<QueryRequest<PatientQueryType>, IQueryable<PatientQueryType>>, QueryRequestHandler<PatientQueryType>>();
         services.AddScoped<IRequestHandler<QuerySingleRequest<PatientQueryType>, PatientQueryType?>, QuerySingleRequestHandler<PatientQueryType>>();
+    }
+}
+mQueryType>>, QueryRequestHandler<RoomQueryType>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<RoomQueryType>,RoomQueryType?>, QuerySingleRequestHandler<RoomQueryType>>();
+    }
+}
+yQueryType>>, QueryRequestHandler<SecretaryQueryType>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<SecretaryQueryType>,SecretaryQueryType?>, QuerySingleRequestHandler<SecretaryQueryType>>();
     }
 }
