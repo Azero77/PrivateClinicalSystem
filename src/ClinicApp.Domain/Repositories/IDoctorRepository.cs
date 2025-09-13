@@ -1,4 +1,5 @@
 using ClinicApp.Domain.DoctorAgg;
+using ClinicApp.Domain.PatientAgg;
 
 namespace ClinicApp.Domain.Repositories
 {
@@ -9,5 +10,11 @@ namespace ClinicApp.Domain.Repositories
         Task<Doctor?> GetDoctorByRoom(Guid roomId);
         Task<Doctor?> DeleteDoctor(Guid doctorId);
         Task<Doctor> UpdateDoctor(Doctor doctor);
+        Task<Doctor?> GetDoctorByUsedId(Guid userId);
+    }
+
+    public interface IPatientRepository : IRepository<Patient>
+    {
+        Task<Patient?> GetPatientByUserId(Guid userId);
     }
 }

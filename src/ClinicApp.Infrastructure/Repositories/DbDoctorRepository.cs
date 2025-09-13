@@ -51,4 +51,11 @@ public class DbDoctorRepository : Repository<Doctor,DoctorDataModel>,IDoctorRepo
         _context.Remove(doctorData);
         return _converter.MapToEntity(doctorData);
     }
+
+    public async Task<Doctor?> GetDoctorByUsedId(Guid userId)
+    {
+        var datamodel =  await _context.Doctors.Where(d => d.UserId == userId)
+            .SingleOrDefaultAsync();
+        return datamodel is null ? null : _converter.MapToEntity(datamodel);
+    }
 }

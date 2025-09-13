@@ -28,4 +28,9 @@ public class Query
     {
         return await mediator.Send(new QuerySingleRequest<DoctorQueryType>(doctorId));
     }
+    [UseProjection]
+    public async Task<PatientQueryType?> GetPatient(Guid patientId, IMediator mediator)
+    {
+        return await mediator.Send(new QuerySingleRequest<PatientQueryType>(patientId));
+    }
 }

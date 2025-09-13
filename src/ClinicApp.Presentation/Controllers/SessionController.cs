@@ -12,6 +12,7 @@ using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Presentation.Helpers;
 using ClinicApp.Presentation.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -34,18 +35,19 @@ public partial class SessionController : ApiController
     }
 
     [HttpPost("add")]
+    [Authorize]
     public async Task<IActionResult> AddSession(
         [FromBody]
         AddSessionRequest request,CancellationToken token)
     {
-        //var userRole = Enum.Parse<UserRole>(HttpContext.User.FindFirst("role")!.Value.ToString());
+        UserRole userRole = HttpContext.User.GetRole();
         var command = new AddSessionCommand(request.StartTime,
                                             request.EndTime,
                                             request.SessionDescriptionContent,
                                             request.RoomId,
                                             request.PatientId,
                                             request.DoctorId,
-                                            UserRole.Admin);
+                                            userRole);
 
         var result = await _mediator.Send(command,token);
         if (!result.IsError)

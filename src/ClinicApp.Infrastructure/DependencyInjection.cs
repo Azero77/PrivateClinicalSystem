@@ -50,8 +50,10 @@ public static class DependencyInjection
     private static void RegisterMediatrGenericHandlers(IServiceCollection services)
     {
         services.AddScoped<IRequestHandler<QueryRequest<SessionQueryType>, IQueryable<SessionQueryType>>, QueryRequestHandler<SessionQueryType>>();
-        services.AddScoped<IRequestHandler<QueryRequest<DoctorQueryType>, IQueryable<DoctorQueryType>>, QueryRequestHandler<DoctorQueryType>>();
         services.AddScoped<IRequestHandler<QuerySingleRequest<SessionQueryType>,SessionQueryType?>, QuerySingleRequestHandler<SessionQueryType>>();
+        services.AddScoped<IRequestHandler<QueryRequest<DoctorQueryType>, IQueryable<DoctorQueryType>>, QueryRequestHandler<DoctorQueryType>>();
         services.AddScoped<IRequestHandler<QuerySingleRequest<DoctorQueryType>,DoctorQueryType?>, QuerySingleRequestHandler<DoctorQueryType>>();
+        services.AddScoped<IRequestHandler<QueryRequest<PatientQueryType>, IQueryable<PatientQueryType>>, QueryRequestHandler<PatientQueryType>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<PatientQueryType>, PatientQueryType?>, QuerySingleRequestHandler<PatientQueryType>>();
     }
 }
