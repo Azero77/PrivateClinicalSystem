@@ -34,7 +34,7 @@
     Only doctor of the session.
 
 - CanViewSessionStateHistory
-    Admins, secretary, and doctor of the session.
+    Admins, secretary, and doctor,patient of the session.
 
 - CanEditSession
     Probably only admins, doctors, secretary.

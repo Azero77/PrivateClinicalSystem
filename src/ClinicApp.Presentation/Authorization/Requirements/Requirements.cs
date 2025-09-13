@@ -1,8 +1,13 @@
 ﻿// Session-related
+using ClinicApp.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
 
-public record CanViewOwnSessions : IAuthorizationRequirement;
-public record CanViewAllSessions : IAuthorizationRequirement;
+
+/// <summary>
+/// requirement for doctors and patients to only see their sessions 
+/// </summary>
+/// <param name="allowedRoles"> roles to view sessions even if they were not their own</param>
+public record CanViewOwnSessions(UserRole[] allowedRoles) : IAuthorizationRequirement;
 public record CanViewSessionStatus : IAuthorizationRequirement;
 public record CanViewSessionDetails : IAuthorizationRequirement;
 public record CanViewSessionStateHistory : IAuthorizationRequirement;
@@ -22,3 +27,5 @@ public record CanViewDoctorAvailability : IAuthorizationRequirement; // secretar
 // Admin-related
 public record CanManageUsers : IAuthorizationRequirement;
 public record CanManageSystemSettings : IAuthorizationRequirement;
+
+//For more details go to /src/ClinicApp.Presentation/Policies.md

@@ -24,9 +24,13 @@ public abstract class BaseOwnSessionHandler : AuthorizationHandler<CanViewOwnSes
 
         var role = httpContext.User.GetRole();
         // only handle if current role matches the one this handler supports
+        if (requirement.allowedRoles.Contains(role))
+        {
+            context.Succeed(requirement);
+            return;
+        }
         if (role != SupportedRole)
             return;
-
         if (!Guid.TryParse(
                 httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
                 out Guid userId))
@@ -70,7 +74,6 @@ public class DoctorCanViewOwnSessionsHandler(IHttpContextAccessor httpContextAcc
     {
         return (await repo.GetDoctorByUsedId(userId))?.Id;
     }
-}
 }
 
 

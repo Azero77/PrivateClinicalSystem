@@ -4,6 +4,7 @@ using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.Seeding;
+using ClinicApp.Presentation.Authorization.Policies;
 using ClinicApp.Presentation.Exceptions;
 using ClinicApp.Presentation.QueryService;
 using FluentValidation;
@@ -85,7 +86,10 @@ namespace ClinicApp.Presentation
 
             AddSerilog(builder);
             AddGraphQL(builder);
-            builder.Services.AddAuthorization();
+            builder.Services.AddAuthorization(opts =>
+            {
+                opts.AddPolicies();
+            });
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
             builder.Services.AddControllers();
