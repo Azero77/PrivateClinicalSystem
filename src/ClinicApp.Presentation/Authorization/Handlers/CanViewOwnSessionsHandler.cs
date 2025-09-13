@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-public abstract class BaseOwnSessionHandler : AuthorizationHandler<CanViewOwnSessions>
+public abstract class BaseOwnSessionHandler : AuthorizationHandler<CanView>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -16,7 +16,7 @@ public abstract class BaseOwnSessionHandler : AuthorizationHandler<CanViewOwnSes
 
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
-        CanViewOwnSessions requirement)
+        CanView requirement)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext is null)

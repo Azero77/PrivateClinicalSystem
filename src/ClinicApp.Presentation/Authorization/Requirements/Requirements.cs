@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 /// requirement for doctors and patients to only see their sessions 
 /// </summary>
 /// <param name="allowedRoles"> roles to view sessions even if they were not their own</param>
-public record CanViewOwnSessions(UserRole[] allowedRoles) : IAuthorizationRequirement;
+public record CanView(UserRole[] allowedRoles) : IAuthorizationRequirement;
 public record CanViewSessionStatus : IAuthorizationRequirement;
 public record CanViewSessionDetails : IAuthorizationRequirement;
 public record CanViewSessionStateHistory : IAuthorizationRequirement;
