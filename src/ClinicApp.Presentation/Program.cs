@@ -90,6 +90,7 @@ namespace ClinicApp.Presentation
             {
                 opts.AddPolicies();
             });
+            builder.Services.AddPolicyServices();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             // Add services to the container.
             builder.Services.AddControllers();

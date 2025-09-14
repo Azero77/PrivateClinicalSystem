@@ -1,5 +1,6 @@
 ﻿
 using ClinicApp.Domain.Common;
+using ClinicApp.Presentation.Authorization.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
@@ -52,5 +53,11 @@ public static class PolicyExtensions
         #region adminPolicies
         opts.AddPolicy(PoliciesConstants.CanManageUsers,builder => builder.RequireRole(UserRole.Admin.ToString()));
         #endregion
+    }
+
+    public static IServiceCollection AddPolicyServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IAuthorizationHandler, CanViewOwnSessionHandler>();
+        return services;
     }
 }
