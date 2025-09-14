@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Domain.SessionAgg;
+using HotChocolate.Authorization;
 
 namespace ClinicApp.Application.QueryTypes;
 public class SessionQueryType : QueryType

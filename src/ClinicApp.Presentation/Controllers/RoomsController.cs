@@ -67,7 +67,7 @@ public class RoomsController : ApiController
     public async Task<IActionResult> GetRooms(CancellationToken cancellationToken)
     { 
         var query = new QueryRequest<RoomQueryType>();
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = (await _mediator.Send(query, cancellationToken)).ToList();
         return Ok(result);
     }
 }

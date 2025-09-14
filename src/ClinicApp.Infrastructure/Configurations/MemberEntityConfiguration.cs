@@ -16,5 +16,8 @@ public class MemberEntityConfiguration<T> : IEntityTypeConfiguration<T>
         builder.Property(m => m.LastName)
             .HasMaxLength(255)
             .IsRequired();
+
+        builder.HasIndex(m => m.UserId)
+            .IsUnique();
     }
 }

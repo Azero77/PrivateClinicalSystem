@@ -3,13 +3,13 @@
 public static class PoliciesConstants
 {
     //Session-Related
-    public static string CanViewOwnSessionsPolicy = "CanViewOwnSessions";
-    public static string CanViewAllSessionsPolicy = "CanViewAllSessions";  
-    public static string CanViewSessionStatus = "CanViewSessionStatus";  
-    public static string CanViewSessionHistory = "CanViewSessionHistory";  
-    public static string CanViewSessionDetails = "CanViewSessionDetails";  
-    public static string CanEditSessionDetails = "CanEditSessionDetails";
-    public static string CanDeleteSession = "CanDeleteSession";
+    public const string CanViewOwnSessionsPolicy = "CanViewOwnSessions";
+    public const string CanViewAllSessionsPolicy = "CanViewAllSessions"; 
+    public const string CanViewSessionStatus = "CanViewSessionStatus";  
+    public const string CanViewSessionHistory = "CanViewSessionHistory";  
+    public const string CanViewSessionDetails = "CanViewSessionDetails";  
+    public const string CanEditSessionDetails = "CanEditSessionDetails";
+    public const string CanDeleteSession = "CanDeleteSession";
 
     // Room-related
     public const string CanViewRooms = "CanViewRooms";

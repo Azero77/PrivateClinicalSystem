@@ -67,7 +67,7 @@ public class SecretariesController : ApiController
     public async Task<IActionResult> GetSecretaries(CancellationToken cancellationToken)
     {
         var query = new QueryRequest<SecretaryQueryType>();
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = (await _mediator.Send(query, cancellationToken)).ToList();
         return Ok(result);
     }
 }

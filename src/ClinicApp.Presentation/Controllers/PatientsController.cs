@@ -67,7 +67,7 @@ public class PatientsController : ApiController
     public async Task<IActionResult> GetPatients(CancellationToken cancellationToken)
     {
         var query = new QueryRequest<PatientQueryType>();
-        var result = await _mediator.Send(query, cancellationToken);
+        var result = (await _mediator.Send(query, cancellationToken)).ToList();
         return Ok(result);
     }
 }

@@ -22,9 +22,9 @@ using Serilog;
 
 namespace ClinicApp.Presentation.Controllers;
 
+[ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[ApiController]
 public partial class SessionController : ApiController
 {
     private readonly IMediator _mediator;
