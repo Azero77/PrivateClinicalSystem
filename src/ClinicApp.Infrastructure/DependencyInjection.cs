@@ -1,7 +1,6 @@
 ﻿using ClinicApp.Application.Common;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryServices;
-using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
@@ -16,6 +15,7 @@ using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
+using ClinicApp.Shared.QueryTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

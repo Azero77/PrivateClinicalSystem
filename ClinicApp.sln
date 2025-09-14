@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Identity.BFF", "a
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Identity.Server", "auth\ClinicApp.Identity.Server\ClinicApp.Identity.Server.csproj", "{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Shared", "src\ClinicApp.Shared\ClinicApp.Shared.csproj", "{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{DD07CBBC-C643-9052-D0F8-9A98DC5158EB} = {054549EC-349C-46F5-9762-CE1811F43953}
 		{97A63EEA-FB43-FB86-9394-D8A454615431} = {C9BEB82A-FFD8-40CD-B0E8-FB2C0728B8C5}
 		{8C17EFDE-B971-1E40-3E4C-EBD930A99A2A} = {C9BEB82A-FFD8-40CD-B0E8-FB2C0728B8C5}
+		{F2B780A2-D1A6-405E-B4FF-A24525DB9FDD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28E7AD30-B8DF-4623-8D1F-A5BAD12EA064}

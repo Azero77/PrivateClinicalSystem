@@ -1,6 +1,6 @@
-﻿using ClinicApp.Application.QueryTypes;
-using ClinicApp.Domain.Common;
+﻿using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Repositories;
+using ClinicApp.Shared.QueryTypes;
 using HotChocolate.Resolvers;
 using Microsoft.AspNetCore.Authorization;
 

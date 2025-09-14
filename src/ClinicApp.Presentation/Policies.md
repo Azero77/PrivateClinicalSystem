@@ -42,6 +42,9 @@
 - CanCancelSession
     Doctor (for their own),Secretary.
 
+- CanAddSession
+    Secretary,Admin(For all doctors),Doctor for their own doctor,
+
 ### Room-related
 
 - CanViewRooms

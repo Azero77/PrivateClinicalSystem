@@ -1,6 +1,6 @@
-﻿using ClinicApp.Application.QueryTypes;
-using ClinicApp.Domain.Common;
+﻿using ClinicApp.Domain.Common;
 using ClinicApp.Presentation.Helpers;
+using ClinicApp.Shared.QueryTypes;
 using HotChocolate.Resolvers;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -9,7 +9,7 @@ namespace ClinicApp.Presentation.Authorization.Handlers;
 
 public abstract class CanViewBaseHandler<TCanView,TResource> : AuthorizationHandler<TCanView>
     where TCanView : CanView
-    where TResource : QueryType
+    where TResource : class
 {
     /// <summary>
     /// The resource role 

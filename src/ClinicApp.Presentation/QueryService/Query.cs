@@ -1,6 +1,6 @@
 ﻿using ClinicApp.Application.Queries.Common;
-using ClinicApp.Application.QueryTypes;
 using ClinicApp.Shared;
+using ClinicApp.Shared.QueryTypes;
 using HotChocolate.Authorization;
 using MediatR;
 

@@ -14,14 +14,15 @@ public class DoctorQueryType : MemberQueryType
     [UseFiltering]                  
     [UseSorting] 
     public IReadOnlyCollection<SessionQueryType>? Sessions { get; set; } = new List<SessionQueryType>();
-    [Authorize(PoliciesConstants.CanViewDoctorWorkingTime)]
+    [Authorize(PoliciesConstants.CanViewDoctorWorkingTime,ApplyPolicy.AfterResolver)]
     public WorkingTimeQueryType? WorkingTime { get; set; }
     public string TimeZoneId { get; set; } = string.Empty;
+    [Authorize(PoliciesConstants.CanViewDoctorTimesOff, ApplyPolicy.AfterResolver)]
     public ICollection<TimeOffQueryType> TimesOff { get; set; } = new List<TimeOffQueryType>();
 }
 
 
-public class WorkingTimeQueryType : QueryType
+public class WorkingTimeQueryType
 {
     public WorkingDays WorkingDays { get; set; }
     public TimeOnly StartTime { get; set; }

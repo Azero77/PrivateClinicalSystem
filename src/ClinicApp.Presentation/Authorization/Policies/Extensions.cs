@@ -47,9 +47,9 @@ public static class PolicyExtensions
         #endregion
         #region doctor
         opts.AddPolicy(PoliciesConstants.CanViewDoctorsInfo,builder => builder.RequireAssertion(_ => true)); //all users
-        opts.AddPolicy(PoliciesConstants.CanViewDoctorWorkingTime, builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary]))
+        opts.AddPolicy(PoliciesConstants.CanViewDoctorWorkingTime, builder => builder.AddRequirements(new CanViewDoctorWorkingTime([UserRole.Admin,UserRole.Secretary]))
         .RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString(),UserRole.Secretary.ToString()));
-        opts.AddPolicy(PoliciesConstants.CanViewDoctorTimesOff, builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin])).RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString()));
+        opts.AddPolicy(PoliciesConstants.CanViewDoctorTimesOff, builder => builder.AddRequirements(new CanViewDoctorTimesOff([UserRole.Admin])).RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString()));
         #endregion
         #region adminPolicies
         opts.AddPolicy(PoliciesConstants.CanManageUsers,builder => builder.RequireRole(UserRole.Admin.ToString()));
@@ -58,7 +58,10 @@ public static class PolicyExtensions
 
     public static IServiceCollection AddPolicyServices(this IServiceCollection services)
     {
-        services.AddSingleton<IAuthorizationHandler, CanViewOwnSessionHandler>();
+        services.AddScoped<IAuthorizationHandler, CanViewDoctorTimesOffHandler>();
+        services.AddScoped<IAuthorizationHandler, CanViewDoctorWorkingTimeHandler>();
+        services.AddScoped<IAuthorizationHandler, DoctorCanViewOwnedSessionHandler>();
+        services.AddScoped<IAuthorizationHandler, PatientCanViewOwnedSessionHandler>();
         return services;
     }
 }

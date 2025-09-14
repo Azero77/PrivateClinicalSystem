@@ -1,22 +1,20 @@
 ﻿using ClinicApp.Application.Commands.AddSessionsCommands;
 using ClinicApp.Application.Commands.DeleteSessionCommands;
 using ClinicApp.Application.Commands.FinishSessionCommands;
-using ClinicApp.Application.Commands.ModifySession;
 using ClinicApp.Application.Commands.RejectSessionsCommands;
 using ClinicApp.Application.Commands.SetSessionsCommands;
 using ClinicApp.Application.Commands.StartSessionCommands;
 using ClinicApp.Application.Commands.UpdateSessionDateCommands;
 using ClinicApp.Application.Queries.Common;
-using ClinicApp.Application.Queries.Sessions;
 using ClinicApp.Application.Queries.Sessions.SessionHistory;
-using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.Common;
-using ClinicApp.Domain.SessionAgg;
+using ClinicApp.Presentation.Authorization.Filters;
 using ClinicApp.Presentation.Helpers;
 using ClinicApp.Presentation.Requests;
+using ClinicApp.Shared;
+using ClinicApp.Shared.QueryTypes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -35,7 +33,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpPost("add")]
-    [Authorize]
+    [AuthorizeByRequestFilter<CanAddSession,AddSessionRequest>] //admins and secretary can add any session,doctor can add session of their own
     public async Task<IActionResult> AddSession(
         [FromBody]
         AddSessionRequest request,CancellationToken token)

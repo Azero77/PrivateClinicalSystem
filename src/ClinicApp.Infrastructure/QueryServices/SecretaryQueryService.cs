@@ -1,7 +1,7 @@
 using ClinicApp.Application.QueryServices;
-using ClinicApp.Application.QueryTypes;
 using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Infrastructure.Persistance.DataModels;
+using ClinicApp.Shared.QueryTypes;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

@@ -1,7 +1,7 @@
 using ClinicApp.Application.QueryServices;
-using ClinicApp.Application.QueryTypes;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Shared.QueryTypes;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -45,9 +45,12 @@ public class SessionQueryService(AppDbContext context) : IQueryService<SessionQu
                         Major = e.Doctor.Major,
                         RoomId = e.Doctor.RoomId,
                         UserId = e.Doctor.UserId,
-                        WorkingDays = e.Doctor.WorkingDays,
-                        StartTime = e.Doctor.StartTime,
-                        EndTime = e.Doctor.EndTime,
+                        WorkingTime = new WorkingTimeQueryType()
+                        {
+                            WorkingDays = e.Doctor.WorkingDays,
+                            StartTime = e.Doctor.StartTime,
+                            EndTime = e.Doctor.EndTime
+                        },
                         TimeZoneId = e.Doctor.TimeZoneId,
                         TimesOff = e.Doctor.TimesOff.Select(t => new TimeOffQueryType { StartDate = t.StartDate, EndDate = t.EndDate, reason = t.reason }).ToList()
                     },
@@ -89,9 +92,12 @@ public class SessionQueryService(AppDbContext context) : IQueryService<SessionQu
                          Major = e.Doctor.Major,
                          RoomId = e.Doctor.RoomId,
                          UserId = e.Doctor.UserId,
-                         WorkingDays = e.Doctor.WorkingDays,
-                         StartTime = e.Doctor.StartTime,
-                         EndTime = e.Doctor.EndTime,
+                         WorkingTime = new WorkingTimeQueryType()
+                         {
+                             WorkingDays = e.Doctor.WorkingDays,
+                             StartTime = e.Doctor.StartTime,
+                             EndTime = e.Doctor.EndTime
+                         },
                          TimeZoneId = e.Doctor.TimeZoneId,
                          TimesOff = e.Doctor.TimesOff.Select(t => new TimeOffQueryType { StartDate = t.StartDate, EndDate = t.EndDate, reason = t.reason }).ToList()
                      },
