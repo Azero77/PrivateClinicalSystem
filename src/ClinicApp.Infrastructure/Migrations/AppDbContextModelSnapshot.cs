@@ -122,6 +122,9 @@ namespace ClinicApp.Infrastructure.Migrations
                     b.HasIndex("RoomId")
                         .IsUnique();
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Doctors", "domain");
                 });
 
@@ -145,6 +148,9 @@ namespace ClinicApp.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Patients", "domain");
                 });
@@ -206,6 +212,9 @@ namespace ClinicApp.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("Endtime");
 
+                    b.Property<Guid?>("PatientDataModelId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uuid");
 
@@ -222,6 +231,8 @@ namespace ClinicApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("PatientDataModelId");
 
                     b.HasIndex("PatientId");
 
@@ -274,6 +285,10 @@ namespace ClinicApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClinicApp.Infrastructure.Persistance.DataModels.PatientDataModel", null)
+                        .WithMany("Sessions")
+                        .HasForeignKey("PatientDataModelId");
+
                     b.HasOne("ClinicApp.Infrastructure.Persistance.DataModels.PatientDataModel", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
@@ -294,6 +309,11 @@ namespace ClinicApp.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("ClinicApp.Infrastructure.Persistance.DataModels.DoctorDataModel", b =>
+                {
+                    b.Navigation("Sessions");
+                });
+
+            modelBuilder.Entity("ClinicApp.Infrastructure.Persistance.DataModels.PatientDataModel", b =>
                 {
                     b.Navigation("Sessions");
                 });

@@ -144,7 +144,8 @@ namespace ClinicApp.Presentation
                                 opts.MaxPageSize = qoptions.MaxPageSize;
                                 opts.IncludeTotalCount = qoptions.IncludeTotalCount;
                                 opts.DefaultPageSize = qoptions.DefaultPageSize;
-                            });
+                            })
+                            .AddAuthorization();
         }
 
         private static void AddSerilog(WebApplicationBuilder builder)
