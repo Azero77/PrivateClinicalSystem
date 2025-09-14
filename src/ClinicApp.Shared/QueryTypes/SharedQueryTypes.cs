@@ -1,6 +1,6 @@
-namespace ClinicApp.Application.QueryTypes;
+namespace ClinicApp.Shared.QueryTypes;
 
-public class TimeOffQueryType
+public class TimeOffQueryType : QueryType
 {
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }

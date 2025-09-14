@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Handlers;
 
-public class CanViewOwnSessionHandler : AuthorizationHandler<CanView>
+public class CanViewOwnSessionHandler : AuthorizationHandler<CanViewSessions>
 {
     private static UserRole[] _supportedRoles = { UserRole.Patient, UserRole.Doctor };
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -24,7 +24,7 @@ public class CanViewOwnSessionHandler : AuthorizationHandler<CanView>
         _patientRepository = patientRepository;
     }
 
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CanView requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, CanViewSessions requirement)
     {
         var user = context.User;
         var role = user.GetRole();
@@ -50,7 +50,7 @@ public class CanViewOwnSessionHandler : AuthorizationHandler<CanView>
         }
     }
 
-    private async Task HandleRestRequirementAsync(ClaimsPrincipal user,UserRole role,AuthorizationHandlerContext context, CanView requirement)
+    private async Task HandleRestRequirementAsync(ClaimsPrincipal user,UserRole role,AuthorizationHandlerContext context, CanViewSessions requirement)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext is null)
@@ -84,7 +84,7 @@ public class CanViewOwnSessionHandler : AuthorizationHandler<CanView>
         context.Succeed(requirement);
     }
 
-    private async Task HandleGraphQLRequirementAsync(AuthorizationHandlerContext context, CanView requirement, IResolverContext resolverContext)
+    private async Task HandleGraphQLRequirementAsync(AuthorizationHandlerContext context, CanViewSessions requirement, IResolverContext resolverContext)
     {
         var user = context.User;
         var role = user.GetRole();

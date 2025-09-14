@@ -17,7 +17,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.10" />
 	  <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.10" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+	  <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

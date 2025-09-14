@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 /// </summary>
 /// <param name="allowedRoles"> roles to view sessions even if they were not their own</param>
 public record CanView(UserRole[] allowedRoles) : IAuthorizationRequirement;
+public record CanViewSessions(UserRole[] allowedRoles) : CanView(allowedRoles);
 public record CanViewSessionStatus : IAuthorizationRequirement;
 public record CanViewSessionDetails : IAuthorizationRequirement;
 public record CanViewSessionStateHistory : IAuthorizationRequirement;
@@ -20,8 +21,8 @@ public record CanManageRooms : IAuthorizationRequirement;
 
 // Doctor-related
 public record CanViewDoctorsInfo : IAuthorizationRequirement;
-public record CanViewDoctorWorkingTime : IAuthorizationRequirement;
-public record CanViewDoctorTimesOff : IAuthorizationRequirement;
+public record CanViewDoctorWorkingTime(UserRole[] allowedRoles) : CanView(allowedRoles);
+public record CanViewDoctorTimesOff(UserRole[] allowedRoles) : CanView(allowedRoles);
 public record CanViewDoctorAvailability : IAuthorizationRequirement; // secretary's limited view
 
 // Admin-related

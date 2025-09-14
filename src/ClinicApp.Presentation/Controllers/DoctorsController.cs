@@ -1,8 +1,8 @@
 using ClinicApp.Application.Commands.DoctorAddCommands;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryTypes;
-using ClinicApp.Presentation.Authorization.Policies;
 using ClinicApp.Presentation.Requests;
+using ClinicApp.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -5,10 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+	<ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ClinicApp.Application\ClinicApp.Application.csproj" />
-    <ProjectReference Include="..\ClinicApp.Presentation\ClinicApp.Presentation.csproj" />
-  </ItemGroup>
-
+		<PackageReference Include="HotChocolate.AspNetCore" Version="15.1.10" />
+		<PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.10" />
+		<PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
+	</ItemGroup>
 </Project>

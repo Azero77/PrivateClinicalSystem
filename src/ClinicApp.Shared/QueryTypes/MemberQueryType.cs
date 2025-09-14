@@ -1,4 +1,6 @@
-﻿namespace ClinicApp.Application.QueryTypes;
+﻿using ClinicApp.Shared.QueryTypes;
+
+namespace ClinicApp.Shared.QueryTypes;
 
 public abstract class MemberQueryType : QueryType
 {

@@ -1,4 +1,4 @@
-﻿namespace ClinicApp.Application.QueryTypes;
+﻿namespace ClinicApp.Shared.QueryTypes;
 
 public class RoomQueryType : QueryType
 {

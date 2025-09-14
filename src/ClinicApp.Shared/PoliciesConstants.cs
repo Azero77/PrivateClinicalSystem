@@ -1,4 +1,4 @@
-﻿namespace ClinicApp.Presentation.Authorization.Policies;
+﻿namespace ClinicApp.Shared;
 
 public static class PoliciesConstants
 {

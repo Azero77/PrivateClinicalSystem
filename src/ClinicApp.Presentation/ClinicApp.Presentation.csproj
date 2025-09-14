@@ -36,6 +36,7 @@
 	  
     <ProjectReference Include="..\ClinicApp.Application\ClinicApp.Application.csproj" />
     <ProjectReference Include="..\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\ClinicApp.Shared\ClinicApp.Shared.csproj" />
   </ItemGroup>
 
 </Project>

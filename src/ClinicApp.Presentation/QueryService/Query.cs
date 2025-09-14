@@ -1,6 +1,6 @@
 ﻿using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryTypes;
-using ClinicApp.Presentation.Authorization.Policies;
+using ClinicApp.Shared;
 using HotChocolate.Authorization;
 using MediatR;
 
@@ -13,13 +13,14 @@ public class Query
     [UseFiltering]
     [UseSorting]
     [Authorize(Policy = PoliciesConstants.CanViewAllSessionsPolicy)]
+    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
     public async Task<IQueryable<SessionQueryType>> GetSessions(IMediator mediator)
     {
         return await mediator.Send(new QueryRequest<SessionQueryType>());
     }
 
     [UseProjection]
-    [Authorize()] // will add a middleware to check the id of the session and who is requesting it
+    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)] // will add a middleware to check the id of the session and who is requesting it
     public async Task<SessionQueryType?> GetSession(Guid id,IMediator mediator)
     {
         return await mediator.Send(new QuerySingleRequest<SessionQueryType>(id));
