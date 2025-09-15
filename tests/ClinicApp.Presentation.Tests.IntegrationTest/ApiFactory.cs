@@ -26,7 +26,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     private HttpClient _client = null!;
     public HttpClient Client => _client;
 
-    private AppDbContext CreateDbContext()
+    public AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(_database.GetConnectionString())

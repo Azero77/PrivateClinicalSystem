@@ -54,17 +54,20 @@ public static class DependencyInjection
         RegisterMediatrGenericHandlers(services);
         return services;
     }
+    private static void RegisterMediatrGenericHandler<T>(IServiceCollection services)
+        where T:QueryType
+    {
+        services.AddScoped<IRequestHandler<QueryRequest<T>, IQueryable<T>>, QueryRequestHandler<T>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<T>, T?>, QuerySingleRequestHandler<T>>();
 
+    }
     private static void RegisterMediatrGenericHandlers(IServiceCollection services)
     {
-        services.AddScoped<IRequestHandler<QueryRequest<SessionQueryType>, IQueryable<SessionQueryType>>, QueryRequestHandler<SessionQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<SessionQueryType>,SessionQueryType?>, QuerySingleRequestHandler<SessionQueryType>>();
-        services.AddScoped<IRequestHandler<QueryRequest<DoctorQueryType>, IQueryable<DoctorQueryType>>, QueryRequestHandler<DoctorQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<DoctorQueryType>,DoctorQueryType?>, QuerySingleRequestHandler<DoctorQueryType>>();
-        services.AddScoped<IRequestHandler<QueryRequest<PatientQueryType>, IQueryable<PatientQueryType>>, QueryRequestHandler<PatientQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<PatientQueryType>, PatientQueryType?>, QuerySingleRequestHandler<PatientQueryType>>();
-
-        services.AddScoped<IRequestHandler<QueryRequest<RoomQueryType>, IQueryable<RoomQueryType>>, QueryRequestHandler<RoomQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<RoomQueryType>, RoomQueryType?>, QuerySingleRequestHandler<RoomQueryType>>();
+        RegisterMediatrGenericHandler<SessionQueryType>(services);
+        RegisterMediatrGenericHandler<DoctorQueryType>(services);
+        RegisterMediatrGenericHandler<PatientQueryType>(services);
+        RegisterMediatrGenericHandler<RoomQueryType>(services);
+        RegisterMediatrGenericHandler<SecretaryQueryType>(services);
     }
+
 }

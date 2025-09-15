@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Core;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace ClinicApp.Presentation
@@ -58,7 +59,9 @@ namespace ClinicApp.Presentation
                             ValidIssuer = builder.Configuration?["JWT:Authority"] ?? throw new ArgumentException("IdentityUrl Should Be Provided"),
                             ValidateIssuer = true,
                             ValidateAudience = true,
-                            IssuerSigningKey = key
+                            IssuerSigningKey = key,
+                            RoleClaimType = "role"
+
                         };
                     }
                     else
@@ -68,11 +71,12 @@ namespace ClinicApp.Presentation
                         jwtoptions.TokenValidationParameters = new TokenValidationParameters()
                         {
                             ValidateIssuer = true,
-                            ValidateAudience = true
+                            ValidateAudience = true,
+                            RoleClaimType = "role"
+
                         };
                     }
                     jwtoptions.MapInboundClaims = false;
-
                     static SymmetricSecurityKey getKey(WebApplicationBuilder builder)
                     {
                         // This secret must be the base64 encoded key from 'dotnet user-jwts'

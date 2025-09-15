@@ -1,6 +1,7 @@
 
 using System.Net;
 using System.Net.Http.Json;
+using ClinicApp.Infrastructure.Persistance.Seeding;
 using ClinicApp.Presentation.Requests;
 using FluentAssertions;
 
@@ -69,13 +70,19 @@ public class RestApiPolicyTests
     {
         // Arrange
         var client = GetClientForRole(role);
-        var roomId = Guid.NewGuid(); 
+        var roomId = SeedData.Room1Id; 
 
         // Act
         var response = await client.DeleteAsync($"/api/rooms/{roomId}");
 
         // Assert
         response.StatusCode.Should().Be(expectedStatusCode);
+
+        //Cleanup
+
+        var dbContext = _apiFactory.CreateDbContext();
+        dbContext.Rooms.Add(SeedData.Rooms[0]);
+        await dbContext.SaveChangesAsync();
     }
     
     [Theory]
@@ -92,5 +99,8 @@ public class RestApiPolicyTests
 
         // Assert
         response.StatusCode.Should().Be(expectedStatusCode);
+
+
     }
+
 }
