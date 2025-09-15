@@ -24,6 +24,9 @@ var seq = builder.AddSeq("seq")
     .WithEnvironment("ACCEPT_EULA", "Y")
     .WithEnvironment("SEQ_FIRSTRUN_NOAUTHENTICATION", "true");
 
+var redis = builder.AddRedis("cache")
+    .WithImage("redis:8.2-alpine");
+
 var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)
     .WaitFor(db)
@@ -31,6 +34,8 @@ var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-pre
     .WaitFor(seq)
     .WithReference(identityServer)
     .WithReference(bff)
+    .WaitFor(redis)
+    .WithReference(redis)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT","Development");
 
 // Apply settings from appsettings.json to the respective projects

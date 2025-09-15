@@ -17,22 +17,32 @@ using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
 using ClinicApp.Shared.QueryTypes;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicApp.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
-        string connectionstring)
+        WebApplicationBuilder builder)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<AppDbContext>((sp, opts) =>
         {
-            opts.UseNpgsql(connectionstring);
+            opts.UseNpgsql(builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("Connection string is null for clinic db"));
         });
+
+        services.AddStackExchangeRedisCache(opts =>
+        {
+            opts.Configuration = builder.Configuration.GetConnectionString("cache") ?? throw new ArgumentException("Connection string is null for redis ");
+            opts.InstanceName = "clinic-sessions";
+        });
+
         services.AddScoped<ISessionRepository, DbSessionRepository>();
-        services.AddScoped<IDoctorRepository, DbDoctorRepository>();
+        services.AddScoped<DbDoctorRepository>();
+        services.AddScoped<IDoctorRepository, CachedDbDoctorRepository>();
         services.AddScoped<IRoomRepository, DbRoomRepository>();
         services.AddScoped<IPatientRepository, DbPatientRepository>();
         services.AddScoped<ISecretaryRepository, DbSecretaryRepository>();

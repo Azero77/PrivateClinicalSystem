@@ -104,7 +104,7 @@ namespace ClinicApp.Presentation
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDomainServices()
-                .AddInfrastructure(builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("Connection string is null for clinic db"))
+                .AddInfrastructure(builder)
                 .AddApplication();
 
             builder.Services.AddHttpContextAccessor();
