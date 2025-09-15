@@ -3,6 +3,7 @@ using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ClinicApp.Presentation.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Handlers;
@@ -41,7 +42,7 @@ public abstract class CanModifySession<TRequirement, TRequest> : AuthorizationHa
             context.Fail();return;
         }
 
-        if (Guid.TryParse(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        if (Guid.TryParse(context.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out Guid userId))
         {
             context.Fail();
             return;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Filters;
@@ -23,7 +24,7 @@ public sealed class AuthorizeByRequestFilter<TRequirement,TRequest> : IAsyncActi
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var user = context.HttpContext.User;
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier);
+        var userId = user.FindFirst(JwtRegisteredClaimNames.Sub);
         var requirement = new TRequirement();
         var model = context.ActionArguments.Values.OfType<TRequest>().FirstOrDefault();
         if (model is null)

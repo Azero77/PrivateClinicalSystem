@@ -15,7 +15,7 @@ public class DoctorQueryService(AppDbContext context) : IQueryService<DoctorQuer
         Id = d.Id,
         FirstName = d.FirstName,
         LastName = d.LastName,
-
+        UserId = d.UserId,
         Major = d.Major,
         RoomId = d.RoomId,
         Room = d.Room == null ? null : new RoomQueryType
@@ -38,7 +38,7 @@ public class DoctorQueryService(AppDbContext context) : IQueryService<DoctorQuer
         TimeZoneId = d.TimeZoneId,
         WorkingTime = new WorkingTimeQueryType()
         {
-            WorkingDays = d.WorkingDays,
+            WorkingDays = (byte) d.WorkingDays,
             StartTime = d.StartTime,
             EndTime = d.EndTime,
         },

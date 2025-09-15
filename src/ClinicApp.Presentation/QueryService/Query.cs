@@ -12,8 +12,7 @@ public class Query
     [UseProjection]
     [UseFiltering]
     [UseSorting]
-    [Authorize(Policy = PoliciesConstants.CanViewAllSessionsPolicy)]
-    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
+    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy,Apply =ApplyPolicy.AfterResolver)]
     public async Task<IQueryable<SessionQueryType>> GetSessions(IMediator mediator)
     {
         return await mediator.Send(new QueryRequest<SessionQueryType>());

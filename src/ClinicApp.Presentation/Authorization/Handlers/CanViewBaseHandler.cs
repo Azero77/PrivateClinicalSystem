@@ -3,6 +3,7 @@ using ClinicApp.Presentation.Helpers;
 using ClinicApp.Shared.QueryTypes;
 using HotChocolate.Resolvers;
 using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Handlers;
@@ -39,7 +40,7 @@ public abstract class CanViewBaseHandler<TCanView,TResource> : AuthorizationHand
             return;
         }
 
-        if (!Guid.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+        if (!Guid.TryParse(user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out Guid userId))
         {
             context.Fail();
             return;

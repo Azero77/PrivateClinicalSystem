@@ -24,8 +24,7 @@ public class DoctorQueryType : MemberQueryType
 
 public class WorkingTimeQueryType
 {
-    public WorkingDays WorkingDays { get; set; }
+    public byte WorkingDays { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
-
 }

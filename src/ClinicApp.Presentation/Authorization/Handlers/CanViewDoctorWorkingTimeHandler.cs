@@ -10,7 +10,7 @@ namespace ClinicApp.Presentation.Authorization.Handlers;
 public class CanViewDoctorWorkingTimeHandler(IHttpContextAccessor accessor, IDoctorRepository repo) : CanViewBaseHandler<CanViewDoctorWorkingTime,
     DoctorQueryType>(accessor)
 {
-    public override UserRole ScopedRole => throw new NotImplementedException();
+    public override UserRole ScopedRole => UserRole.Doctor;
 
     protected override void CheckOwnedGraphQL(AuthorizationHandlerContext context, CanViewDoctorWorkingTime requirement, UserRole role, Guid domainId, IMiddlewareContext ctx)
     {

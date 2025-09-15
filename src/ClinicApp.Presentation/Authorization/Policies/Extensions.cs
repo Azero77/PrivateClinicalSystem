@@ -13,9 +13,7 @@ public static class PolicyExtensions
     public static void AddPolicies(this AuthorizationOptions opts)
     {
         #region sessionPolicies
-        opts.AddPolicy(PoliciesConstants.CanViewOwnSessionsPolicy, builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary]))
-        .RequireAuthenticatedUser()
-        .RequireClaim(ClaimTypes.NameIdentifier));
+        opts.AddPolicy(PoliciesConstants.CanViewOwnSessionsPolicy, builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary])));
 
         opts.AddPolicy(PoliciesConstants.CanViewAllSessionsPolicy,builder => builder.RequireRole(UserRole.Admin.ToString(),UserRole.Secretary.ToString()));
 
@@ -33,12 +31,10 @@ public static class PolicyExtensions
         builder.AddRequirements(new CanViewSessions([UserRole.Admin, UserRole.Secretary])));
 
         opts.AddPolicy(PoliciesConstants.CanEditSessionDetails,
-            builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary]))
-            .RequireRole(UserRole.Admin.ToString(),UserRole.Secretary.ToString(),UserRole.Doctor.ToString()));
+            builder => builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary])));
 
         opts.AddPolicy(PoliciesConstants.CanDeleteSession,
-            builder => builder.AddRequirements(new CanViewSessions([UserRole.Secretary]))
-            .RequireRole(UserRole.Doctor.ToString(),UserRole.Secretary.ToString()));
+            builder => builder.AddRequirements(new CanViewSessions([UserRole.Secretary])));
 
         #endregion
         #region roomPolicies
@@ -47,12 +43,16 @@ public static class PolicyExtensions
         #endregion
         #region doctor
         opts.AddPolicy(PoliciesConstants.CanViewDoctorsInfo,builder => builder.RequireAssertion(_ => true)); //all users
-        opts.AddPolicy(PoliciesConstants.CanViewDoctorWorkingTime, builder => builder.AddRequirements(new CanViewDoctorWorkingTime([UserRole.Admin,UserRole.Secretary]))
-        .RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString(),UserRole.Secretary.ToString()));
-        opts.AddPolicy(PoliciesConstants.CanViewDoctorTimesOff, builder => builder.AddRequirements(new CanViewDoctorTimesOff([UserRole.Admin])).RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString()));
+        opts.AddPolicy(PoliciesConstants.CanViewDoctorWorkingTime, builder => builder.AddRequirements(new CanViewDoctorWorkingTime([UserRole.Admin, UserRole.Secretary])));
+
+        opts.AddPolicy(PoliciesConstants.CanViewDoctorTimesOff, builder => builder.AddRequirements(new CanViewDoctorTimesOff([UserRole.Admin])));
         #endregion
         #region adminPolicies
         opts.AddPolicy(PoliciesConstants.CanManageUsers,builder => builder.RequireRole(UserRole.Admin.ToString()));
+        #endregion
+
+        #region patientPolicies
+        opts.AddPolicy(PoliciesConstants.CanViewPatient, builder => builder.RequireRole(UserRole.Admin.ToString(),UserRole.Doctor.ToString()));
         #endregion
     }
 

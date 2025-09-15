@@ -24,4 +24,7 @@ public static class PoliciesConstants
     // Admin-related
     public const string CanManageUsers = "CanManageUsers";
     public const string CanManageSystemSettings = "CanManageSystemSettings";
+
+    //Patient-related
+    public const string CanViewPatient = "CanViewPatient";
 }

@@ -47,7 +47,7 @@ public class SessionQueryService(AppDbContext context) : IQueryService<SessionQu
                         UserId = e.Doctor.UserId,
                         WorkingTime = new WorkingTimeQueryType()
                         {
-                            WorkingDays = e.Doctor.WorkingDays,
+                            WorkingDays = (byte) e.Doctor.WorkingDays,
                             StartTime = e.Doctor.StartTime,
                             EndTime = e.Doctor.EndTime
                         },
@@ -94,7 +94,7 @@ public class SessionQueryService(AppDbContext context) : IQueryService<SessionQu
                          UserId = e.Doctor.UserId,
                          WorkingTime = new WorkingTimeQueryType()
                          {
-                             WorkingDays = e.Doctor.WorkingDays,
+                             WorkingDays = (byte) e.Doctor.WorkingDays,
                              StartTime = e.Doctor.StartTime,
                              EndTime = e.Doctor.EndTime
                          },
