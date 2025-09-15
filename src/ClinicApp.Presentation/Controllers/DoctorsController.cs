@@ -58,9 +58,9 @@ public class DoctorsController : ApiController
     [Authorize(Policy = PoliciesConstants.CanViewDoctorsInfo)]
     public async Task<IActionResult> GetDoctor(Guid id, CancellationToken cancellationToken)
     {
-        var query = new QuerySingleRequest<DoctorQueryType>(id);
+        var query = new GetDoctorByIdQuery(id);
         var result = await _mediator.Send(query, cancellationToken);
-        return result is not null ? Ok(result) : NotFound();
+        return result.Match(Ok,ProblemResult);
     }
 
     [HttpGet]

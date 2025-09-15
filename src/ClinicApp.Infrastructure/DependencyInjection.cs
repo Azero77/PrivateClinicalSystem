@@ -43,7 +43,8 @@ public static class DependencyInjection
         services.AddScoped<ISessionRepository, DbSessionRepository>();
         services.AddScoped<DbDoctorRepository>();
         services.AddScoped<IDoctorRepository, CachedDbDoctorRepository>();
-        services.AddScoped<IRoomRepository, DbRoomRepository>();
+        services.AddScoped<DbRoomRepository>();
+        services.AddScoped<IRoomRepository, CachedDbRoomRepository>();
         services.AddScoped<IPatientRepository, DbPatientRepository>();
         services.AddScoped<ISecretaryRepository, DbSecretaryRepository>();
         services.AddSingleton<IClock, Clock>();
