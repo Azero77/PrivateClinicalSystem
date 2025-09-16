@@ -7,6 +7,7 @@ public class SessionQueryType : QueryType
 {
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
+    [Authorize(Policy = PoliciesConstants.CanViewSessionDetails,Apply = ApplyPolicy.AfterResolver)]
     public string? Content { get; set; }
     public Guid RoomId { get; set; }
     public RoomQueryType? Room { get; set; }

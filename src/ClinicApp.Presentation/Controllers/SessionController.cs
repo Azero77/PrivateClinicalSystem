@@ -61,6 +61,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpGet("sessions/{id}")]
+    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
     public async Task<IActionResult> GetSession(
         [FromRoute] Guid id)
     {
@@ -70,6 +71,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpGet("sessions/history/{id}")]
+    [Authorize(Policy = PoliciesConstants.CanViewSessionHistory)]
     public async Task<IActionResult> SessionHistory(
         [FromRoute] GetSessionHistoryRequest request)
     {
@@ -78,6 +80,7 @@ public partial class SessionController : ApiController
         return result.Match(value => Ok(value),errors => ProblemResult(errors));
     }
     [HttpDelete("sessions/{id}/delete")]
+    [Authorize(Policy = PoliciesConstants.CanDeleteSession)]
     public async Task<IActionResult> SessionDelete(
         [FromRoute] ModifySessionRequest request)
     {
@@ -86,6 +89,7 @@ public partial class SessionController : ApiController
         return result.Match(value => NoContent(),ProblemResult);
     }
     [HttpPatch("sessions/{id}/reject")]
+    [AuthorizeByRequestFilter<CanUpdateSessionRequirement,ModifySessionRequest>]
     public async Task<IActionResult> SessionReject(
         [FromRoute] ModifySessionRequest request)
     {
@@ -94,6 +98,7 @@ public partial class SessionController : ApiController
         return result.Match(value => NoContent(), ProblemResult);
     }
     [HttpPatch("sessions/{id}/finish")]
+    [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
     public async Task<IActionResult> SessionFinish(
         [FromRoute] ModifySessionRequest request)
     {
@@ -102,6 +107,7 @@ public partial class SessionController : ApiController
         return result.Match(value => NoContent(), ProblemResult);
     }
     [HttpPatch("sessions/{id}/set")]
+    [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
     public async Task<IActionResult> SessionSet(
         [FromRoute] ModifySessionRequest request)
     {
@@ -111,6 +117,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpPatch("sessions/{id}/start")]
+    [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
     public async Task<IActionResult> SessionStart(
         [FromRoute] ModifySessionRequest request)
     {
@@ -120,6 +127,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpPatch("sessions/{id}/update-time")]
+    [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
     public async Task<IActionResult> SessionUpdateTime(
         [FromRoute] UpdateSessionTimeRequest request)
     {
