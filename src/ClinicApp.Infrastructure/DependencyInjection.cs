@@ -17,23 +17,34 @@ using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
 using ClinicApp.Shared.QueryTypes;
 using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicApp.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
-        string connectionstring)
+        WebApplicationBuilder builder)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<AppDbContext>((sp, opts) =>
         {
-            opts.UseNpgsql(connectionstring);
+            opts.UseNpgsql(builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("Connection string is null for clinic db"));
         });
+
+        services.AddStackExchangeRedisCache(opts =>
+        {
+            opts.Configuration = builder.Configuration.GetConnectionString("cache") ?? throw new ArgumentException("Connection string is null for redis ");
+            opts.InstanceName = "clinic-sessions";
+        });
+
         services.AddScoped<ISessionRepository, DbSessionRepository>();
-        services.AddScoped<IDoctorRepository, DbDoctorRepository>();
-        services.AddScoped<IRoomRepository, DbRoomRepository>();
+        services.AddScoped<DbDoctorRepository>();
+        services.AddScoped<IDoctorRepository, CachedDbDoctorRepository>();
+        services.AddScoped<DbRoomRepository>();
+        services.AddScoped<IRoomRepository, CachedDbRoomRepository>();
         services.AddScoped<IPatientRepository, DbPatientRepository>();
         services.AddScoped<ISecretaryRepository, DbSecretaryRepository>();
         services.AddSingleton<IClock, Clock>();
@@ -54,17 +65,20 @@ public static class DependencyInjection
         RegisterMediatrGenericHandlers(services);
         return services;
     }
+    private static void RegisterMediatrGenericHandler<T>(IServiceCollection services)
+        where T:QueryType
+    {
+        services.AddScoped<IRequestHandler<QueryRequest<T>, IQueryable<T>>, QueryRequestHandler<T>>();
+        services.AddScoped<IRequestHandler<QuerySingleRequest<T>, T?>, QuerySingleRequestHandler<T>>();
 
+    }
     private static void RegisterMediatrGenericHandlers(IServiceCollection services)
     {
-        services.AddScoped<IRequestHandler<QueryRequest<SessionQueryType>, IQueryable<SessionQueryType>>, QueryRequestHandler<SessionQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<SessionQueryType>,SessionQueryType?>, QuerySingleRequestHandler<SessionQueryType>>();
-        services.AddScoped<IRequestHandler<QueryRequest<DoctorQueryType>, IQueryable<DoctorQueryType>>, QueryRequestHandler<DoctorQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<DoctorQueryType>,DoctorQueryType?>, QuerySingleRequestHandler<DoctorQueryType>>();
-        services.AddScoped<IRequestHandler<QueryRequest<PatientQueryType>, IQueryable<PatientQueryType>>, QueryRequestHandler<PatientQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<PatientQueryType>, PatientQueryType?>, QuerySingleRequestHandler<PatientQueryType>>();
-
-        services.AddScoped<IRequestHandler<QueryRequest<RoomQueryType>, IQueryable<RoomQueryType>>, QueryRequestHandler<RoomQueryType>>();
-        services.AddScoped<IRequestHandler<QuerySingleRequest<RoomQueryType>, RoomQueryType?>, QuerySingleRequestHandler<RoomQueryType>>();
+        RegisterMediatrGenericHandler<SessionQueryType>(services);
+        RegisterMediatrGenericHandler<DoctorQueryType>(services);
+        RegisterMediatrGenericHandler<PatientQueryType>(services);
+        RegisterMediatrGenericHandler<RoomQueryType>(services);
+        RegisterMediatrGenericHandler<SecretaryQueryType>(services);
     }
+
 }

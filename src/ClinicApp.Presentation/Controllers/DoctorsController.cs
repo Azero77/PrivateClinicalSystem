@@ -1,4 +1,5 @@
 using ClinicApp.Application.Commands.DoctorAddCommands;
+using ClinicApp.Application.Queries.Doctors;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Presentation.Requests;
 using ClinicApp.Shared;
@@ -57,17 +58,17 @@ public class DoctorsController : ApiController
     [Authorize(Policy = PoliciesConstants.CanViewDoctorsInfo)]
     public async Task<IActionResult> GetDoctor(Guid id, CancellationToken cancellationToken)
     {
-        var query = new QuerySingleRequest<DoctorQueryType>(id);
+        var query = new GetDoctorByIdQuery(id);
         var result = await _mediator.Send(query, cancellationToken);
-        return result is not null ? Ok(result) : NotFound();
+        return result.Match(Ok,ProblemResult);
     }
 
     [HttpGet]
     [Authorize(Policy = PoliciesConstants.CanViewDoctorsInfo)]
     public async Task<IActionResult> GetDoctors(CancellationToken cancellationToken)
     {
-        var query = new QueryRequest<DoctorQueryType>();
-        var result = (await _mediator.Send(query, cancellationToken)).ToList();
+        var query = new GetDoctorsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
 }

@@ -8,7 +8,8 @@ using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Handlers;
 
-public class DoctorCanModifySession : CanModifySession<CanAddSession, AddSessionRequest>
+public class DoctorCanModifySession<TRequirement> : CanModifySession<TRequirement, AddSessionRequest>
+   where TRequirement : CanModifySessionRequirement,new()
 {
     private readonly IDoctorRepository _repo;
 
@@ -17,17 +18,17 @@ public class DoctorCanModifySession : CanModifySession<CanAddSession, AddSession
         _repo = repo;
     }
 
-    protected override async Task<bool> Authorize(AuthorizationHandlerContext context, CanAddSession requirement, AddSessionRequest resource, Guid userId)
+    protected override async Task<bool> Authorize(AuthorizationHandlerContext context, TRequirement requirement, AddSessionRequest resource, Guid userId)
     {
         var doctor = await _repo.GetDoctorByUsedId(userId);
         return doctor?.Id == resource.DoctorId;
     }
 }
-public class DoctorCanAddSession(IDoctorRepository repo) : DoctorCanModifySession(repo) { }
-public class DoctorCanUpdateSession(IDoctorRepository repo) : DoctorCanModifySession(repo) { }
+public class DoctorCanAddSession(IDoctorRepository repo) : DoctorCanModifySession<CanAddSessionRequirement>(repo) { }
+public class DoctorCanUpdateSession(IDoctorRepository repo) : DoctorCanModifySession<CanUpdateSessionRequirement>(repo) { }
 
 public abstract class CanModifySession<TRequirement, TRequest> : AuthorizationHandler<TRequirement, TRequest>
-    where TRequirement : IAuthorizationRequirement, new()
+    where TRequirement : CanModifySessionRequirement, new()
 {
     private static UserRole[] AllowedRoles = { UserRole.Admin, UserRole.Secretary };
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement, TRequest resource)
@@ -35,7 +36,7 @@ public abstract class CanModifySession<TRequirement, TRequest> : AuthorizationHa
         var userRole = context.User.GetRole();
         if (AllowedRoles.Contains(userRole))
         {
-            context.Succeed(requirement);
+            context.Succeed(requirement);return;
         }
         else if (userRole != UserRole.Doctor) 
         {

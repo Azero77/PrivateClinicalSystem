@@ -25,6 +25,11 @@ public static class PolicyExtensions
         builder.RequireRole(UserRole.Doctor.ToString())
         .AddRequirements(new CanViewSessions([])));//no one can see the session details except the doctor (not even sec or admin);
 
+        opts.AddPolicy(PoliciesConstants.CanAddSessions, builder =>
+        builder.AddRequirements(new CanAddSessionRequirement()));
+
+        opts.AddPolicy(PoliciesConstants.CanUpdateSessions, builder =>
+        builder.AddRequirements(new CanUpdateSessionRequirement()));
 
         //this policy is made upon CanViewOwnSessionsPolicy
         opts.AddPolicy(PoliciesConstants.CanViewSessionHistory, builder =>
@@ -62,6 +67,8 @@ public static class PolicyExtensions
         services.AddScoped<IAuthorizationHandler, CanViewDoctorWorkingTimeHandler>();
         services.AddScoped<IAuthorizationHandler, DoctorCanViewOwnedSessionHandler>();
         services.AddScoped<IAuthorizationHandler, PatientCanViewOwnedSessionHandler>();
+        services.AddScoped<IAuthorizationHandler, DoctorCanAddSession>();
+        services.AddScoped<IAuthorizationHandler, DoctorCanUpdateSession>();
         return services;
     }
 }

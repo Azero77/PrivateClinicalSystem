@@ -1,5 +1,5 @@
 using ClinicApp.Application.Commands.RoomCommands;
-using ClinicApp.Application.Queries.Common;
+using ClinicApp.Application.Queries.Rooms;
 using ClinicApp.Presentation.Requests;
 using ClinicApp.Shared;
 using ClinicApp.Shared.QueryTypes;
@@ -57,17 +57,17 @@ public class RoomsController : ApiController
     [Authorize(Policy = PoliciesConstants.CanViewRooms)]
     public async Task<IActionResult> GetRoom(Guid id, CancellationToken cancellationToken)
     {
-        var query = new QuerySingleRequest<RoomQueryType>(id);
+        var query = new GetRoomByIdQuery(id);
         var result = await _mediator.Send(query, cancellationToken);
-        return result is not null ? Ok(result) : NotFound();
+        return result.Match(Ok, ProblemResult);
     }
 
     [HttpGet]
     [Authorize(Policy = PoliciesConstants.CanViewRooms)]
     public async Task<IActionResult> GetRooms(CancellationToken cancellationToken)
     { 
-        var query = new QueryRequest<RoomQueryType>();
-        var result = (await _mediator.Send(query, cancellationToken)).ToList();
+        var query = new GetAllRoomsQuery();
+        var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
 }

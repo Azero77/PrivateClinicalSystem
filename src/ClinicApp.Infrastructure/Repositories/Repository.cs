@@ -21,7 +21,7 @@ public class Repository<T, TData>
         _context = context;
         _converter = converter;
     }
-    public async Task<T?> GetById(Guid id)
+    public virtual async Task<T?> GetById(Guid id)
     {
         TData? datamodel = await _context.Set<TData>()
             .AsNoTracking()
@@ -35,7 +35,7 @@ public class Repository<T, TData>
     /// </summary>
     /// <param name="Entity"></param>
     /// <returns></returns>
-    public Task SaveAsync(T entity)
+    public virtual Task SaveAsync(T entity)
     {
         var dataModel = _converter.MapToData(entity);
         _context.Set<TData>().Update(dataModel);

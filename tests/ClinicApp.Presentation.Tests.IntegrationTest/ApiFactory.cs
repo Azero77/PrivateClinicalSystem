@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -26,7 +27,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     private HttpClient _client = null!;
     public HttpClient Client => _client;
 
-    private AppDbContext CreateDbContext()
+    public AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(_database.GetConnectionString())
@@ -71,6 +72,10 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 
             services.RemoveAll<IClock>();
             services.AddSingleton<IClock, TestClock>();
+
+            //remove caching using redis and using memory instead
+            services.RemoveAll<IDistributedCache>();
+            services.AddDistributedMemoryCache();
         });
         base.ConfigureWebHost(builder);
     }

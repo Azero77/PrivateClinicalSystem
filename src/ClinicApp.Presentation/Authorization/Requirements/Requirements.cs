@@ -14,7 +14,9 @@ public record CanViewSessionDetails : IAuthorizationRequirement;
 public record CanViewSessionStateHistory : IAuthorizationRequirement;
 public record CanEditSession : IAuthorizationRequirement;
 public record CanCancelSession : IAuthorizationRequirement;
-public record CanAddSession : IAuthorizationRequirement;
+public record CanModifySessionRequirement : IAuthorizationRequirement;
+public record CanAddSessionRequirement : CanModifySessionRequirement;
+public record CanUpdateSessionRequirement : CanModifySessionRequirement;
 
 // Room-related
 public record CanViewRooms : IAuthorizationRequirement;
