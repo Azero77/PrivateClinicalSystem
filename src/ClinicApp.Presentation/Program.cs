@@ -35,7 +35,7 @@ namespace ClinicApp.Presentation
                 {
                     context.ProblemDetails.Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
                     context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
-                    context.ProblemDetails.Extensions.Add("traceId", System.Diagnostics.Activity.Current?.TraceId.ToHexString());
+                    context.ProblemDetails.Extensions.TryAdd("traceId", System.Diagnostics.Activity.Current?.TraceId.ToHexString());
                 };
             });
 

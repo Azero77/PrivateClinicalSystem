@@ -33,7 +33,7 @@ public partial class SessionController : ApiController
     }
 
     [HttpPost("add")]
-    [AuthorizeByRequestFilter<CanAddSession,AddSessionRequest>] //admins and secretary can add any session,doctor can add session of their own
+    [AuthorizeByRequestFilter<CanAddSessionRequirement,AddSessionRequest>] //admins and secretary can add any session,doctor can add session of their own
     public async Task<IActionResult> AddSession(
         [FromBody]
         AddSessionRequest request,CancellationToken token)

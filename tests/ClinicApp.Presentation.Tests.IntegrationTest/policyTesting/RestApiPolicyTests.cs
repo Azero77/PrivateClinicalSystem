@@ -79,10 +79,13 @@ public class RestApiPolicyTests
         response.StatusCode.Should().Be(expectedStatusCode);
 
         //Cleanup
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
 
-        var dbContext = _apiFactory.CreateDbContext();
-        dbContext.Rooms.Add(SeedData.Rooms[0]);
-        await dbContext.SaveChangesAsync();
+            var dbContext = _apiFactory.CreateDbContext();
+            dbContext.Rooms.Add(SeedData.Rooms[0]);
+            await dbContext.SaveChangesAsync();
+        }
     }
     
     [Theory]

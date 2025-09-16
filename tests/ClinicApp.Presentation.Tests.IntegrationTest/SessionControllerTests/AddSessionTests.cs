@@ -51,9 +51,9 @@ public class AddSessionTests
             );
         //Act
 
-        var result = await _client.PostAsJsonAsync<AddSessionRequest>("/Add",addSessionRequest);
+        var result = await _client.PostAsJsonAsync<AddSessionRequest>("/api/session/add", addSessionRequest);
         //Assert
-        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
     }
 
 
@@ -73,7 +73,7 @@ public class AddSessionTests
             );
         //Act
 
-        var result = await _client.PostAsJsonAsync<AddSessionRequest>("/Add", addSessionRequest);
+        var result = await _client.PostAsJsonAsync<AddSessionRequest>("/api/session/add", addSessionRequest);
         //Assert
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
         result.IsSuccessStatusCode.Should().Be(false);

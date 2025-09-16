@@ -10,6 +10,9 @@ public static class PoliciesConstants
     public const string CanViewSessionDetails = "CanViewSessionDetails";  
     public const string CanEditSessionDetails = "CanEditSessionDetails";
     public const string CanDeleteSession = "CanDeleteSession";
+    public const string CanAddSessions = "CanAddSessions";
+    public const string CanUpdateSessions = "CanUpdateSessions";
+
 
     // Room-related
     public const string CanViewRooms = "CanViewRooms";
