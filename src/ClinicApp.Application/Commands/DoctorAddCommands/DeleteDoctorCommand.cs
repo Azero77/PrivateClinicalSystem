@@ -23,7 +23,7 @@ public class DeleteDoctorCommandHandler : IRequestHandler<DeleteDoctorCommand, E
         var deletedDoctor = await _doctorRepository.DeleteDoctor(request.Id);
         if (deletedDoctor is null)
         {
-            return Error.NotFound("Doctor.NotFound", "Doctor not found.");
+            return Errors.General.NotFound;
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken, deletedDoctor);
         return Result.Success;

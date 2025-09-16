@@ -34,7 +34,7 @@ public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessio
         var doctor = await _doctorRepo.GetById(request.doctorId);
 
         if (doctor is null)
-            return Error.NotFound("Application.Doctor.NotFound","Doctor with id not found");
+            return Errors.General.NotFound;
         var timerange = TimeRange.Create(request.StartTime, request.EndTime);
         if (timerange.IsError)
             return timerange.Errors;

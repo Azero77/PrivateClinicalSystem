@@ -24,7 +24,7 @@ public class UpdateSecretaryCommandHandler : IRequestHandler<UpdateSecretaryComm
         var secretary = await _secretaryRepository.GetById(request.Id);
         if (secretary is null)
         {
-            return Error.NotFound("Secretary.NotFound", "Secretary not found.");
+            return Errors.General.NotFound;
         }
 
         secretary.FirstName = request.FirstName;

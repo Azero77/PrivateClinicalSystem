@@ -24,7 +24,7 @@ public class DeleteSecretaryCommandHandler : IRequestHandler<DeleteSecretaryComm
         var deletedSecretary = await _secretaryRepository.DeleteSecretary(request.Id);
         if (deletedSecretary is null)
         {
-            return Error.NotFound("Secretary.NotFound", "Secretary not found.");
+            return Errors.General.NotFound;
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken, deletedSecretary);
         return Result.Success;

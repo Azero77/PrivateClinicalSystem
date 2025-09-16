@@ -32,7 +32,7 @@ public class UpdateDoctorCommandHandler : IRequestHandler<UpdateDoctorCommand, E
         var doctor = await _doctorRepository.GetById(request.Id);
         if (doctor is null)
         {
-            return Error.NotFound("Doctor.NotFound", "Doctor not found.");
+            return Errors.General.NotFound;
         }
 
         if (request.FirstName is not null)

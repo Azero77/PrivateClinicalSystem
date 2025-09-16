@@ -23,7 +23,7 @@ public class DeleteRoomCommandHandler : IRequestHandler<DeleteRoomCommand, Error
         var deletedRoom = await _roomRepository.DeleteRoom(request.Id);
         if (deletedRoom is null)
         {
-             return Error.NotFound("Room.NotFound", "Room not found.");
+             return Errors.General.NotFound;
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken, deletedRoom);
         return Result.Success;
