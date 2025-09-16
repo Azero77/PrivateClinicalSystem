@@ -24,7 +24,7 @@ public class UpdateRoomCommandHandler : IRequestHandler<UpdateRoomCommand, Error
         var room = await _roomRepository.GetById(request.Id);
         if (room is null)
         {
-            return Error.NotFound("Room.NotFound", "Room not found.");
+            return Errors.General.NotFound;
         }
 
         room.UpdateName(request.Name);

@@ -38,7 +38,7 @@ public class DoctorAddCommandHandler : IRequestHandler<DoctorAddCommand, ErrorOr
         var doctor = await _repo.AddDoctor(request.ToDoctor());
         var num = await _unitOfWork.SaveChangesAsync(cancellationToken,doctor);
         if (num != 1)
-            return Error.Validation("Application.Validation", "Something Went Wrong,No Doctor Created");
+            return Errors.Doctor.CreateFailed;
         return doctor;
     }
 }

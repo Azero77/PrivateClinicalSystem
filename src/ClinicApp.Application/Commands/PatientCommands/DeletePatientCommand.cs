@@ -23,7 +23,7 @@ public class DeletePatientCommandHandler : IRequestHandler<DeletePatientCommand,
         var deletedPatient = await _patientRepository.DeletePatient(request.Id);
         if (deletedPatient is null)
         {
-            return Error.NotFound("Patient.NotFound", "Patient not found.");
+            return Errors.General.NotFound;
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken, deletedPatient);
         return Result.Success;

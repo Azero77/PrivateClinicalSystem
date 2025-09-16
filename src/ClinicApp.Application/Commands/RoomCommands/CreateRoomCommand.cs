@@ -25,7 +25,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Error
         var createdRoom = await _roomRepository.AddRoom(room);
         if (createdRoom is null)
         {
-            return Error.Failure("Room.NotCreated", "Failed to create room.");
+            return Errors.Room.CreateFailed;
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken, createdRoom);
         return createdRoom;

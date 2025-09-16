@@ -25,7 +25,7 @@ public class UpdateSessionDateCommandHandler : IRequestHandler<UpdateSessionDate
             return timerange.Errors;
         var session = await _repo.GetById(request.SessionId);
         if (session is null)
-            return Error.NotFound();
+            return Errors.General.NotFound;
         var result = session.UpdateDate(timerange.Value);
         if (result.IsError)
             return result;

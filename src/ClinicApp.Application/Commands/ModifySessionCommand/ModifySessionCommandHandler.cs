@@ -24,7 +24,7 @@ public abstract class ModifySessionCommandHandler<TCommand> : IRequestHandler<TC
     {
         var session = await _repo.GetById(command.SessionId);
         if (session is null)
-            return Error.NotFound();
+            return Errors.General.NotFound;
 
 
         var result = await ApplySessionAction(session,command);

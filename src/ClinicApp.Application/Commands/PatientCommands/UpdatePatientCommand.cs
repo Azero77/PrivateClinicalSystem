@@ -24,7 +24,7 @@ public class UpdatePatientCommandHandler : IRequestHandler<UpdatePatientCommand,
         var patient = await _patientRepository.GetById(request.Id);
         if (patient is null)
         {
-            return Error.NotFound("Patient.NotFound", "Patient not found.");
+            return Errors.General.NotFound;
         }
 
         patient.FirstName = request.FirstName;
