@@ -1,14 +1,13 @@
-﻿using ClinicApp.Domain.Common;
-using ClinicApp.Domain.DoctorAgg;
+﻿using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
-using ClinicApp.Presentation.Helpers;
+using ClinicApp.Presentation.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
 namespace ClinicApp.Presentation.Authorization.Handlers;
 
-public class DoctorCanModifySession<TRequirement> : CanModifySession<TRequirement, AddSessionRequest>
+public abstract class DoctorCanModifySession<TRequirement, TReqeust> : CanModifySession<TRequirement, TReqeust>
    where TRequirement : CanModifySessionRequirement,new()
 {
     private readonly IDoctorRepository _repo;
@@ -18,43 +17,26 @@ public class DoctorCanModifySession<TRequirement> : CanModifySession<TRequiremen
         _repo = repo;
     }
 
-    protected override async Task<bool> Authorize(AuthorizationHandlerContext context, TRequirement requirement, AddSessionRequest resource, Guid userId)
+    protected override async Task<bool> Authorize(AuthorizationHandlerContext context, TRequirement requirement, TReqeust resource, Guid userId)
     {
         var doctor = await _repo.GetDoctorByUsedId(userId);
-        return doctor?.Id == resource.DoctorId;
+        return CanDoAction(resource, doctor);
+    }
+
+    protected abstract bool CanDoAction(TReqeust resource, Doctor? doctor);
+}
+public class DoctorCanAddSession(IDoctorRepository repo) : DoctorCanModifySession<CanAddSessionRequirement, AddSessionRequest>(repo)
+{
+    protected override bool CanDoAction(AddSessionRequest resource, Doctor? doctor)
+    {
+        return resource.DoctorId == doctor?.Id;
     }
 }
-public class DoctorCanAddSession(IDoctorRepository repo) : DoctorCanModifySession<CanAddSessionRequirement>(repo) { }
-public class DoctorCanUpdateSession(IDoctorRepository repo) : DoctorCanModifySession<CanUpdateSessionRequirement>(repo) { }
-
-public abstract class CanModifySession<TRequirement, TRequest> : AuthorizationHandler<TRequirement, TRequest>
-    where TRequirement : CanModifySessionRequirement, new()
+public class DoctorCanUpdateSession(IDoctorRepository repo) : DoctorCanModifySession<CanUpdateSessionRequirement, ModifySessionRequest>(repo)
 {
-    private static UserRole[] AllowedRoles = { UserRole.Admin, UserRole.Secretary };
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement, TRequest resource)
+    protected override bool CanDoAction(ModifySessionRequest resource, Doctor? doctor)
     {
-        var userRole = context.User.GetRole();
-        if (AllowedRoles.Contains(userRole))
-        {
-            context.Succeed(requirement);return;
-        }
-        else if (userRole != UserRole.Doctor) 
-        {
-            context.Fail();return;
-        }
-
-        if (Guid.TryParse(context.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out Guid userId))
-        {
-            context.Fail();
-            return;
-        }
-        if (await Authorize(context, requirement, resource, userId))
-            context.Succeed(requirement);
-        else
-        {
-            context.Fail();
-        }
+        return resource.id == doctor?.Id;
     }
-    protected abstract Task<bool> Authorize(AuthorizationHandlerContext context, TRequirement requirement, TRequest resource, Guid userId);
 }
 
