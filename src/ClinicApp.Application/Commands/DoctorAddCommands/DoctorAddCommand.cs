@@ -1,5 +1,6 @@
 ﻿using ClinicApp.Application.Common;
 using ClinicApp.Application.Converters;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Repositories;
 using ErrorOr;
@@ -20,10 +21,10 @@ public record DoctorAddCommand(
     WorkingDays workingDays,
     TimeOnly workingHoursStartTime,
     TimeOnly workingHoursEndTime,
-    string? Major) : IRequest<ErrorOr<Doctor>>;
+    string? Major) : IRequest<ErrorOr<DoctorDTO>>;
 
 
-public class DoctorAddCommandHandler : IRequestHandler<DoctorAddCommand, ErrorOr<Doctor>>
+public class DoctorAddCommandHandler : IRequestHandler<DoctorAddCommand, ErrorOr<DoctorDTO>>
 {
     private readonly IDoctorRepository _repo;
     private readonly IUnitOfWork _unitOfWork;
@@ -33,12 +34,12 @@ public class DoctorAddCommandHandler : IRequestHandler<DoctorAddCommand, ErrorOr
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ErrorOr<Doctor>> Handle(DoctorAddCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<DoctorDTO>> Handle(DoctorAddCommand request, CancellationToken cancellationToken)
     {
         var doctor = await _repo.AddDoctor(request.ToDoctor());
         var num = await _unitOfWork.SaveChangesAsync(cancellationToken,doctor);
         if (num != 1)
             return Errors.Doctor.CreateFailed;
-        return doctor;
+        return doctor!.FromDoctorToDTO();
     }
 }

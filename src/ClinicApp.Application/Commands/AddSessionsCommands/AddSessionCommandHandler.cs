@@ -1,6 +1,7 @@
 ﻿using ClinicApp.Application.Commands.Common;
 using ClinicApp.Application.Common;
 using ClinicApp.Application.Converters;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.Repositories;
@@ -12,7 +13,7 @@ using MediatR;
 
 namespace ClinicApp.Application.Commands.AddSessionsCommands;
 
-public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessionCommand,Session>
+public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessionCommand,SessionDTO>
 {
     private readonly IDoctorRepository _doctorRepo;
     private readonly IScheduler _scheduler;
@@ -29,7 +30,7 @@ public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessio
         _unitOfWork = unitOfWork;
     }
 
-    public override async Task<ErrorOr<Session>> GetResponse(AddSessionCommand request, CancellationToken cancellationToken)
+    public override async Task<ErrorOr<SessionDTO>> GetResponse(AddSessionCommand request, CancellationToken cancellationToken)
     {
         var doctor = await _doctorRepo.GetById(request.doctorId);
 
@@ -49,8 +50,8 @@ public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessio
             doctor
             );
         if (session.IsError)
-            return session;
+            return session.Errors;
         await _unitOfWork.SaveChangesAsync(cancellationToken,session.Value);
-        return session;
+        return session.Value.FromSessionToDTO();
     }
 }

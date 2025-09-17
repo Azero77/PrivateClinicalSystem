@@ -21,16 +21,32 @@ public static class Converters
             doctordto.Major);
     }
 
-    public static DoctorWithSessionsDTO DTOFrom(Doctor doctor,IReadOnlyCollection<Session> sessions)
+    public static SessionDTO FromSessionToDTO(this Session session)
     {
-        return new DoctorWithSessionsDTO
+        return new SessionDTO()
+        {
+            Id = session.Id,
+            DoctorId = session.DoctorId,
+            PatientId = session.PatientId,
+            RoomId = session.RoomId,
+            StartTime = session.SessionDate.StartTime,
+            EndTime = session.SessionDate.EndTime,
+             SessionDescription = session.SessionDescription?.content ?? string.Empty,
+             SessionStatus = session.SessionStatus
+
+        };
+    }
+
+    public static DoctorDTO FromDoctorToDTO(this Doctor doctor)
+    {
+        return new()
         {
             Id = doctor.Id,
-            Name = doctor.FirstName + " " + doctor.LastName,
-            WorkingDays = doctor.WorkingTime.WorkingDays.ToListDays(),
-            WorkingDaysBit = doctor.WorkingTime.WorkingDays.ToList(),
-            WorkingHours = doctor.WorkingTime.WorkingHours,
-            Sessions = sessions
+            FirstName = doctor.FirstName,
+            LastName = doctor.LastName,
+            Major = doctor.Major,
+            RoomId = doctor.RoomId,
+            UserId  = doctor.UserId
         };
     }
 }
