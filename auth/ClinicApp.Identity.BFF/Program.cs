@@ -25,18 +25,15 @@ builder.Services.AddAuthentication(options =>
 
         options.Cookie.SameSite = SameSiteMode.None;
         options.Cookie.HttpOnly = true;
-        if (builder.Environment.IsDevelopment())
-        {
-            options.Cookie.SecurePolicy = CookieSecurePolicy.None; //Allow http
-        }
-        else
-        {
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        }
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
     })
     .AddOpenIdConnect("oidc", options =>
     {
+        if (isDev)
+        {
+            options.RequireHttpsMetadata = false;
+        }
         options.Authority = config.Authority;
         options.ClientId = config.ClientId;
         options.ClientSecret = config.ClientSecret;

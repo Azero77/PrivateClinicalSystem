@@ -18,7 +18,7 @@ public class GetDoctorByIdQueryHandler : IRequestHandler<GetDoctorByIdQuery, Err
     {
         var doctor = await _doctorRepository.GetById(request.Id);
         if (doctor is null)
-            return Errors.General.NotFound;
+            return Application.Common.Errors.General.NotFound;
 
         return new DoctorDTO
         {

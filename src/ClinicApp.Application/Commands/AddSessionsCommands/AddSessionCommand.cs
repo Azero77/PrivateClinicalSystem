@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Application.Converters;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.SessionAgg;
@@ -13,6 +14,6 @@ public record AddSessionCommand(
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,
-                       UserRole role) : IRequest<ErrorOr<Session>>;
+                       UserRole role) : IRequest<ErrorOr<SessionDTO>>;
 
 

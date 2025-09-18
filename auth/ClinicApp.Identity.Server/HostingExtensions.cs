@@ -1,4 +1,5 @@
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using ClinicApp.Identity.Server.Pages;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -9,7 +10,7 @@ internal static class HostingExtensions
     {
         
         // uncomment if you want to add a UI
-        //builder.Services.AddRazorPages();
+        builder.Services.AddRazorPages();
         var isDev = builder.Environment.IsDevelopment();
 
         builder.Services.AddDbContext<UsersDbContext>(options =>
@@ -17,9 +18,14 @@ internal static class HostingExtensions
             string connectionString = builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
             options.UseNpgsql(connectionString);
         });
-
         builder.Services.AddIdentity<ApplicationUser,ApplicationRole>()
             .AddEntityFrameworkStores<UsersDbContext>();
+
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });
         builder.Services.AddIdentityServer(options =>
         {
             options.IssuerUri = builder.Configuration?["Identity:Issuer"] ?? throw new ArgumentException("Issuer Was not provided");
@@ -27,11 +33,13 @@ internal static class HostingExtensions
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseInformationEvents = true;
             options.Events.RaiseSuccessEvents = true;
+            options.Authentication.CookieSameSiteMode = SameSiteMode.None;  
         })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<ApplicationUser>()
+            .AddTestUsers(TestUsers.Users)
             .AddLicenseSummary();
         
         return builder.Build();
@@ -47,14 +55,14 @@ internal static class HostingExtensions
         }
 
         // uncomment if you want to add a UI
-        //app.UseStaticFiles();
-        //app.UseRouting();
+        app.UseStaticFiles();
+        app.UseRouting();
 
         app.UseIdentityServer();
 
         // uncomment if you want to add a UI
-        //app.UseAuthorization();
-        //app.MapRazorPages().RequireAuthorization();
+        app.UseAuthorization();
+        app.MapRazorPages().RequireAuthorization();
 
         return app;
     }

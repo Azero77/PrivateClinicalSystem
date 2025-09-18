@@ -18,7 +18,7 @@ public class GetRoomByIdQueryHandler : IRequestHandler<GetRoomByIdQuery, ErrorOr
     {
         var room = await _roomRepository.GetById(request.Id);
         if (room is null)
-            return Errors.General.NotFound;
+            return Application.Common.Errors.General.NotFound;
 
         return new RoomDTO
         {
