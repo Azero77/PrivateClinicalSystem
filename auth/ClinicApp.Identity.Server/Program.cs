@@ -3,6 +3,9 @@ using Duende.IdentityServer.Licensing;
 using Serilog;
 using System.Globalization;
 using System.Text;
+using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -46,6 +49,11 @@ finally
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
 }
+var connectionString = builder.Configuration.GetConnectionString("UsersDbContextConnection") ?? throw new InvalidOperationException("Connection string 'UsersDbContextConnection' not found.");
+
+builder.Services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<UsersDbContext>();
 
 static string Summary(LicenseUsageSummary usage)
 {
