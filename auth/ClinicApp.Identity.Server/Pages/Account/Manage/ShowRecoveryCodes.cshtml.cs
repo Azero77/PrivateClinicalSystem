@@ -2,13 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using ClinicApp;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account.Manage
+namespace ClinicApp.Identity.Server.Pages.Account.Manage
 {
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

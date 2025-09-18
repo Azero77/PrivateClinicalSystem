@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account.Manage
+namespace ClinicApp.Identity.Server.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {

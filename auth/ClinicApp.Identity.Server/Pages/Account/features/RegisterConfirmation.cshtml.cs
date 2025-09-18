@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account
+namespace ClinicApp.Identity.Server.Pages.Account.Features
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
@@ -70,7 +70,7 @@ namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account
                 EmailConfirmationUrl = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
-                    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                    values: new { area = "Identity", userId, code, returnUrl },
                     protocol: Request.Scheme);
             }
 

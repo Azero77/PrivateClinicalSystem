@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account
+namespace ClinicApp.Identity.Server.Pages.Account.Features
 {
     public class ResetPasswordModel : PageModel
     {

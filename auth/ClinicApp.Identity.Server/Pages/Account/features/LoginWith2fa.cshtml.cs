@@ -13,7 +13,7 @@ using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace ClinicApp.Identity.Server.Areas.Identity.Pages.Account
+namespace ClinicApp.Identity.Server.Pages.Account.Features
 {
     public class LoginWith2faModel : PageModel
     {
