@@ -73,7 +73,7 @@ namespace ClinicApp.Identity.Server.Pages.Account.Features
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
+                "/Account/Features/ConfirmEmail",
                 pageHandler: null,
                 values: new { userId, code },
                 protocol: Request.Scheme);

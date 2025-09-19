@@ -1,5 +1,8 @@
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
+using ClinicApp.Identity.Server.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -19,7 +22,8 @@ internal static class HostingExtensions
             options.UseNpgsql(connectionString);
         });
         builder.Services.AddIdentity<ApplicationUser,ApplicationRole>()
-            .AddEntityFrameworkStores<UsersDbContext>();
+            .AddEntityFrameworkStores<UsersDbContext>()
+            .AddDefaultTokenProviders();
 
         builder.Services.ConfigureApplicationCookie(options =>
         {
@@ -41,7 +45,7 @@ internal static class HostingExtensions
             .AddAspNetIdentity<ApplicationUser>()
             .AddTestUsers(TestUsers.Users)
             .AddLicenseSummary();
-        
+        builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
         return builder.Build();
     }
 
