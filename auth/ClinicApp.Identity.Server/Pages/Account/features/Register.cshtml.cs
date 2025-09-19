@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ClinicApp.Identity.Server.Pages.Account.Features;
 
+[AllowAnonymous]
 public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;

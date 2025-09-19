@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace ClinicApp.Identity.Server.Pages.Account.Features;
 
+[AllowAnonymous]
 public class ConfirmEmailModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;

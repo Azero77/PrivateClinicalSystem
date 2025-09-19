@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace ClinicApp.Identity.Server.Pages.Account.Features
 {
+    [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
