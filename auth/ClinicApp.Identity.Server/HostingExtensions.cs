@@ -59,7 +59,7 @@ internal static class HostingExtensions
             {
                 builder.RequireClaim(ServerConstants.CompleteProfileClaimKey);//no restriction on the claim value
             });
-            opts.DefaultPolicy = opts.GetPolicy(ServerConstants.RequireCompletedProfilePolicy)!;
+            opts.FallbackPolicy = opts.GetPolicy(ServerConstants.RequireCompletedProfilePolicy)!;
         });
 
 
@@ -85,7 +85,7 @@ internal static class HostingExtensions
 
         // uncomment if you want to add a UI
         app.UseAuthorization();
-        app.MapRazorPages().RequireAuthorization();
+        app.MapRazorPages();
 
         return app;
     }
