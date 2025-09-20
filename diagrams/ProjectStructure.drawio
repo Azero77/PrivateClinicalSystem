@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
   <diagram name="Page-1" id="xnZi6lC4hp2PnTK2ZD3j">
-    <mxGraphModel dx="1859" dy="510" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2436" dy="801" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -9,6 +9,9 @@
         </mxCell>
         <mxCell id="xH5XawpameOzum3ILojz-26" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="40" y="930" width="810" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="A-loqj5NcG1vEuBnmWrK-20" value="&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;what happens is user go to /bff/login, he will be redirected to /connect/authorize?returnUrl=&quot;page from main app&quot;&amp;amp;..., and then he will redirected to /Account/Login?ReturnUrl=/connect/authorize...., and then he will go to register page /Account/Create?ReturnUrl=/connect/authorize, and then he will complete the first registration , a cookie is made with claim of {&quot;profile_stage&quot;:&quot;uncompleted&quot;} and then maybe:&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;1- user redirected to /Account/CompleteRegistration, user resumes the registration and completed it and then the claim is replaced in the db and in the cookie and a jwt is made and a profile is made and a message is sent to microservices .... all of that stuff&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;2- maybe he will come back later , by /bff/login,...(all the way up to /Account/Login?ReturnUrl=/connect/authorize, and in login handler we will check the &quot;profile_stag&quot; claim , he will be redirected back to /Account/CompleteRegistration if the claim value is &quot;uncomplete&quot; and the same for option 1, this is happening to people who just register or use an external auth without completing the registration&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="870" y="930" width="810" height="380" as="geometry" />
         </mxCell>
         <mxCell id="xH5XawpameOzum3ILojz-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xH5XawpameOzum3ILojz-2" target="xH5XawpameOzum3ILojz-5" edge="1">
           <mxGeometry relative="1" as="geometry" />

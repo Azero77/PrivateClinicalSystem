@@ -1,4 +1,21 @@
 ﻿@page
+@using ClinicApp.Domain.Common
 @model ClinicApp.Identity.Server.Pages.Account.CompleteRegistration.IndexModel
 @{
+}
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All"></div>
+    <input type="hidden" asp-for="Input.ReturnUrl"/>
+    <div>
+        <label asp-for="Input.Role"></label>
+        <select asp-for="Input.Role" class="form-control" asp-items="Model.AllowedRoles">
+        <option value="" disabled>-- Select role --</option>
+        </select>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"/>
 }

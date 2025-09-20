@@ -1,4 +1,5 @@
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using ClinicApp.Identity.Server.Pages.Account.Login;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;

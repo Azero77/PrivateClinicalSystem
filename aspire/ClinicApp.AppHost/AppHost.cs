@@ -14,7 +14,8 @@ var postgresClinic = builder.AddPostgres("postgres")
 var db = postgresClinic.AddDatabase("postgresClinicdb");
 
 var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("identity")
-    .WithReference(db);
+    .WithReference(db)
+    .WaitFor(db);
 
 var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
     .WithReference(identityServer);

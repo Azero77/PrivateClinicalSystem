@@ -50,13 +50,19 @@ internal static class HostingExtensions
         {
             opts.AddPolicy(ServerConstants.RequireCompletedProfilePolicy, builder =>
             {
-                builder.RequireClaim(ServerConstants.CompleteProfileClaimKey,ServerConstants.CompletedProfileClaimValue);
+                builder.RequireClaim(ServerConstants.CompleteProfileClaimKey, ServerConstants.CompletedProfileClaimValue);
+            });
+
+            opts.AddPolicy(ServerConstants.UnCompletedProfilePolicy, builder =>
+            {
+                builder.RequireClaim(ServerConstants.CompleteProfileClaimKey);//no restriction on the claim value
             });
             opts.DefaultPolicy = opts.GetPolicy(ServerConstants.RequireCompletedProfilePolicy)!;
         });
 
 
         builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
+        builder.Services.AddScoped<IDomainUserRegister, DomainUserRegister>();
         return builder.Build();
     }
 

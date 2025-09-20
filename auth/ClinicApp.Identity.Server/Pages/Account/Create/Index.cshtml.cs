@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QuickStart3.Pages.Login;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuickStart3.Pages.Create;
 
@@ -44,9 +45,15 @@ public class Index : PageModel
         _schemeProvider = schemeProvider;
     }
 
-    public IActionResult OnGet(string? returnUrl)
+    public async Task<IActionResult> OnGet(string? returnUrl)
     {
         Input = new InputModel { ReturnUrl = returnUrl };
+        await BuildModelAsync(returnUrl);
+        if (View.IsExternalLoginOnly)
+        {
+            // we only have one option for logging in and it's an external provider
+            return RedirectToPage("/ExternalLogin/Challenge", new { scheme = View.ExternalLoginScheme, returnUrl });
+        }
         return Page();
     }
 
@@ -124,7 +131,7 @@ public class Index : PageModel
             {
                 throw new ArgumentException("Invalid Return Url");
             }
-            string stage2Url = Url.Page("/Account/CompleteRegistration",new { returnUrl = Input.ReturnUrl})!;
+            string stage2Url = Url.Page("/Account/CompleteRegistration/Index",new { returnUrl = Input.ReturnUrl})!;
             if (context != null)
             {
                 if (context.IsNativeClient())
