@@ -1,3 +1,4 @@
+using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
 using ClinicApp.Identity.Server.Services;
@@ -30,6 +31,7 @@ internal static class HostingExtensions
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
+        
         builder.Services.AddIdentityServer(options =>
         {
             options.IssuerUri = builder.Configuration?["Identity:Issuer"] ?? throw new ArgumentException("Issuer Was not provided");
@@ -43,8 +45,17 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<ApplicationUser>()
-            .AddTestUsers(TestUsers.Users)
             .AddLicenseSummary();
+        builder.Services.AddAuthorization(opts =>
+        {
+            opts.AddPolicy(ServerConstants.RequireCompletedProfilePolicy, builder =>
+            {
+                builder.RequireClaim(ServerConstants.CompleteProfileClaimKey,ServerConstants.CompletedProfileClaimValue);
+            });
+            opts.DefaultPolicy = opts.GetPolicy(ServerConstants.RequireCompletedProfilePolicy)!;
+        });
+
+
         builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
         return builder.Build();
     }

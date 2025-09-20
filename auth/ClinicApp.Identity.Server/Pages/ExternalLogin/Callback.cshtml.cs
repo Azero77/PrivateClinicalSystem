@@ -67,11 +67,7 @@ public class Callback : PageModel
         var user = _users.FindByExternalProvider(provider, providerUserId);
         if (user == null)
         {
-            // this might be where you might initiate a custom workflow for user registration
-            // in this sample we don't show how that would be done, as our sample implementation
-            // simply auto-provisions new external user
-            //
-            // remove the user id claim so we don't include it as an extra claim if/when we provision the user
+            //Here we need to register the new User ....
             var claims = externalUser.Claims.ToList();
             claims.Remove(userIdClaim);
             user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());

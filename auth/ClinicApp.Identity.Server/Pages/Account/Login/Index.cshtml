@@ -53,10 +53,12 @@
                                 <a asp-page="/Account/Features/ForgotPassword">Forget Your Passowrd?</a>
                             </p>
                             <p>
-                                <a asp-page="/Account/Features/Register">Register a new User</a>
+                                <a asp-page="/Account/Create/Index"
+                                    asp-route-returnUrl="@Model.Input.ReturnUrl">Register a new User</a>
                             </p>
                             <p>
-                                <a asp-page="/Account/Features/ResendEmailConfirmation">Resend Email Confirmation</a>
+                                <a asp-page="/Account/Features/ResendEmailConfirmation"
+                                    asp-route-returnUrl="@Model.Input.ReturnUrl">Resend Email Confirmation</a>
                             </p>
                         </div>
                     </div>

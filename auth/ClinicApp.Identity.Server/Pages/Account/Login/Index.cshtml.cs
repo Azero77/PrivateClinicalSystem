@@ -17,7 +17,7 @@ namespace QuickStart3.Pages.Login;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly IUserStore<ApplicationUser> _users;
+    private readonly UserManager<ApplicationUser> _users;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -32,8 +32,8 @@ public class Index : PageModel
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
         IIdentityProviderStore identityProviderStore,
-        IEventService events,
-        IUserStore<ApplicationUser> users)
+        IEventService events,   
+        UserManager<ApplicationUser> users)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
         _users = users;
@@ -95,10 +95,12 @@ public class Index : PageModel
         if (ModelState.IsValid)
         {
             // validate username/password against in-memory store
-            var user = await _users.FindByNameAsync(Input!.Username,cancellationToken);
+            var user = await _users.FindByNameAsync(Input!.Username);
             if (user is null)
             {
                 ModelState.AddModelError("Input.Username", "Username was not found");
+                await BuildModelAsync(Input.ReturnUrl);
+                return Page();
             }
             await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName,user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
             Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
@@ -178,7 +180,7 @@ public class Index : PageModel
                     EnableLocalLogin = local,
                 };
 
-                Input.Username = context.LoginHint;
+                Input.Username = context?.LoginHint ?? string.Empty;
 
                 if (!local)
                 {

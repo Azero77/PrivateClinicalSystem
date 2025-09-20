@@ -50,7 +50,7 @@ namespace ClinicApp.Identity.Server.Pages.Account.Features
             [EmailAddress]
             public string Email { get; set; }
         }
-
+        public string ReturnUrl { get; set; } = "/";
         public void OnGet()
         {
         }
@@ -75,7 +75,7 @@ namespace ClinicApp.Identity.Server.Pages.Account.Features
             var callbackUrl = Url.Page(
                 "/Account/Features/ConfirmEmail",
                 pageHandler: null,
-                values: new { userId, code },
+                values: new { userId, code ,ReturnUrl},
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,

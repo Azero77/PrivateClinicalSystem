@@ -16,4 +16,5 @@ public class InputModel
     public string? ReturnUrl { get; set; }
 
     public string? Button { get; set; }
+    public bool RememberMe { get; set; } = false;
 }

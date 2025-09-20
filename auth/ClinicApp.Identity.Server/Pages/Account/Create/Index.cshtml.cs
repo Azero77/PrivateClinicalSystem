@@ -1,10 +1,18 @@
+using ClinicApp.Identity.Server.Constants;
+using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 using Duende.IdentityServer.Test;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using QuickStart3.Pages.Login;
+using System.Security.Claims;
 
 namespace QuickStart3.Pages.Create;
 
@@ -12,20 +20,28 @@ namespace QuickStart3.Pages.Create;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly TestUserStore _users;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IIdentityServerInteractionService _interaction;
+    private readonly IAuthenticationSchemeProvider _schemeProvider;
+    private readonly IIdentityProviderStore _identityProviderStore;
 
+    public ViewModel View { get; set; } = null!;
     [BindProperty]
     public InputModel Input { get; set; } = default!;
 
     public Index(
         IIdentityServerInteractionService interaction,
-        TestUserStore? users = null)
+        UserManager<ApplicationUser> userStore,
+        SignInManager<ApplicationUser> signInManager,
+        IIdentityProviderStore identityProviderStore,
+        IAuthenticationSchemeProvider schemeProvider)
     {
-        // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-        _users = users ?? throw new InvalidOperationException("Please call 'AddTestUsers(TestUsers.Users)' on the IIdentityServerBuilder in Startup or remove the TestUserStore from the AccountController.");
-
+        _userManager = userStore;
         _interaction = interaction;
+        _signInManager = signInManager;
+        _identityProviderStore = identityProviderStore;
+        _schemeProvider = schemeProvider;
     }
 
     public IActionResult OnGet(string? returnUrl)
@@ -66,23 +82,49 @@ public class Index : PageModel
             }
         }
 
-        if (_users.FindByUsername(Input.Username) != null)
-        {
-            ModelState.AddModelError("Input.Username", "Invalid username");
-        }
+        
 
         if (ModelState.IsValid)
         {
-            var user = _users.CreateUser(Input.Username, Input.Password, Input.Name, Input.Email);
+            var user = await _userManager.FindByNameAsync(Input?.Username ?? string.Empty);
+            if (user is not null)
+            {
+                ModelState.AddModelError("Input.Username", $"{user.UserName} is already taken");
+                await BuildModelAsync(Input!.ReturnUrl);
+                return Page();
+            }
+            Guid sub = Guid.NewGuid();
+            ApplicationUser newUser = new ApplicationUser()
+            {
+                Id = sub,
+                UserName = Input!.Username,
+                Email = Input!.Email,
+            };
+            var result = await _userManager.CreateAsync(newUser,Input.Password!);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                await BuildModelAsync(Input!.ReturnUrl);
+                return Page();
+            }
+            await _userManager.AddClaimAsync(newUser,
+    new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
+
+
+            var principal = await _signInManager.CreateUserPrincipalAsync(newUser);
+            var identity = (ClaimsIdentity)principal.Identity!;
+            identity.AddClaim(new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
 
             // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(user.SubjectId)
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
+            if (!Url.IsLocalUrl(Input.ReturnUrl))
             {
-                DisplayName = user.Username
-            };
-
-            await HttpContext.SignInAsync(isuser);
-
+                throw new ArgumentException("Invalid Return Url");
+            }
+            string stage2Url = Url.Page("/Account/CompleteRegistration",new { returnUrl = Input.ReturnUrl})!;
             if (context != null)
             {
                 if (context.IsNativeClient())
@@ -93,25 +135,82 @@ public class Index : PageModel
                 }
 
                 // we can trust Input.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(Input.ReturnUrl ?? "~/");
+                return Redirect(stage2Url);
+            }
+            return Redirect(stage2Url); //local page
+        }
+        await BuildModelAsync(Input!.ReturnUrl);
+        return Page();
+    }
+
+    private async Task BuildModelAsync(string? returnUrl)
+    {
+        Input = new InputModel
+        {
+            ReturnUrl = returnUrl ?? "/"
+        };
+
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        if (context?.IdP != null)
+        {
+            var scheme = await _schemeProvider.GetSchemeAsync(context.IdP);
+            if (scheme != null)
+            {
+                var local = context.IdP == Duende.IdentityServer.IdentityServerConstants.LocalIdentityProvider;
+
+                // this is meant to short circuit the UI and only trigger the one external IdP
+                View = new ViewModel
+                {
+                    EnableLocalLogin = local,
+                };
+
+                Input.Username = context?.LoginHint ?? string.Empty;
+
+                if (!local)
+                {
+                    View.ExternalProviders = [new ViewModel.ExternalProvider(authenticationScheme: context.IdP, displayName: scheme.DisplayName)];
+                }
             }
 
-            // request for a local page
-            if (Url.IsLocalUrl(Input.ReturnUrl))
+            return;
+        }
+
+        var schemes = await _schemeProvider.GetAllSchemesAsync();
+
+        var providers = schemes
+            .Where(x => x.DisplayName != null)
+            .Select(x => new ViewModel.ExternalProvider
+            (
+                authenticationScheme: x.Name,
+                displayName: x.DisplayName ?? x.Name
+            )).ToList();
+
+        var dynamicSchemes = (await _identityProviderStore.GetAllSchemeNamesAsync())
+            .Where(x => x.Enabled)
+            .Select(x => new ViewModel.ExternalProvider
+            (
+                authenticationScheme: x.Scheme,
+                displayName: x.DisplayName ?? x.Scheme
+            ));
+        providers.AddRange(dynamicSchemes);
+
+
+        var allowLocal = true;
+        var client = context?.Client;
+        if (client != null)
+        {
+            allowLocal = client.EnableLocalLogin;
+            if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Count != 0)
             {
-                return Redirect(Input.ReturnUrl);
-            }
-            else if (string.IsNullOrEmpty(Input.ReturnUrl))
-            {
-                return Redirect("~/");
-            }
-            else
-            {
-                // user might have clicked on a malicious link - should be logged
-                throw new ArgumentException("invalid return URL");
+                providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme)).ToList();
             }
         }
 
-        return Page();
+        View = new ViewModel
+        {
+            AllowRememberLogin = LoginOptions.AllowRememberLogin,
+            EnableLocalLogin = allowLocal && LoginOptions.AllowLocalLogin,
+            ExternalProviders = providers.ToArray()
+        };
     }
 }
