@@ -1,6 +1,7 @@
 using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
+using ClinicApp.Identity.Server.Profiles;
 using ClinicApp.Identity.Server.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -31,7 +32,7 @@ internal static class HostingExtensions
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
-        
+
         builder.Services.AddIdentityServer(options =>
         {
             options.IssuerUri = builder.Configuration?["Identity:Issuer"] ?? throw new ArgumentException("Issuer Was not provided");
@@ -39,12 +40,13 @@ internal static class HostingExtensions
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseInformationEvents = true;
             options.Events.RaiseSuccessEvents = true;
-            options.Authentication.CookieSameSiteMode = SameSiteMode.None;  
+            options.Authentication.CookieSameSiteMode = SameSiteMode.None;
         })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<ApplicationUser>()
+            .AddProfileService<ApplicationUserProfileService>()
             .AddLicenseSummary();
         builder.Services.AddAuthorization(opts =>
         {

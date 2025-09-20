@@ -1,3 +1,4 @@
+using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages.Account.Login;
 using Duende.IdentityServer;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 
 namespace QuickStart3.Pages.Login;
 
@@ -19,6 +21,7 @@ namespace QuickStart3.Pages.Login;
 public class Index : PageModel
 {
     private readonly UserManager<ApplicationUser> _users;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -33,8 +36,9 @@ public class Index : PageModel
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
         IIdentityProviderStore identityProviderStore,
-        IEventService events,   
-        UserManager<ApplicationUser> users)
+        IEventService events,
+        UserManager<ApplicationUser> users,
+        SignInManager<ApplicationUser> signInManager)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
         _users = users;
@@ -43,6 +47,7 @@ public class Index : PageModel
         _schemeProvider = schemeProvider;
         _identityProviderStore = identityProviderStore;
         _events = events;
+        _signInManager = signInManager;
     }
 
     public async Task<IActionResult> OnGet(string? returnUrl)
@@ -116,13 +121,20 @@ public class Index : PageModel
             }
 
             // issue authentication cookie with subject ID and username
-            var isuser = new IdentityServerUser(user.Id.ToString())
+            var principal = await _signInManager.CreateUserPrincipalAsync(user);
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
+            var claim = principal.FindFirst(ServerConstants.CompleteProfileClaimKey);
+            var stage2Url = Url.Page("/Account/CompleteRegistration/Index", new { returnUrl = Input.ReturnUrl });
+
+            if (claim is null)
             {
-                DisplayName = user.UserName
-            };
-
-            await HttpContext.SignInAsync(isuser, props);
-
+                await _users.AddClaimAsync(user, new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
+                await _signInManager.RefreshSignInAsync(user);
+                return LocalRedirect(stage2Url!);
+            }
+            else if (claim!.Value == ServerConstants.UnCompletedProfileClaimValue) {
+                return LocalRedirect(stage2Url!);
+            }
             if (context != null)
             {
                 // This "can't happen", because if the ReturnUrl was null, then the context would be null
