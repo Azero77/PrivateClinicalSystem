@@ -119,6 +119,18 @@ public class Index : PageModel
                 props.IsPersistent = true;
                 props.ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration);
             }
+            //we will check if the user has verified his email
+            var code = await _users.GenerateEmailConfirmationTokenAsync(user);
+            if (!user.EmailConfirmed)
+            {
+                var callbackUrl = Url.Page(
+                  "/Account/Features/ConfirmEmail",
+                  pageHandler: null,
+                  values: new { user.Id, code, returnUrl = Input.ReturnUrl },
+                  protocol: Request.Scheme);
+                return LocalRedirect(callbackUrl!);
+            }
+
 
             // issue authentication cookie with subject ID and username
             var principal = await _signInManager.CreateUserPrincipalAsync(user);

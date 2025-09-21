@@ -1,9 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +8,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Duende.IdentityServer.Services;
+using System.Security.Claims;
+using ClinicApp.Identity.Server.Constants;
+using QuickStart3.Pages;
+using Duende.IdentityServer;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ClinicApp.Identity.Server.Pages.Account.Features;
 
@@ -19,19 +21,20 @@ namespace ClinicApp.Identity.Server.Pages.Account.Features;
 public class ConfirmEmailModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IIdentityServerInteractionService _interaction;
 
-    public ConfirmEmailModel(UserManager<ApplicationUser> userManager)
+    public ConfirmEmailModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IIdentityServerInteractionService interaction)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
+        _interaction = interaction;
     }
 
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
     [TempData]
     public string StatusMessage { get; set; }
-    public async Task<IActionResult> OnGetAsync(string userId, string code)
+
+    public async Task<IActionResult> OnGetAsync(string userId, string code, string returnUrl)
     {
         if (userId == null || code == null)
         {
@@ -46,7 +49,34 @@ public class ConfirmEmailModel : PageModel
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await _userManager.ConfirmEmailAsync(user, code);
-        StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+        
+        if(result.Succeeded)
+        {
+            await _userManager.AddClaimAsync(user, new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
+
+            // We need to issue a cookie so the user can navigate to the next step.
+            var principal = await _signInManager.CreateUserPrincipalAsync(user);
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+            string stage2Url = Url.Page("/Account/CompleteRegistration/Index", new { returnUrl });
+            
+            if (returnUrl != null)
+            {
+                var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+                if (context != null)
+                {
+                    if (context.IsNativeClient())
+                    {
+                        return this.LoadingPage(stage2Url);
+                    }
+                    return Redirect(stage2Url);
+                }
+            }
+
+            return Redirect(stage2Url ?? "/");
+        }
+
+        StatusMessage = "Error confirming your email.";
         return Page();
     }
 }

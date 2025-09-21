@@ -24,7 +24,10 @@ internal static class HostingExtensions
             string connectionString = builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
             options.UseNpgsql(connectionString);
         });
-        builder.Services.AddIdentity<ApplicationUser,ApplicationRole>()
+        builder.Services.AddIdentity<ApplicationUser,ApplicationRole>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true;
+        })
             .AddEntityFrameworkStores<UsersDbContext>()
             .AddDefaultTokenProviders();
 

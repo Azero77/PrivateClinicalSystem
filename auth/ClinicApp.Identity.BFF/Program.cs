@@ -78,12 +78,15 @@ if (config.Apis.Any())
             .RequireAccessToken(api.RequiredToken);
     }
 }
-app.MapGet("/credentials", async (HttpContext context) =>
-{
-    var accessToken = await context.GetTokenAsync("access_token");
-    var idToken = await context.GetTokenAsync("id_token");
-    var refreshToken = await context.GetTokenAsync("refresh_token");
-    return new { accessToken, idToken, refreshToken };
-});
 
+if (isDev)
+{
+    app.MapGet("/credentials", async (HttpContext context) =>
+    {
+        var accessToken = await context.GetTokenAsync("access_token");
+        var idToken = await context.GetTokenAsync("id_token");
+        var refreshToken = await context.GetTokenAsync("refresh_token");
+        return new { accessToken, idToken, refreshToken };
+    });
+}
 app.Run();

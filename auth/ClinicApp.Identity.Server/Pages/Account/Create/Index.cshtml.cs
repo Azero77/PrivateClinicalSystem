@@ -4,15 +4,16 @@ using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
-using Duende.IdentityServer.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using QuickStart3.Pages.Login;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace QuickStart3.Pages.Create;
@@ -26,6 +27,9 @@ public class Index : PageModel
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
+    private readonly IEmailSender _emailSender;
+    private readonly ILogger<Index> _logger;
+
 
     public ViewModel View { get; set; } = null!;
     [BindProperty]
@@ -33,16 +37,20 @@ public class Index : PageModel
 
     public Index(
         IIdentityServerInteractionService interaction,
-        UserManager<ApplicationUser> userStore,
+        UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IIdentityProviderStore identityProviderStore,
-        IAuthenticationSchemeProvider schemeProvider)
+        IAuthenticationSchemeProvider schemeProvider,
+        IEmailSender emailSender,
+        ILogger<Index> logger)
     {
-        _userManager = userStore;
+        _userManager = userManager;
         _interaction = interaction;
         _signInManager = signInManager;
         _identityProviderStore = identityProviderStore;
         _schemeProvider = schemeProvider;
+        _emailSender = emailSender;
+        _logger = logger;
     }
 
     public async Task<IActionResult> OnGet(string? returnUrl)
@@ -106,6 +114,7 @@ public class Index : PageModel
                 Id = sub,
                 UserName = Input!.Username,
                 Email = Input!.Email,
+                EmailConfirmed = false
             };
             var result = await _userManager.CreateAsync(newUser,Input.Password!);
             if (!result.Succeeded)
@@ -117,34 +126,22 @@ public class Index : PageModel
                 await BuildModelAsync(Input!.ReturnUrl);
                 return Page();
             }
-            await _userManager.AddClaimAsync(newUser,
-    new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
+            
+            _logger.LogInformation("User created a new account with password.");
 
+            var userId = await _userManager.GetUserIdAsync(newUser);
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Page(
+                "/Account/Features/ConfirmEmail",
+                pageHandler: null,
+                values: new { userId, code, returnUrl = Input.ReturnUrl },
+                protocol: Request.Scheme);
 
-            var principal = await _signInManager.CreateUserPrincipalAsync(newUser);
-            var identity = (ClaimsIdentity)principal.Identity!;
-            identity.AddClaim(new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
+            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                $"Please confirm your account by <a href='{callbackUrl}'>clicking here</a>.");
 
-            // issue authentication cookie with subject ID and username
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
-            if (!Url.IsLocalUrl(Input.ReturnUrl))
-            {
-                throw new ArgumentException("Invalid Return Url");
-            }
-            string stage2Url = Url.Page("/Account/CompleteRegistration/Index",new { returnUrl = Input.ReturnUrl})!;
-            if (context != null)
-            {
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
-                }
-
-                // we can trust Input.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(stage2Url);
-            }
-            return Redirect(stage2Url); //local page
+            return RedirectToPage("/Account/Features/RegisterConfirmation", new { email = Input.Email, returnUrl = Input.ReturnUrl });
         }
         await BuildModelAsync(Input!.ReturnUrl);
         return Page();
