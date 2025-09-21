@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using Duende.IdentityModel;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
@@ -6,6 +7,7 @@ using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -15,7 +17,8 @@ namespace QuickStart3.Pages.ExternalLogin;
 [SecurityHeaders]
 public class Callback : PageModel
 {
-    private readonly TestUserStore _users;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly ILogger<Callback> _logger;
     private readonly IEventService _events;
@@ -24,14 +27,15 @@ public class Callback : PageModel
         IIdentityServerInteractionService interaction,
         IEventService events,
         ILogger<Callback> logger,
-        TestUserStore? users = null)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
-        // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-        _users = users ?? throw new InvalidOperationException("Please call 'AddTestUsers(TestUsers.Users)' on the IIdentityServerBuilder in Startup or remove the TestUserStore from the AccountController.");
 
         _interaction = interaction;
         _logger = logger;
         _events = events;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     public async Task<IActionResult> OnGet()
@@ -60,17 +64,24 @@ public class Callback : PageModel
                           externalUser.FindFirst(ClaimTypes.NameIdentifier) ??
                           throw new InvalidOperationException("Unknown userid");
 
+        var username = externalUser.FindFirst(JwtClaimTypes.Name);
+        var email = externalUser.FindFirst(JwtClaimTypes.Email);
         var provider = result.Properties.Items["scheme"] ?? throw new InvalidOperationException("Null scheme in authentication properties");
         var providerUserId = userIdClaim.Value;
 
         // find external user
-        var user = _users.FindByExternalProvider(provider, providerUserId);
+        var user = await _userManager.FindByLoginAsync(provider, providerUserId);
         if (user == null)
         {
-            //Here we need to register the new User ....
-            var claims = externalUser.Claims.ToList();
-            claims.Remove(userIdClaim);
-            user = _users.AutoProvisionUser(provider, providerUserId, claims.ToList());
+            Guid sub = Guid.NewGuid();
+            ApplicationUser newUser = new ApplicationUser()
+            {
+                Id = sub,
+                UserName = username?.Value,
+                Email = email?.Value,
+                EmailConfirmed = true // here ofcourse the user is logged in
+            };
+            var createResult = await _userManager.CreateAsync(newUser);
         }
 
         // this allows us to collect any additional claims or properties
@@ -81,14 +92,8 @@ public class Callback : PageModel
         CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
 
         // issue authentication cookie for user
-        var isuser = new IdentityServerUser(user.SubjectId)
-        {
-            DisplayName = user.Username,
-            IdentityProvider = provider,
-            AdditionalClaims = additionalLocalClaims
-        };
-
-        await HttpContext.SignInAsync(isuser, localSignInProps);
+        var principle = await _signInManager.CreateUserPrincipalAsync(user!);
+        await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principle);
 
         // delete temporary cookie used during external authentication
         await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);

@@ -10,6 +10,7 @@
     <PackageReference Include="Duende.IdentityServer" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.EntityFramework" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.AspNetIdentity" version="7.2.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5" />

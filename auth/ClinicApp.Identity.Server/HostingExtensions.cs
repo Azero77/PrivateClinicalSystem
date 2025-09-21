@@ -1,3 +1,4 @@
+using ClinicApp.Identity.Server.ConfigurationModels;
 using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
@@ -53,6 +54,9 @@ internal static class HostingExtensions
             .AddAspNetIdentity<ApplicationUser>()
             .AddProfileService<ApplicationUserProfileService>()
             .AddLicenseSummary();
+        var authentiation = builder.Services.AddAuthentication();
+        AddExternalProviders(authentiation, builder);
+
         builder.Services.AddAuthorization(opts =>
         {
             opts.AddPolicy(ServerConstants.RequireCompletedProfilePolicy, builder =>
@@ -71,6 +75,28 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
         builder.Services.AddScoped<IDomainUserRegister, DomainUserRegister>();
         return builder.Build();
+    }
+
+    private static void AddExternalProviders(AuthenticationBuilder authentiation, WebApplicationBuilder builder)
+    {
+        var providers = builder.Configuration.GetSection("ExternalAuthProviders")
+            .Get<IEnumerable<ExternalAuthProvider>>() ?? throw new ArgumentException("No external Providers have been provided");
+
+        foreach (var provider in providers)
+        {
+            switch (provider.ProviderName)
+            {
+                case "Google":
+                    authentiation.AddGoogle(opts =>
+                    {
+                        opts.ClientId = provider.ClientId;
+                        opts.ClientSecret = provider.ClientSecret;
+                    });
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
