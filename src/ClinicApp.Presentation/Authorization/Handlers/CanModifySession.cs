@@ -20,7 +20,6 @@ public abstract class CanModifySession<TRequirement, TRequest> : AuthorizationHa
         {
             context.Fail();return;
         }
-
         if (Guid.TryParse(context.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value, out Guid userId))
         {
             context.Fail();

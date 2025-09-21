@@ -3,6 +3,7 @@ using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
 using ClinicApp.Identity.Server.Profiles;
 using ClinicApp.Identity.Server.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,7 @@ internal static class HostingExtensions
         })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryApiResources(Config.ApiResources)
             .AddInMemoryClients(Config.Clients(builder.Configuration))
             .AddAspNetIdentity<ApplicationUser>()
             .AddProfileService<ApplicationUserProfileService>()
@@ -86,7 +88,7 @@ internal static class HostingExtensions
         // uncomment if you want to add a UI
         app.UseAuthorization();
         app.MapRazorPages();
-
+       
         return app;
     }
 }

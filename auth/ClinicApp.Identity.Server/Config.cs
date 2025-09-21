@@ -12,12 +12,22 @@ public static class Config
             new IdentityResources.Profile(),
             new IdentityResources.Email(),
             new IdentityResources.Address(),
-            new IdentityResources.Phone()
+            new IdentityResources.Phone(),
+            new IdentityResource(JwtClaimTypes.Role, new string[] { "role" })
         };
-
+        
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
             { new ApiScope("api","Management API")};
+
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        { new ApiResource("api")
+            {
+                Scopes = {"api" },
+                UserClaims = { JwtClaimTypes.Role }
+            }
+        };
 
     public static IEnumerable<Client> Clients(IConfiguration configuration)
     {
@@ -50,9 +60,11 @@ public static class Config
                         IdentityServerConstants.StandardScopes.Address,
                         IdentityServerConstants.StandardScopes.Phone,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
+                        JwtClaimTypes.Role,
                         "api",
                     },
                     AllowOfflineAccess = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
                 }
             };
     }
