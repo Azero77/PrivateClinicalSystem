@@ -53,11 +53,14 @@ public class CheckRegistrationCompleteUserAuthenticationMiddleware
         if (claim is null)
         {
             await _userManager.AddClaimAsync(user, new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
-            await _signInManager.RefreshSignInAsync(user);
+            await _signInManager.SignInAsync(user,true);
             return new LoginResult(LoginFlowStatus.RequireProfileCompletion,completeRegistrationUrl);
         }
         else if (claim!.Value == ServerConstants.UnCompletedProfileClaimValue)
         {
+
+            // They already have the claim in DB, but may not have a cookie yet
+            await _signInManager.SignInAsync(user, isPersistent: false);
             return new LoginResult(LoginFlowStatus.RequireProfileCompletion,completeRegistrationUrl);
         }
 

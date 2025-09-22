@@ -72,6 +72,9 @@ public class Callback : PageModel
         var email = externalUser.FindFirst(JwtClaimTypes.Email);
         var provider = result.Properties.Items["scheme"] ?? throw new InvalidOperationException("Null scheme in authentication properties");
         var providerUserId = userIdClaim.Value;
+        var additionalLocalClaims = new List<Claim>();
+        var localSignInProps = new AuthenticationProperties();
+        CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
 
         // find external user
         var user = await _userManager.FindByLoginAsync(provider, providerUserId);
@@ -86,17 +89,24 @@ public class Callback : PageModel
                 EmailConfirmed = true // here ofcourse the user is logged in
             };
             var createResult = await _userManager.CreateAsync(newUser);
+            if (!createResult.Succeeded)
+            {
+                throw new ArgumentException("sorry,Something went wrong during login");
+            }
+            var loginInfo = new UserLoginInfo(provider, providerUserId, provider);
+            var addLoginResult = await _userManager.AddLoginAsync(newUser, loginInfo);
+            if (!addLoginResult.Succeeded)
+            {
+                throw new ArgumentException("sorry,Something went wrong during login");
+            }
             user = newUser;
         }
 
         // this allows us to collect any additional claims or properties
         // for the specific protocols used and store them in the local auth cookie.
         // this is typically used to store data needed for signout from those protocols.
-        var additionalLocalClaims = new List<Claim>();
-        var localSignInProps = new AuthenticationProperties();
-        CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
-        var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
-        var loginResult = await _userLoginService.Handle(user, "",returnUrl,additionalLocalClaims);
+      var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
+        var loginResult = await _userLoginService.HandleExternal(user,returnUrl,additionalLocalClaims);
         // delete temporary cookie used during external authentication
 
         if (loginResult.IsError)

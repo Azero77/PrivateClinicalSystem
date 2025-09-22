@@ -14,7 +14,8 @@ using System.Security.Claims;
 
 namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
 {
-    [Authorize(Policy = ServerConstants.UnCompletedProfilePolicy)]
+    //[Authorize(Policy = ServerConstants.UnCompletedProfilePolicy)]
+    [AllowAnonymous]
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -58,13 +59,10 @@ namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
             if (user is null)
             {
                 ModelState.AddModelError("", "Unknown Error Happend,Try Again later");
+                return Page();
             }
             await _register.Modify(user!, new DomainUserRegisterContext() { SelectedRole = selectedRole});
-            //Remove the old cookie and make a new one
-            var principle = await _signInManager.CreateUserPrincipalAsync(user!);
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            //add the new claim
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principle);
+            await _signInManager.RefreshSignInAsync(user);
 
             return LocalRedirect(Input.ReturnUrl ?? "/");
         }

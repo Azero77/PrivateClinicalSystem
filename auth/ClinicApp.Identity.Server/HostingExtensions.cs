@@ -4,6 +4,7 @@ using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages;
 using ClinicApp.Identity.Server.Profiles;
 using ClinicApp.Identity.Server.Services;
+using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -37,7 +38,6 @@ internal static class HostingExtensions
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
-
         builder.Services.AddIdentityServer(options =>
         {
             options.IssuerUri = builder.Configuration?["Identity:Issuer"] ?? throw new ArgumentException("Issuer Was not provided");
@@ -45,7 +45,6 @@ internal static class HostingExtensions
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseInformationEvents = true;
             options.Events.RaiseSuccessEvents = true;
-            options.Authentication.CookieSameSiteMode = SameSiteMode.None;
         })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
@@ -90,8 +89,11 @@ internal static class HostingExtensions
                 case "Google":
                     authentiation.AddGoogle(opts =>
                     {
+
+                        opts.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                         opts.ClientId = provider.ClientId;
                         opts.ClientSecret = provider.ClientSecret;
+                        
                     });
                     break;
                 default:
@@ -112,7 +114,6 @@ internal static class HostingExtensions
         // uncomment if you want to add a UI
         app.UseStaticFiles();
         app.UseRouting();
-
         app.UseIdentityServer();
 
         // uncomment if you want to add a UI

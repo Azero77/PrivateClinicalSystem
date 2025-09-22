@@ -1,5 +1,6 @@
 ﻿using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ErrorOr;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +62,6 @@ public class CheckEmailVerifiedUserAuthenticationMiddleware
                 "Confirm your email",
                 $"Please confirm your account by <a href='{callbackUrl}'>clicking here</a>.");
         }
-
         return new LoginResult(LoginFlowStatus.RequireEmailConfirmation,
             "/Account/Features/RegisterConfirmation");
     }

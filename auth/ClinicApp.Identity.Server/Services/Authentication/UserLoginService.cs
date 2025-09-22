@@ -31,10 +31,8 @@ public class UserLoginService
             .SetNext(checkRegistrationCompleteUserAuthenticationMiddleware)
             .SetNext(checkAuthorizationContextClientRequestMiddleware);
 
-        ExternalLoginFlow = checkEmailVerifiedUserAuthenticationMiddleware;
+        ExternalLoginFlow = checkRegistrationCompleteUserAuthenticationMiddleware;
         ExternalLoginFlow
-            .SetNext(checkEmailVerifiedUserAuthenticationMiddleware)
-            .SetNext(checkRegistrationCompleteUserAuthenticationMiddleware)
             .SetNext(checkAuthorizationContextClientRequestMiddleware);
         _userManager = userManager;
         _signInManager = signInManager;
@@ -49,11 +47,10 @@ public class UserLoginService
     }
 
     public async Task<ErrorOr<LoginResult>> HandleExternal(ApplicationUser user,
-        string password,
         string returnUrl,
         List<Claim>? additionalClaims)
     {
-        return await LoginFlow.Handle(user, password, returnUrl, additionalClaims);
+        return await ExternalLoginFlow.Handle(user, string.Empty, returnUrl, additionalClaims);
     }
 
     public Task<ApplicationUser?> FindByNameAsync(string userName)
@@ -82,7 +79,7 @@ public class SignInUserAuthenticationMiddleware : UserAuthenticationMiddleware
 
     public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string password,string returnUrl, List<Claim>? additionalClaim = null)
     {
-        SignInResult isSignedIn = await _signInManager.CheckPasswordSignInAsync(user, password, true);
+        SignInResult isSignedIn = await _signInManager.CheckPasswordSignInAsync(user, password, false);
         if (!isSignedIn.Succeeded)
         {
             return new LoginResult(LoginFlowStatus.PasswordDoNotMatch, returnUrl);
