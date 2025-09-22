@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,37 +14,52 @@ public class CheckEmailVerifiedUserAuthenticationMiddleware
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
+    private readonly LinkGenerator _linkGenerator;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CheckEmailVerifiedUserAuthenticationMiddleware(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+    public CheckEmailVerifiedUserAuthenticationMiddleware(
+        UserManager<ApplicationUser> userManager,
+        IEmailSender emailSender,
+        LinkGenerator linkGenerator,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _emailSender = emailSender;
+        _linkGenerator = linkGenerator;
+        _httpContextAccessor = httpContextAccessor;
     }
 
-    public override async Task<IActionResult> Handle(ApplicationUser user,PageModel pageModel,string returnUrl)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl)
     {
         if (user.EmailConfirmed && _next is not null)
-        { 
-            return await _next.Handle(user,pageModel,returnUrl);
+        {
+            return await _next.Handle(user, returnUrl);
         }
-        //generate an email confirmation token
 
         var userId = await _userManager.GetUserIdAsync(user);
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-        //after the user has successfully confirmed their email they should be moved to complete registration
-        var completeRegistrationurl = pageModel.Url.Page("/Account/CompleteRegistration/Index", new { returnUrl });
+        var completeRegistrationUrl = _linkGenerator.GetPathByPage(
+            page: "/Account/CompleteRegistration/Index",
+            values: new { returnUrl }
+        );
 
-        var callbackUrl = pageModel.Url.Page(
-            "/Account/Features/ConfirmEmail",
-            pageHandler: null,
-            values: new { userId, code, returnUrl = completeRegistrationurl },
-            protocol: pageModel.Request.Scheme);
-        if(user.Email is not null)
-            await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
+        var callbackUrl = _linkGenerator.GetUriByPage(
+            httpContext: _httpContextAccessor.HttpContext!,
+            page: "/Account/Features/ConfirmEmail",
+            values: new { userId, code, returnUrl = completeRegistrationUrl }
+        );
+
+        if (user.Email is not null)
+        {
+            await _emailSender.SendEmailAsync(
+                user.Email,
+                "Confirm your email",
                 $"Please confirm your account by <a href='{callbackUrl}'>clicking here</a>.");
+        }
 
-        return pageModel.RedirectToPage("/Account/Features/RegisterConfirmation");
+        return new LoginResult(LoginFlowStatus.RequireEmailConfirmation,
+            "/Account/Features/RegisterConfirmation");
     }
 }

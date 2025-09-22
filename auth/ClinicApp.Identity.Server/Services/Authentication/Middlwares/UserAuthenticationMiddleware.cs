@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,15 +16,5 @@ public abstract class UserAuthenticationMiddleware
         _next = next;
         return next;
     }
-    public abstract Task<IActionResult> Handle(ApplicationUser user, PageModel pageModel, string returnUrl);
-}
-
-
-public class CheckingOAuthContextUserAuthenticationMiddleware :
-    UserAuthenticationMiddleware
-{
-    public override Task<IActionResult> Handle(ApplicationUser user, PageModel pageModel, string returnUrl)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl);
 }

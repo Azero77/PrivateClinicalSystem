@@ -65,6 +65,7 @@ public class Index : PageModel
     {
         // check if we are in the context of an authorization request
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+        await BuildModelAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
         if (Input.Button != "login")
@@ -98,12 +99,12 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
+
             // validate username/password against in-memory store
             var user = await _userLoginService.FindByNameAsync(Input!.Username);
             if (user is null)
             {
                 ModelState.AddModelError("Input.Username", "Username was not found");
-                await BuildModelAsync(Input.ReturnUrl);
                 return Page();
             }
             await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName,user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
@@ -117,68 +118,17 @@ public class Index : PageModel
                 props.IsPersistent = true;
                 props.ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration);
             }
-            //we will check if the user has verified his email
-            var code = await _users.GenerateEmailConfirmationTokenAsync(user);
-            if (!user.EmailConfirmed)
+            var redirect = await _userLoginService.Handle(user,Input!.ReturnUrl ?? "~/");
+            if (redirect.IsError)
             {
-                var callbackUrl = Url.Page(
-                  "/Account/Features/ConfirmEmail",
-                  pageHandler: null,
-                  values: new { user.Id, code, returnUrl = Input.ReturnUrl },
-                  protocol: Request.Scheme);
-                return LocalRedirect(callbackUrl!);
+                ModelState.AddModelError("", redirect.FirstError.Description);
             }
 
-
-            // issue authentication cookie with subject ID and username
-            var principal = await _signInManager.CreateUserPrincipalAsync(user);
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
-            var claim = principal.FindFirst(ServerConstants.CompleteProfileClaimKey);
-            var stage2Url = Url.Page("/Account/CompleteRegistration/Index", new { returnUrl = Input.ReturnUrl });
-
-            if (claim is null)
-            {
-                await _users.AddClaimAsync(user, new Claim(ServerConstants.CompleteProfileClaimKey, ServerConstants.UnCompletedProfileClaimValue));
-                await _signInManager.RefreshSignInAsync(user);
-                return LocalRedirect(stage2Url!);
-            }
-            else if (claim!.Value == ServerConstants.UnCompletedProfileClaimValue) {
-                return LocalRedirect(stage2Url!);
-            }
-            if (context != null)
-            {
-                // This "can't happen", because if the ReturnUrl was null, then the context would be null
-                ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
-
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
-                }
-
-                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                return Redirect(Input.ReturnUrl ?? "~/");
-            }
-
-            // request for a local page
-            if (Url.IsLocalUrl(Input.ReturnUrl))
-            {
-                return Redirect(Input.ReturnUrl);
-            }
-            else if (string.IsNullOrEmpty(Input.ReturnUrl))
-            {
-                return Redirect("~/");
-            }
-            else
-            {
-                // user might have clicked on a malicious link - should be logged
-                throw new ArgumentException("invalid return URL");
-            }
+            return redirect.Value.ToActionResult(this);
         }
 
         // something went wrong, show form with error
-        await BuildModelAsync(Input.ReturnUrl);
+        //await BuildModelAsync(Input.ReturnUrl);
         return Page();
     }
 
