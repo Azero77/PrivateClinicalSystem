@@ -17,5 +17,5 @@ public abstract class UserAuthenticationMiddleware
         _next = next;
         return next;
     }
-    public abstract Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null);
+    public abstract Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string password,string returnUrl, List<Claim>? additionalClaim = null);
 }

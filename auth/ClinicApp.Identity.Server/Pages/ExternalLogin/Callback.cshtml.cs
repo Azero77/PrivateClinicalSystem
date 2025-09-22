@@ -96,7 +96,7 @@ public class Callback : PageModel
         var localSignInProps = new AuthenticationProperties();
         CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
         var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
-        var loginResult = await _userLoginService.Handle(user, returnUrl);
+        var loginResult = await _userLoginService.Handle(user, "",returnUrl,additionalLocalClaims);
         // delete temporary cookie used during external authentication
 
         if (loginResult.IsError)

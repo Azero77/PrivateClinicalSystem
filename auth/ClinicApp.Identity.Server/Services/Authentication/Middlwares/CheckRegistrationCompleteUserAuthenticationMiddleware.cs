@@ -28,7 +28,9 @@ public class CheckRegistrationCompleteUserAuthenticationMiddleware
         _linkGenerator = linkGenerator;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, 
+        string password,
+        string returnUrl, List<Claim>? additionalClaim = null)
     {
         if (_accessor.HttpContext is null)
             return new LoginResult(LoginFlowStatus.AccessDenied,returnUrl);
@@ -64,6 +66,6 @@ public class CheckRegistrationCompleteUserAuthenticationMiddleware
         await _accessor.HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
         //will go to /connect/authorize endpoint to generate the jwt
 
-        return await _next!.Handle(user, returnUrl);
+        return await _next!.Handle(user, password,returnUrl,additionalClaim);
     }
 }

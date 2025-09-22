@@ -30,14 +30,16 @@ public class CheckEmailVerifiedUserAuthenticationMiddleware
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user,
+        string password,
+        string returnUrl, 
+        List<Claim>? additionalClaim = null)
     {
         if (user.EmailConfirmed && _next is not null)
         {
-            return await _next.Handle(user, returnUrl);
+            return await _next.Handle(user, password, returnUrl,additionalClaim);
         }
 
-        var userId = await _userManager.GetUserIdAsync(user);
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
@@ -49,7 +51,7 @@ public class CheckEmailVerifiedUserAuthenticationMiddleware
         var callbackUrl = _linkGenerator.GetUriByPage(
             httpContext: _httpContextAccessor.HttpContext!,
             page: "/Account/Features/ConfirmEmail",
-            values: new { userId, code, returnUrl = completeRegistrationUrl }
+            values: new { userId = user.Id, code, returnUrl = completeRegistrationUrl }
         );
 
         if (user.Email is not null)

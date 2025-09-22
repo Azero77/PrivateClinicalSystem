@@ -32,6 +32,7 @@ public static class LoginFlowResultExtensions
         services.AddScoped<CheckEmailVerifiedUserAuthenticationMiddleware>();
         services.AddScoped<CheckRegistrationCompleteUserAuthenticationMiddleware>();
         services.AddScoped<CheckAuthorizationContextClientRequestMiddleware>();
+        services.AddScoped<SignInUserAuthenticationMiddleware>();
         services.AddHttpContextAccessor();
         return services;
     }

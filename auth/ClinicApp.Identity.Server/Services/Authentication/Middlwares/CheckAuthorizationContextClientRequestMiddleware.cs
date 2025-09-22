@@ -16,7 +16,10 @@ public class CheckAuthorizationContextClientRequestMiddleware : UserAuthenticati
         _interaction = interaction;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user,
+        string password,
+        string returnUrl, 
+        List<Claim>? additionalClaim = null)
     {
         if (string.IsNullOrEmpty(returnUrl))
             throw new ArgumentNullException(nameof(returnUrl), "Return URL can't be null");

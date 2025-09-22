@@ -65,7 +65,6 @@ public class Index : PageModel
     {
         // check if we are in the context of an authorization request
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
-        await BuildModelAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
         if (Input.Button != "login")
@@ -99,12 +98,12 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-
             // validate username/password against in-memory store
             var user = await _userLoginService.FindByNameAsync(Input!.Username);
             if (user is null)
             {
                 ModelState.AddModelError("Input.Username", "Username was not found");
+                await BuildModelAsync(Input.ReturnUrl);
                 return Page();
             }
             await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName,user.Id.ToString(), user.UserName, clientId: context?.Client.ClientId));
@@ -118,10 +117,16 @@ public class Index : PageModel
                 props.IsPersistent = true;
                 props.ExpiresUtc = DateTimeOffset.UtcNow.Add(LoginOptions.RememberMeLoginDuration);
             }
-            var redirect = await _userLoginService.Handle(user,Input!.ReturnUrl ?? "~/");
+            var redirect = await _userLoginService.Handle(user,Input.Password,Input!.ReturnUrl ?? "~/");
             if (redirect.IsError)
             {
                 ModelState.AddModelError("", redirect.FirstError.Description);
+            }
+            if (redirect.Value.status == LoginFlowStatus.PasswordDoNotMatch)
+            {
+                await BuildModelAsync(Input.ReturnUrl);
+                ModelState.AddModelError("", "Invalid Password");
+                return Page();
             }
 
             return redirect.Value.ToActionResult(this);
@@ -129,6 +134,7 @@ public class Index : PageModel
 
         // something went wrong, show form with error
         //await BuildModelAsync(Input.ReturnUrl);
+        await BuildModelAsync(Input.ReturnUrl);
         return Page();
     }
 
