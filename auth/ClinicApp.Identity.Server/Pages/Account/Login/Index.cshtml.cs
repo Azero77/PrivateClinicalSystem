@@ -1,6 +1,7 @@
 using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Pages.Account.Login;
+using ClinicApp.Identity.Server.Services.Authentication;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
@@ -20,8 +21,7 @@ namespace QuickStart3.Pages.Login;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly UserManager<ApplicationUser> _users;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserLoginService _userLoginService;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -37,17 +37,15 @@ public class Index : PageModel
         IAuthenticationSchemeProvider schemeProvider,
         IIdentityProviderStore identityProviderStore,
         IEventService events,
-        UserManager<ApplicationUser> users,
-        SignInManager<ApplicationUser> signInManager)
+        UserLoginService userLoginService)
     {
         // this is where you would plug in your own custom identity management library (e.g. ASP.NET Identity)
-        _users = users;
 
         _interaction = interaction;
         _schemeProvider = schemeProvider;
         _identityProviderStore = identityProviderStore;
         _events = events;
-        _signInManager = signInManager;
+        _userLoginService = userLoginService;
     }
 
     public async Task<IActionResult> OnGet(string? returnUrl)
@@ -101,7 +99,7 @@ public class Index : PageModel
         if (ModelState.IsValid)
         {
             // validate username/password against in-memory store
-            var user = await _users.FindByNameAsync(Input!.Username);
+            var user = await _userLoginService.FindByNameAsync(Input!.Username);
             if (user is null)
             {
                 ModelState.AddModelError("Input.Username", "Username was not found");
