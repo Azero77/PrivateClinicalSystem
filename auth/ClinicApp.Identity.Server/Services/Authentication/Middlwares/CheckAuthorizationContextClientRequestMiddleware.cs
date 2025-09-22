@@ -4,6 +4,7 @@ using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QuickStart3.Pages;
+using System.Security.Claims;
 
 namespace ClinicApp.Identity.Server.Services.Authentication.Middlwares;
 public class CheckAuthorizationContextClientRequestMiddleware : UserAuthenticationMiddleware
@@ -15,7 +16,7 @@ public class CheckAuthorizationContextClientRequestMiddleware : UserAuthenticati
         _interaction = interaction;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
     {
         if (string.IsNullOrEmpty(returnUrl))
             throw new ArgumentNullException(nameof(returnUrl), "Return URL can't be null");

@@ -28,14 +28,21 @@ public class CheckRegistrationCompleteUserAuthenticationMiddleware
         _linkGenerator = linkGenerator;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
     {
         if (_accessor.HttpContext is null)
             return new LoginResult(LoginFlowStatus.AccessDenied,returnUrl);
         var principal = await _signInManager.CreateUserPrincipalAsync(user);
 
+        if (additionalClaim is not null)
+        {
+            var identity = (ClaimsIdentity)principal.Identity!;
+            foreach (var additionalclaim in additionalClaim)
+            {
+                identity.AddClaim(additionalclaim);
+            }
+        }
         //check if {profile_stage:completed} claim is found or not
-        await _accessor.HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
         var claim = principal.FindFirst(ServerConstants.CompleteProfileClaimKey);
         var completeRegistrationUrl = _linkGenerator.GetPathByPage(
            page: "/Account/CompleteRegistration/Index",
@@ -53,7 +60,10 @@ public class CheckRegistrationCompleteUserAuthenticationMiddleware
         }
 
         //the user has completed registration we will return them to the page
+        //we need to assign new claims to the user for the external provider claims
+        await _accessor.HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principal);
         //will go to /connect/authorize endpoint to generate the jwt
+
         return await _next!.Handle(user, returnUrl);
     }
 }

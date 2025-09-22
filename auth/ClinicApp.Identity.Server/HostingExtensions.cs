@@ -74,6 +74,7 @@ internal static class HostingExtensions
 
         builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
         builder.Services.AddScoped<IDomainUserRegister, DomainUserRegister>();
+        builder.Services.AddLoginFLow();
         return builder.Build();
     }
 

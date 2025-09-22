@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Claims;
 using System.Text;
 
 namespace ClinicApp.Identity.Server.Services.Authentication.Middlwares;
@@ -29,7 +30,7 @@ public class CheckEmailVerifiedUserAuthenticationMiddleware
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl)
+    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string returnUrl, List<Claim>? additionalClaim = null)
     {
         if (user.EmailConfirmed && _next is not null)
         {

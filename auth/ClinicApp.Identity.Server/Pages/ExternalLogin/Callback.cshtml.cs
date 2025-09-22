@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
+using ClinicApp.Identity.Server.Services.Authentication;
 using Duende.IdentityModel;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
@@ -19,6 +20,7 @@ public class Callback : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserLoginService _userLoginService;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly ILogger<Callback> _logger;
     private readonly IEventService _events;
@@ -28,7 +30,8 @@ public class Callback : PageModel
         IEventService events,
         ILogger<Callback> logger,
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        UserLoginService userLoginService)
     {
 
         _interaction = interaction;
@@ -36,6 +39,7 @@ public class Callback : PageModel
         _events = events;
         _userManager = userManager;
         _signInManager = signInManager;
+        _userLoginService = userLoginService;
     }
 
     public async Task<IActionResult> OnGet()
@@ -82,6 +86,7 @@ public class Callback : PageModel
                 EmailConfirmed = true // here ofcourse the user is logged in
             };
             var createResult = await _userManager.CreateAsync(newUser);
+            user = newUser;
         }
 
         // this allows us to collect any additional claims or properties
@@ -90,33 +95,21 @@ public class Callback : PageModel
         var additionalLocalClaims = new List<Claim>();
         var localSignInProps = new AuthenticationProperties();
         CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
-
-        // issue authentication cookie for user
-        var principle = await _signInManager.CreateUserPrincipalAsync(user!);
-        await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme,principle);
-
-        // delete temporary cookie used during external authentication
-        await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
-
-        // retrieve return URL
         var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
+        var loginResult = await _userLoginService.Handle(user, returnUrl);
+        // delete temporary cookie used during external authentication
 
-        // check if external login is in the context of an OIDC request
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-        await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user.SubjectId, user.Username, true, context?.Client.ClientId));
-        Telemetry.Metrics.UserLogin(context?.Client.ClientId, provider!);
-
-        if (context != null)
+        if (loginResult.IsError)
         {
-            if (context.IsNativeClient())
-            {
-                // The client is native, so this change in how to
-                // return the response is for better UX for the end user.
-                return this.LoadingPage(returnUrl);
-            }
+            ModelState.AddModelError("", loginResult.FirstError.Description);
+            return Page();
         }
-
-        return Redirect(returnUrl);
+        var value = loginResult.Value;
+        if (value.status == LoginFlowStatus.LoginSucceed)
+        {
+            await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+        }
+        return value.ToActionResult(this);
     }
 
     // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
