@@ -84,7 +84,7 @@ namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
                 return Page();
             }
             UserRole selectedRole = Input.Role;
-            if (Input.DoctorInfo is not null || selectedRole != UserRole.Doctor)
+            if (Input.DoctorInfo is not null && selectedRole != UserRole.Doctor)
             {
                 ModelState.AddModelError("", "Invalid Data");
                 return Page();

@@ -1,13 +1,17 @@
 ﻿using AspNetCoreGeneratedDocument;
+using ClinicApp.Application.Common;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Services.Authentication.Middlwares;
+using ClinicApp.Shared.IntegrationEvents;
 using ErrorOr;
 using MassTransit;
+using MassTransit.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace ClinicApp.Identity.Server.Services.Authentication;
 
@@ -71,10 +75,11 @@ public class UserLoginService
     {
         var selectedRole = context.SelectedRole;
 
-        await _register.Modify(user!, new DomainUserRegisterContext() { SelectedRole = selectedRole });
+        await _register.Modify(user!, context);
         await _signInManager.RefreshSignInAsync(user);
         //publish an integration event for created user with role
-        //_publishEndpoint.Publish();
+        var message = new UserCreatedIntegrationEvent(context.SelectedRole, context.content);
+        await _publishEndpoint.Publish(message);
         return new LoginResult(LoginFlowStatus.LoginSucceed,returnUrl);
     }
 }

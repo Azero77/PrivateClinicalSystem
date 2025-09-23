@@ -16,6 +16,7 @@ using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
 using ClinicApp.Shared.QueryTypes;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,7 @@ public static class DependencyInjection
         services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         //Mediatr is unable to register generic requestHandlers because DI with MSDI can support this kind of stuff
         RegisterMediatrGenericHandlers(services);
+        services.AddMessaging();
         return services;
     }
     private static void RegisterMediatrGenericHandler<T>(IServiceCollection services)
@@ -80,5 +82,22 @@ public static class DependencyInjection
         RegisterMediatrGenericHandler<RoomQueryType>(services);
         RegisterMediatrGenericHandler<SecretaryQueryType>(services);
     }
+    public static IServiceCollection AddMessaging(this IServiceCollection services)
+    {
+        services.AddMassTransit(opts =>
+        {
+            opts.UsingRabbitMq((context, cfg) =>
+            {
+                var configuration = context.GetService<IConfiguration>();
+                if (configuration is null)
+                    throw new ArgumentException();
+                var connectionString = configuration.GetConnectionString("rabbitmq");
+                cfg.Host(connectionString);
+                cfg.ConfigureEndpoints(context);
+            });
+            opts.AddConsumers(typeof(Application.DependencyInjection).Assembly);
+        });
 
+        return services;
+    }
 }

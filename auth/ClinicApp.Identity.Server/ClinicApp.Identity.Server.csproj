@@ -10,6 +10,7 @@
     <PackageReference Include="Duende.IdentityServer" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.EntityFramework" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.AspNetIdentity" version="7.2.0" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.5" />
@@ -22,6 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ClinicApp.Application\ClinicApp.Application.csproj" />
     <ProjectReference Include="..\..\src\ClinicApp.Domain\ClinicApp.Domain.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Shared\ClinicApp.Shared.csproj" />
   </ItemGroup>
 </Project>

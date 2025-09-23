@@ -19,6 +19,7 @@
 
 	  <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
 	  <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.10" />
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
