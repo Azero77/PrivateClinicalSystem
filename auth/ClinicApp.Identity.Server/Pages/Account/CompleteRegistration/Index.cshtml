@@ -8,14 +8,65 @@
     <div asp-validation-summary="All"></div>
     <input type="hidden" asp-for="Input.ReturnUrl"/>
     <div>
+        
+        <label asp-for="Input.FirstName">First Name</label>
+        <input asp-for="Input.FirstName"/>
+    </div>
+
+    <div>
+        <label asp-for="Input.LastName">Last Name</label>
+        <input asp-for="Input.LastName" />
+    </div>
+
+
+    <div>
         <label asp-for="Input.Role"></label>
-        <select asp-for="Input.Role" class="form-control" asp-items="Model.AllowedRoles">
-        <option value="" disabled>-- Select role --</option>
+        <select asp-for="Input.Role" class="form-control" asp-items="Model.AllowedRoles" id="roleSelector">
+            <option value="" disabled>-- Select role --</option>
         </select>
     </div>
+
+    <div id="doctor-section">
+        <div>
+            <label asp-for="Input.DoctorInfo.StartTime">Star Time</label>
+            <input asp-for="Input.DoctorInfo.StartTime" />
+        </div>
+        <div>
+            <label asp-for="Input.DoctorInfo.EndTime">End Time</label>
+            <input asp-for="Input.DoctorInfo.EndTime" />
+        </div>
+
+        <div>
+            <label asp-for="Input.DoctorInfo.TimeZoneId">TimeZone: </label>
+            <select asp-for="Input.DoctorInfo.TimeZoneId" asp-items="Model.GetTimeZones()">
+                <option value="" disabled></option>
+            </select>
+        </div>
+    </div>
+
+
     <button class="btn btn-primary" type="submit">Submit</button>
 </form>
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial"/>
+    <script>
+        document.addEventListener("DOMContentLoaded", e => {
+            const select = document.querySelector("select[name='Input.DoctorInfo.TimeZoneId']");
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if(tz && select){
+                const option = [...select.options].find(o => o.value == tz);
+                if(option){
+                    option.selected = true;
+                }
+            }
+
+        });
+
+        document.getElementById("roleSelector").addEventListener("change", function () {
+            let doctorSection = document.getElementById("doctor-section");
+            doctorSection.style.display = (this.value === "Doctor") ? "block" : "none";
+        });
+    </script>
+
 }

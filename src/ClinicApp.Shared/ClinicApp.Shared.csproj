@@ -10,6 +10,8 @@
 		<PackageReference Include="HotChocolate.AspNetCore" Version="15.1.10" />
 		<PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.10" />
 		<PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
+
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\ClinicApp.Domain\ClinicApp.Domain.csproj" />

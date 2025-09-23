@@ -105,7 +105,7 @@ public class Callback : PageModel
         // this allows us to collect any additional claims or properties
         // for the specific protocols used and store them in the local auth cookie.
         // this is typically used to store data needed for signout from those protocols.
-      var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
+        var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
         var loginResult = await _userLoginService.HandleExternal(user,returnUrl,additionalLocalClaims);
         // delete temporary cookie used during external authentication
 

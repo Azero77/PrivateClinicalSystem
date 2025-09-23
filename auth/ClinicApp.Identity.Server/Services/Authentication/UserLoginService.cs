@@ -18,7 +18,7 @@ public class UserLoginService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IDomainUserRegister _register;
-    //sprivate readonly IPublish _eventBus;
+    private readonly IPublishEndpoint _publishEndpoint;
     public UserLoginService(
                             SignInUserAuthenticationMiddleware signInUserAuthenticationMiddleware,
                             CheckEmailVerifiedUserAuthenticationMiddleware checkEmailVerifiedUserAuthenticationMiddleware,
@@ -26,8 +26,8 @@ public class UserLoginService
                             CheckAuthorizationContextClientRequestMiddleware checkAuthorizationContextClientRequestMiddleware,
                             UserManager<ApplicationUser> userManager,
                             SignInManager<ApplicationUser> signInManager,
-                            IDomainUserRegister registerer
-                            )
+                            IDomainUserRegister registerer,
+                            IPublishEndpoint publishEndpoint)
     {
         //login flow, login the user:1-check email verification 2-check completed profile
         LoginFlow = signInUserAuthenticationMiddleware;
@@ -42,6 +42,7 @@ public class UserLoginService
         _userManager = userManager;
         _signInManager = signInManager;
         _register = registerer;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user,
@@ -73,6 +74,7 @@ public class UserLoginService
         await _register.Modify(user!, new DomainUserRegisterContext() { SelectedRole = selectedRole });
         await _signInManager.RefreshSignInAsync(user);
         //publish an integration event for created user with role
+        //_publishEndpoint.Publish();
         return new LoginResult(LoginFlowStatus.LoginSucceed,returnUrl);
     }
 }

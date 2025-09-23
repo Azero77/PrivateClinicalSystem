@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using Duende.IdentityModel;
+using ClinicApp.Identity.Server.Services.Messaging;
 
 namespace ClinicApp.Identity.Server;
 internal static class HostingExtensions
@@ -85,6 +86,7 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
         builder.Services.AddScoped<IDomainUserRegister, DomainUserRegister>();
         builder.Services.AddLoginFLow();
+        builder.Services.AddMessaging();
         return builder.Build();
     }
 
