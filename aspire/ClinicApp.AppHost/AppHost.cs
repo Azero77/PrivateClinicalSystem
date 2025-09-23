@@ -13,20 +13,25 @@ var postgresClinic = builder.AddPostgres("postgres")
 
 var db = postgresClinic.AddDatabase("postgresClinicdb");
 
-var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("identity")
-    .WithReference(db)
-    .WaitFor(db);
 
-var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
-    .WithReference(identityServer);
 
 var seq = builder.AddSeq("seq")
     .WithImage("datalust/seq:2025")
     .WithEnvironment("ACCEPT_EULA", "Y")
     .WithEnvironment("SEQ_FIRSTRUN_NOAUTHENTICATION", "true");
 
+var rabbitmq = builder.AddRabbitMQ("rabbitmq")
+    .WithImage("rabbitmq:3-management");
 var redis = builder.AddRedis("cache")
     .WithImage("redis:8.2-alpine");
+var identityServer = builder.AddProject<Projects.ClinicApp_Identity_Server>("identity")
+    .WithReference(db)
+    .WaitFor(db)
+    .WithReference(rabbitmq);
+
+var bff = builder.AddProject<Projects.ClinicApp_Identity_BFF>("bff")
+    .WithReference(identityServer);
+
 
 var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-presentation")
     .WithReference(db)
@@ -37,6 +42,8 @@ var mainapi = builder.AddProject<Projects.ClinicApp_Presentation>("clinicapp-pre
     .WithReference(bff)
     .WaitFor(redis)
     .WithReference(redis)
+    .WithReference(rabbitmq)
+    .WaitFor(rabbitmq)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT","Development");
 
 // Apply settings from appsettings.json to the respective projects

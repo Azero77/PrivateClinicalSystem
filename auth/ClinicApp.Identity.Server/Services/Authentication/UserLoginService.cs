@@ -2,6 +2,7 @@
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Services.Authentication.Middlwares;
 using ErrorOr;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -17,6 +18,7 @@ public class UserLoginService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IDomainUserRegister _register;
+    //sprivate readonly IPublish _eventBus;
     public UserLoginService(
                             SignInUserAuthenticationMiddleware signInUserAuthenticationMiddleware,
                             CheckEmailVerifiedUserAuthenticationMiddleware checkEmailVerifiedUserAuthenticationMiddleware,
@@ -24,7 +26,8 @@ public class UserLoginService
                             CheckAuthorizationContextClientRequestMiddleware checkAuthorizationContextClientRequestMiddleware,
                             UserManager<ApplicationUser> userManager,
                             SignInManager<ApplicationUser> signInManager,
-                            IDomainUserRegister registerer)
+                            IDomainUserRegister registerer
+                            )
     {
         //login flow, login the user:1-check email verification 2-check completed profile
         LoginFlow = signInUserAuthenticationMiddleware;
