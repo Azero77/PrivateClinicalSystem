@@ -5,8 +5,8 @@ using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Security.Claims;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ClinicApp.Identity.Server.Services.Authentication;
 
@@ -16,13 +16,15 @@ public class UserLoginService
     public UserAuthenticationMiddleware ExternalLoginFlow { get; }
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IDomainUserRegister _register;
     public UserLoginService(
                             SignInUserAuthenticationMiddleware signInUserAuthenticationMiddleware,
                             CheckEmailVerifiedUserAuthenticationMiddleware checkEmailVerifiedUserAuthenticationMiddleware,
                             CheckRegistrationCompleteUserAuthenticationMiddleware checkRegistrationCompleteUserAuthenticationMiddleware,
                             CheckAuthorizationContextClientRequestMiddleware checkAuthorizationContextClientRequestMiddleware,
                             UserManager<ApplicationUser> userManager,
-                            SignInManager<ApplicationUser> signInManager)
+                            SignInManager<ApplicationUser> signInManager,
+                            IDomainUserRegister registerer)
     {
         //login flow, login the user:1-check email verification 2-check completed profile
         LoginFlow = signInUserAuthenticationMiddleware;
@@ -36,6 +38,7 @@ public class UserLoginService
             .SetNext(checkAuthorizationContextClientRequestMiddleware);
         _userManager = userManager;
         _signInManager = signInManager;
+        _register = registerer;
     }
 
     public async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user,
@@ -57,6 +60,18 @@ public class UserLoginService
     {
         return _userManager.FindByNameAsync(userName);
     }
+
+    public async Task<ErrorOr<LoginResult>> CompleteRegistrationFor(ApplicationUser user,
+        string returnUrl,
+        DomainUserRegisterContext context)
+    {
+        var selectedRole = context.SelectedRole;
+
+        await _register.Modify(user!, new DomainUserRegisterContext() { SelectedRole = selectedRole });
+        await _signInManager.RefreshSignInAsync(user);
+        //publish an integration event for created user with role
+        return new LoginResult(LoginFlowStatus.LoginSucceed,returnUrl);
+    }
 }
 public record LoginResult(LoginFlowStatus status,string? returnUrl);
 public enum LoginFlowStatus
@@ -66,29 +81,4 @@ public enum LoginFlowStatus
     RequireEmailConfirmation,
     RequireProfileCompletion,
     AccessDenied
-}
-
-public class SignInUserAuthenticationMiddleware : UserAuthenticationMiddleware
-{
-    private readonly SignInManager<ApplicationUser> _signInManager;
-
-    public SignInUserAuthenticationMiddleware(SignInManager<ApplicationUser> signInManager)
-    {
-        _signInManager = signInManager;
-    }
-
-    public override async Task<ErrorOr<LoginResult>> Handle(ApplicationUser user, string password,string returnUrl, List<Claim>? additionalClaim = null)
-    {
-        SignInResult isSignedIn = await _signInManager.CheckPasswordSignInAsync(user, password, false);
-        if (!isSignedIn.Succeeded)
-        {
-            return new LoginResult(LoginFlowStatus.PasswordDoNotMatch, returnUrl);
-        }
-
-        if (_next is null)
-        {
-            throw new ArgumentException("No Next middleware is added");
-        }
-        return await _next!.Handle(user, password,returnUrl,additionalClaim);
-    }
 }

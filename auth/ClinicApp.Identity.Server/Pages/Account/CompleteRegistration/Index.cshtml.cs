@@ -2,6 +2,7 @@ using ClinicApp.Domain.Common;
 using ClinicApp.Identity.Server.Constants;
 using ClinicApp.Identity.Server.Infrastructure.Persistance;
 using ClinicApp.Identity.Server.Services;
+using ClinicApp.Identity.Server.Services.Authentication;
 using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +20,7 @@ namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IDomainUserRegister _register;
+        private readonly UserLoginService _userLoginService;
         public IEnumerable<SelectListItem> AllowedRoles => Enum.GetValues<UserRole>()
             .Where(DomainUserRegister.AllowedRoles.Contains)
             .Select(r => new SelectListItem()
@@ -29,11 +29,10 @@ namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
                 Text = r.ToString()
             });
 
-        public IndexModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IDomainUserRegister register)
+        public IndexModel(UserManager<ApplicationUser> userManager, UserLoginService userLoginService)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _register = register;
+            _userLoginService = userLoginService;
         }
 
         [BindProperty]
@@ -61,10 +60,16 @@ namespace ClinicApp.Identity.Server.Pages.Account.CompleteRegistration
                 ModelState.AddModelError("", "Unknown Error Happend,Try Again later");
                 return Page();
             }
-            await _register.Modify(user!, new DomainUserRegisterContext() { SelectedRole = selectedRole});
-            await _signInManager.RefreshSignInAsync(user);
-
-            return LocalRedirect(Input.ReturnUrl ?? "/");
+            var result = await _userLoginService
+                .CompleteRegistrationFor(user,
+                Input?.ReturnUrl ?? "/",
+                new DomainUserRegisterContext { SelectedRole = selectedRole });
+            if (result.IsError)
+            {
+                ModelState.AddModelError("", "Unknown Error Happend,Try Again later");
+                return Page();
+            }
+            return result.Value.ToActionResult(this);
         }
     }
 
