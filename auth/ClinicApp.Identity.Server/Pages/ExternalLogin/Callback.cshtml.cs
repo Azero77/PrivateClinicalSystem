@@ -84,7 +84,7 @@ public class Callback : PageModel
             ApplicationUser newUser = new ApplicationUser()
             {
                 Id = sub,
-                UserName = username?.Value,
+                UserName = email?.Value ?? Guid.NewGuid().ToString(),
                 Email = email?.Value,
                 EmailConfirmed = true // here ofcourse the user is logged in
             };

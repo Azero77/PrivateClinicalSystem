@@ -6,16 +6,20 @@ using ClinicApp.Identity.Server.Profiles;
 using ClinicApp.Identity.Server.Services;
 using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.IdentityModel.Tokens.Jwt;
+using Duende.IdentityModel;
 
 namespace ClinicApp.Identity.Server;
 internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         
         // uncomment if you want to add a UI
         builder.Services.AddRazorPages();
@@ -26,6 +30,7 @@ internal static class HostingExtensions
             string connectionString = builder.Configuration.GetConnectionString("postgresClinicdb") ?? throw new ArgumentException("no available connection string was found");
             options.UseNpgsql(connectionString);
         });
+
         builder.Services.AddIdentity<ApplicationUser,ApplicationRole>(options =>
         {
             options.SignIn.RequireConfirmedAccount = true;
@@ -38,6 +43,12 @@ internal static class HostingExtensions
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
+        builder.Services.Configure<CookieAuthenticationOptions>(IdentityServerConstants.ExternalCookieAuthenticationScheme,
+            opts =>
+            {
+                opts.Cookie.SameSite = SameSiteMode.None;
+                opts.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
         builder.Services.AddIdentityServer(options =>
         {
             options.IssuerUri = builder.Configuration?["Identity:Issuer"] ?? throw new ArgumentException("Issuer Was not provided");
@@ -89,11 +100,16 @@ internal static class HostingExtensions
                 case "Google":
                     authentiation.AddGoogle(opts =>
                     {
-
                         opts.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
                         opts.ClientId = provider.ClientId;
                         opts.ClientSecret = provider.ClientSecret;
-                        
+                        opts.ClaimActions.Clear();
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.Subject, "sub");
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.Name, "name");
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.GivenName, "given_name");
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.FamilyName, "family_name");
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.Email, "email");
+                        opts.ClaimActions.MapJsonKey(JwtClaimTypes.Picture, "picture");
                     });
                     break;
                 default:
