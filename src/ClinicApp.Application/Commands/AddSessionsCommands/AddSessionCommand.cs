@@ -16,4 +16,3 @@ public record AddSessionCommand(
                        Guid doctorId,
                        UserRole role) : IRequest<ErrorOr<SessionDTO>>;
 
-

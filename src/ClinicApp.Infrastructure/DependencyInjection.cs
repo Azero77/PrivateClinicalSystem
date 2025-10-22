@@ -15,6 +15,7 @@ using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
+using ClinicApp.Shared.IntegrationEvents;
 using ClinicApp.Shared.QueryTypes;
 using MassTransit;
 using MediatR;
@@ -94,7 +95,9 @@ public static class DependencyInjection
                 var connectionString = configuration.GetConnectionString("rabbitmq");
                 cfg.Host(connectionString);
                 cfg.ConfigureEndpoints(context);
+               
             });
+
             opts.AddConsumers(typeof(Application.DependencyInjection).Assembly);
         });
 
