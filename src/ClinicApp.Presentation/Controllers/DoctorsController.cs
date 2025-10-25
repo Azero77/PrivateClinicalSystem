@@ -1,17 +1,19 @@
 using ClinicApp.Application.Commands.DoctorAddCommands;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Application.Queries.Doctors;
-using ClinicApp.Application.Queries.Common;
 using ClinicApp.Presentation.Requests;
 using ClinicApp.Shared;
-using ClinicApp.Shared.QueryTypes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace ClinicApp.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public class DoctorsController : ApiController
 {
     private readonly IMediator _mediator;
@@ -23,6 +25,10 @@ public class DoctorsController : ApiController
 
     [HttpPost]
     [Authorize(Policy = PoliciesConstants.CanManageUsers)]
+    [ProducesResponseType(typeof(DoctorDTO), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateDoctor([FromBody] CreateDoctorRequest request, CancellationToken cancellationToken)
     {
         var command = new DoctorAddCommand(Guid.NewGuid(), request.UserId, request.RoomId, request.FirstName, request.LastName, request.WorkingDays, request.WorkingHoursStartTime, request.WorkingHoursEndTime, request.Major);
@@ -34,6 +40,10 @@ public class DoctorsController : ApiController
 
     [HttpPut("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanManageUsers)]
+    [ProducesResponseType(typeof(DoctorDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateDoctor(Guid id, [FromBody] UpdateDoctorRequest request, CancellationToken cancellationToken)
     {
         var command = new UpdateDoctorCommand(id, request.FirstName, request.LastName, request.RoomId, request.WorkingDays, request.WorkingHoursStartTime, request.WorkingHoursEndTime, request.Major);
@@ -45,6 +55,10 @@ public class DoctorsController : ApiController
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanManageUsers)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteDoctor(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteDoctorCommand(id);
@@ -56,6 +70,10 @@ public class DoctorsController : ApiController
 
     [HttpGet("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanViewDoctorsInfo)]
+    [ProducesResponseType(typeof(DoctorDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetDoctor(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetDoctorByIdQuery(id);
@@ -65,6 +83,9 @@ public class DoctorsController : ApiController
 
     [HttpGet]
     [Authorize(Policy = PoliciesConstants.CanViewDoctorsInfo)]
+    [ProducesResponseType(typeof(IEnumerable<DoctorDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetDoctors(CancellationToken cancellationToken)
     {
         var query = new GetDoctorsQuery();

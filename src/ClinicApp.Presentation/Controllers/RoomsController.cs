@@ -1,16 +1,20 @@
 using ClinicApp.Application.Commands.RoomCommands;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Application.Queries.Rooms;
+using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Presentation.Requests;
 using ClinicApp.Shared;
-using ClinicApp.Shared.QueryTypes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace ClinicApp.Presentation.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public class RoomsController : ApiController
 {
     private readonly IMediator _mediator;
@@ -22,6 +26,10 @@ public class RoomsController : ApiController
 
     [HttpPost]
     [Authorize(Policy = PoliciesConstants.CanManageRooms)]
+    [ProducesResponseType(typeof(Room), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateRoomCommand(request.Name);
@@ -33,6 +41,10 @@ public class RoomsController : ApiController
 
     [HttpPut("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanManageRooms)]
+    [ProducesResponseType(typeof(Room), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomRequest request, CancellationToken cancellationToken)
     {
         var command = new UpdateRoomCommand(id, request.Name);
@@ -44,6 +56,10 @@ public class RoomsController : ApiController
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanManageRooms)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteRoom(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteRoomCommand(id);
@@ -55,6 +71,10 @@ public class RoomsController : ApiController
 
     [HttpGet("{id:guid}")]
     [Authorize(Policy = PoliciesConstants.CanViewRooms)]
+    [ProducesResponseType(typeof(RoomDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetRoom(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetRoomByIdQuery(id);
@@ -64,6 +84,9 @@ public class RoomsController : ApiController
 
     [HttpGet]
     [Authorize(Policy = PoliciesConstants.CanViewRooms)]
+    [ProducesResponseType(typeof(IEnumerable<RoomDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetRooms(CancellationToken cancellationToken)
     { 
         var query = new GetAllRoomsQuery();

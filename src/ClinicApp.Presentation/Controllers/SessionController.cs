@@ -5,9 +5,11 @@ using ClinicApp.Application.Commands.RejectSessionsCommands;
 using ClinicApp.Application.Commands.SetSessionsCommands;
 using ClinicApp.Application.Commands.StartSessionCommands;
 using ClinicApp.Application.Commands.UpdateSessionDateCommands;
+using ClinicApp.Application.DTOs;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Domain.Common;
+using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Presentation.Authorization.Filters;
 using ClinicApp.Presentation.Helpers;
 using ClinicApp.Presentation.Requests;
@@ -15,8 +17,10 @@ using ClinicApp.Shared;
 using ClinicApp.Shared.QueryTypes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Collections.Generic;
 
 namespace ClinicApp.Presentation.Controllers;
 
@@ -34,6 +38,12 @@ public partial class SessionController : ApiController
 
     [HttpPost("add")]
     [AuthorizeByRequestFilter<CanAddSessionRequirement,AddSessionRequest>] //admins and secretary can add any session,doctor can add session of their own
+    [ProducesResponseType(typeof(SessionDTO), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> AddSession(
         [FromBody]
         AddSessionRequest request,CancellationToken token)
@@ -62,16 +72,24 @@ public partial class SessionController : ApiController
 
     [HttpGet("sessions/{id}")]
     [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
+    [ProducesResponseType(typeof(SessionQueryType), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetSession(
         [FromRoute] Guid id)
     {
         var query = new QuerySingleRequest<SessionQueryType>(id);
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return result is not null ? Ok(result) : NotFound();
     }
 
     [HttpGet("sessions/history/{id}")]
     [Authorize(Policy = PoliciesConstants.CanViewSessionHistory)]
+    [ProducesResponseType(typeof(IReadOnlyCollection<SessionState>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionHistory(
         [FromRoute] GetSessionHistoryRequest request)
     {
@@ -81,6 +99,11 @@ public partial class SessionController : ApiController
     }
     [HttpDelete("sessions/{id}/delete")]
     [Authorize(Policy = PoliciesConstants.CanDeleteSession)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionDelete(
         [FromRoute] ModifySessionRequest request)
     {
@@ -90,6 +113,11 @@ public partial class SessionController : ApiController
     }
     [HttpPatch("sessions/{id}/reject")]
     [AuthorizeByRequestFilter<CanUpdateSessionRequirement,ModifySessionRequest>]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionReject(
         [FromRoute] ModifySessionRequest request)
     {
@@ -99,6 +127,11 @@ public partial class SessionController : ApiController
     }
     [HttpPatch("sessions/{id}/finish")]
     [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionFinish(
         [FromRoute] ModifySessionRequest request)
     {
@@ -108,6 +141,10 @@ public partial class SessionController : ApiController
     }
     [HttpPatch("sessions/{id}/set")]
     [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionSet(
         [FromRoute] ModifySessionRequest request)
     {
@@ -118,6 +155,11 @@ public partial class SessionController : ApiController
 
     [HttpPatch("sessions/{id}/start")]
     [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionStart(
         [FromRoute] ModifySessionRequest request)
     {
@@ -128,6 +170,11 @@ public partial class SessionController : ApiController
 
     [HttpPatch("sessions/{id}/update-time")]
     [AuthorizeByRequestFilter<CanUpdateSessionRequirement, ModifySessionRequest>]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> SessionUpdateTime(
         [FromRoute] UpdateSessionTimeRequest request)
     {
