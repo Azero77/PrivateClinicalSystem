@@ -1,4 +1,6 @@
-﻿using ClinicApp.Application.Common;
+﻿using Amazon.SimpleNotificationService;
+using Amazon.SQS;
+using ClinicApp.Application.Common;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryServices;
 using ClinicApp.Domain.Common.Entities;
@@ -15,7 +17,7 @@ using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
-using ClinicApp.Shared.IntegrationEvents;
+using ClinicApp.Shared;
 using ClinicApp.Shared.QueryTypes;
 using MassTransit;
 using MediatR;
@@ -65,7 +67,7 @@ public static class DependencyInjection
         services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         //Mediatr is unable to register generic requestHandlers because DI with MSDI can support this kind of stuff
         RegisterMediatrGenericHandlers(services);
-        services.AddMessaging();
+        services.AddMessaging(builder);
         return services;
     }
     private static void RegisterMediatrGenericHandler<T>(IServiceCollection services)
@@ -83,11 +85,11 @@ public static class DependencyInjection
         RegisterMediatrGenericHandler<RoomQueryType>(services);
         RegisterMediatrGenericHandler<SecretaryQueryType>(services);
     }
-    public static IServiceCollection AddMessaging(this IServiceCollection services)
+    public static IServiceCollection AddMessaging(this IServiceCollection services, WebApplicationBuilder builder)
     {
         services.AddMassTransit(opts =>
         {
-            opts.UsingRabbitMq((context, cfg) =>
+            /*opts.UsingRabbitMq((context, cfg) =>
             {
                 var configuration = context.GetService<IConfiguration>();
                 if (configuration is null)
@@ -96,11 +98,37 @@ public static class DependencyInjection
                 cfg.Host(connectionString);
                 cfg.ConfigureEndpoints(context);
                
+            });*/
+
+
+            AwsConfiguration awsConfiguration = builder.Configuration
+            .GetSection("AwsConfiguration")
+            .Get<AwsConfiguration>() ?? throw new ArgumentException();
+            opts.UsingAmazonSqs((context,config) =>
+            {
+                config.Host(awsConfiguration.DefaultOrigin, h =>
+                {
+
+                    h.Config(new AmazonSQSConfig
+                    {
+                        ServiceURL = awsConfiguration.ServiceUrl
+                    });
+
+                    h.Config(new AmazonSimpleNotificationServiceConfig
+                    {
+                        ServiceURL = awsConfiguration.ServiceUrl
+                    });
+                    h.SecretKey(awsConfiguration.SecretKey);
+                    h.AccessKey(awsConfiguration.AccessKey);
+                });
             });
+
 
             opts.AddConsumers(typeof(Application.DependencyInjection).Assembly);
         });
 
         return services;
+
+        
     }
 }
