@@ -1,4 +1,6 @@
-﻿using Amazon.SimpleNotificationService;
+﻿using Amazon.Extensions.NETCore.Setup;
+using Amazon.SimpleEmail;
+using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using ClinicApp.Shared;
 using MassTransit;
@@ -24,14 +26,13 @@ public static class Extenstions
 
 
             AwsConfiguration awsConfiguration = builder.Configuration
-            .GetSection("AwsConfiguration")
+            .GetSection("AWS")
             .Get<AwsConfiguration>() ?? throw new ArgumentException();
             opts.UsingAmazonSqs((context, config) =>
             {
 
-                config.Host(awsConfiguration.DefaultOrigin, h =>
+                config.Host(awsConfiguration.Region, h =>
                 {
-
                     h.Config(new AmazonSQSConfig
                     {
                         ServiceURL = awsConfiguration.ServiceUrl
@@ -52,4 +53,21 @@ public static class Extenstions
 
         return services;
     }
+
+    public static IServiceCollection AddEmailing(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+        services.Configure<EmailSettings>(builder.Configuration.GetSection(EmailSettings.EmailConfigurationSection));
+        services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+        services.AddAWSService<IAmazonSimpleEmailService>();
+
+
+        return services;
+    }
+}
+
+
+public class EmailSettings
+{
+    public const string EmailConfigurationSection = "EmailSettings";
+    public string SenderEmail { get; set; } = string.Empty;
 }

@@ -2,22 +2,12 @@ using ClinicApp.Application;
 using ClinicApp.Domain;
 using ClinicApp.Infrastructure;
 using ClinicApp.Infrastructure.Extensions;
-using ClinicApp.Infrastructure.Persistance;
-using ClinicApp.Infrastructure.Persistance.Seeding;
 using ClinicApp.Presentation.Authorization.Policies;
 using ClinicApp.Presentation.Exceptions;
 using ClinicApp.Presentation.QueryService;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Serilog.Core;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace ClinicApp.Presentation
 {

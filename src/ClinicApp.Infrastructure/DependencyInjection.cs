@@ -102,11 +102,11 @@ public static class DependencyInjection
 
 
             AwsConfiguration awsConfiguration = builder.Configuration
-            .GetSection("AwsConfiguration")
+            .GetSection("AWS")
             .Get<AwsConfiguration>() ?? throw new ArgumentException();
             opts.UsingAmazonSqs((context,config) =>
             {
-                config.Host(awsConfiguration.DefaultOrigin, h =>
+                config.Host(awsConfiguration.Region, h =>
                 {
 
                     h.Config(new AmazonSQSConfig

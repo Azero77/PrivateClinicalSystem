@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.14" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.5" />
     <PackageReference Include="Duende.IdentityServer" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.EntityFramework" version="7.2.0" />
 	  <PackageReference Include="Duende.IdentityServer.AspNetIdentity" version="7.2.0" />

@@ -83,10 +83,11 @@ internal static class HostingExtensions
         });
 
 
-        builder.Services.AddScoped<IEmailSender, LoggerEmailSender>();
+        builder.Services.AddScoped<IEmailSender, SESEmailSender>();
         builder.Services.AddScoped<IDomainUserRegister, DomainUserRegister>();
         builder.Services.AddLoginFLow();
         builder.Services.AddMessaging(builder);
+        builder.Services.AddEmailing(builder);
         return builder.Build();
     }
 
