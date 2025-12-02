@@ -33,7 +33,12 @@
 
   <ItemGroup>
 	  
-    <ProjectReference Include="..\..\aspire\ClinicApp.ServiceDefaults\ClinicApp.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\..\aspire\ClinicApp.AppHost\ClinicApp.AppHost.csproj" />
+	  
+    <ProjectReference Include="..\..\..\aspire\ClinicApp.ServiceDefaults\ClinicApp.ServiceDefaults.csproj" />
+	  
+    <ProjectReference Include="..\ClinicApp.Application\ClinicApp.Application.csproj" />
+    <ProjectReference Include="..\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
     <ProjectReference Include="..\ClinicApp.Shared\ClinicApp.Shared.csproj" />
   </ItemGroup>
 
