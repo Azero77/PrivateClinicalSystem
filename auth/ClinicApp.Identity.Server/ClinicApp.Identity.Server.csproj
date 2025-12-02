@@ -25,9 +25,9 @@
 	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ClinicApp.Application\ClinicApp.Application.csproj" />
-    <ProjectReference Include="..\..\src\ClinicApp.Domain\ClinicApp.Domain.csproj" />
-    <ProjectReference Include="..\..\src\ClinicApp.Shared\ClinicApp.Shared.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Application\ClinicApp.Application.csproj" />
+		<ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Domain\ClinicApp.Domain.csproj" />
+		<ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Shared\ClinicApp.Shared.csproj" />
+	</ItemGroup>
 </Project>

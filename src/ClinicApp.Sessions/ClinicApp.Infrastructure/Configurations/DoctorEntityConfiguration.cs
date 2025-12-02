@@ -17,7 +17,7 @@ public class DoctorEntityConfiguration :
         builder.HasOne(d => d.Room)
                 .WithOne(r => r.Docotor)
                 .HasForeignKey<DoctorDataModel>(d => d.RoomId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
         builder.Property(e => e.Major)
             .HasMaxLength(255)
             .IsRequired(false);

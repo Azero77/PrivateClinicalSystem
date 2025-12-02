@@ -246,7 +246,7 @@ namespace ClinicApp.Infrastructure.Migrations
                     b.HasOne("ClinicApp.Infrastructure.Persistance.DataModels.RoomDataModel", "Room")
                         .WithOne("Docotor")
                         .HasForeignKey("ClinicApp.Infrastructure.Persistance.DataModels.DoctorDataModel", "RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.OwnsMany("ClinicApp.Infrastructure.Persistance.DataModels.TimeOffDataModel", "TimesOff", b1 =>

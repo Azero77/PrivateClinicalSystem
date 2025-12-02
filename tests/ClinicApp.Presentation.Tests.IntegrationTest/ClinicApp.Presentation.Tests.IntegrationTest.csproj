@@ -24,7 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ClinicApp.Presentation\ClinicApp.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Domain\ClinicApp.Domain.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Presentation\ClinicApp.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

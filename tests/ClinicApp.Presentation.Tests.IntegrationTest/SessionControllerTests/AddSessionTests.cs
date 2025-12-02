@@ -8,7 +8,6 @@ using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Infrastructure.Persistance.Seeding;
 using ErrorOr;
 using FluentAssertions;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Crypto.Prng;
 using System.Net.Http.Json;
@@ -52,6 +51,9 @@ public class AddSessionTests
         //Act
 
         var result = await _client.PostAsJsonAsync<AddSessionRequest>("/api/session/add", addSessionRequest);
+
+
+        string response = await result.Content.ReadAsStringAsync();
         //Assert
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
     }
