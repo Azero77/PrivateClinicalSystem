@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Domain.SessionAgg;
+using System.Text.Json;
 
 namespace ClinicApp.Application.DTOs;
 public class SessionDTO
@@ -10,6 +11,6 @@ public class SessionDTO
     public Guid DoctorId { get; set; }
     public Guid PatientId { get; set; }
     public SessionStatus SessionStatus { get; set; }
-    public string SessionDescription { get; set; } = string.Empty;
+    public JsonElement? SessionDescription { get; set; }
 
 }

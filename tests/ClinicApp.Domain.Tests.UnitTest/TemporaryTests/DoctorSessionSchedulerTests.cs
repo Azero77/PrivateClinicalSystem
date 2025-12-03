@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System;
 using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Domain.Common;
+using System.Text.Json;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {
@@ -32,7 +33,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var doctor = Factories.DoctorFactory;
             var fakerClock = new FakerClock { UtcNow =  new DateTime(2025,7,21)};
             var sessionTime = TimeRange.Create(new DateTimeOffset(new DateTime(2025, 7, 22), TimeSpan.FromHours(0)), new DateTimeOffset(new DateTime(2025, 7, 22, 10, 30, 0), TimeSpan.FromHours(0))).Value; // Tuesday
-            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             _sessionRepoMock.Setup(repo => repo.GetAllSessionsForDoctor(doctor)).ReturnsAsync(new List<Session>());
 
@@ -53,10 +54,10 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var fakerClock = new FakerClock { UtcNow = new DateTimeOffset(2025, 7, 21,0,0,0,TimeSpan.Zero) };
 
             var existingSessionTime = TimeRange.Create(new DateTimeOffset(2025, 7, 21, 10, 0, 0,TimeSpan.Zero), new DateTimeOffset(2025, 7, 21, 11, 0, 0,TimeSpan.Zero)).Value;
-            var existingSession = Session.Schedule(Guid.NewGuid(), existingSessionTime, new SessionDescription("Existing"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
+            var existingSession = Session.Schedule(Guid.NewGuid(), existingSessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             var newSessionTime = TimeRange.Create(new DateTimeOffset(2025, 7, 21, 10, 30, 0,TimeSpan.Zero), new DateTimeOffset(2025, 7, 21, 11, 30, 0,TimeSpan.Zero)).Value;
-            var newSession = Session.Schedule(Guid.NewGuid(), newSessionTime, new SessionDescription("New"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id, fakerClock,UserRole.Admin).Value;
+            var newSession = Session.Schedule(Guid.NewGuid(), newSessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id, fakerClock,UserRole.Admin).Value;
 
             _sessionRepoMock.Setup(repo => repo.GetSessionsForDoctorOnDay(doctor.Id,newSession.SessionDate.StartTime)).ReturnsAsync(new List<Session> { existingSession });
             _sessionRepoMock.Setup(repo => repo.GetSesssionsForDoctorOnDayAndAfter(doctor.Id,newSession.SessionDate.StartTime)).ReturnsAsync(new List<Session> { existingSession });

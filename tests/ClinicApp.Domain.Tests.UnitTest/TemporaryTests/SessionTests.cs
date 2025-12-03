@@ -6,6 +6,7 @@ using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Domain.Common.Interfaces;
 using ErrorOr;
 using ClinicApp.Domain.Common;
+using System.Text.Json;
 
 namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 {
@@ -16,7 +17,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
         {
             clock = new FakerClock() { UtcNow = new DateTimeOffset(2025, 11, 2,0,0,0,TimeSpan.Zero) };
         }
-        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Secretary);
+        private ErrorOr<Session> GetSession(TimeRange sessionTime) => Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription(JsonDocument.Parse("""{"test": "test"}""").RootElement), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), clock,UserRole.Secretary);
 
         [Fact]
         public void Session_Should_TransitionThroughLifecycleCorrectly()

@@ -4,6 +4,7 @@ using ClinicApp.Infrastructure.Persistance;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.SessionAgg;
+using System.Text.Json;
 
 namespace ClinicApp.Infrastructure.Persistance.Seeding;
 
@@ -86,7 +87,7 @@ public static class SeedData
                 Id = Session1Id,
                 StartTime = new DateTimeOffset(DateOnly.FromDateTime(day), new TimeOnly(10, 30), TimeSpan.FromHours(0)),
                 EndTime = new DateTimeOffset(DateOnly.FromDateTime(day), new TimeOnly(11, 30), TimeSpan.FromHours(0)),
-                Content = "Initial Consultation",
+                Content = JsonDocument.Parse("{}").RootElement,
                 RoomId = Room1Id,
                 PatientId = Patient1Id,
                 DoctorId = Doctor1Id,

@@ -104,6 +104,13 @@ public class Program
             var result = await uploadService.GetFiles(keysAsList);
             return Results.Ok(result);
         });
+
+        app.MapDelete("files/{key:string}", async(string key, IUploadService uploadService) =>
+        {
+            var response = await uploadService.DeleteFile(key);
+
+            return response.Match(value => Results.Ok(value), error => ProblemResult.Create(error));
+        });
         app.Run();
     }
 }

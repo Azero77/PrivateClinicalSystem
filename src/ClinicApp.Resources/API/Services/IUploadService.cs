@@ -12,6 +12,7 @@ public interface IUploadService
     Task<ErrorOr<GetPresignedUrlResponse>> GetFile(string key);
     Task<List<ErrorOr<GetPresignedUrlResponse>>> GetFiles(List<string> keysAsList);
     Task<ErrorOr<GetPresignedUrlResponse>> UploadFile(string fileName, string contentType);
+    Task<ErrorOr<Success>> DeleteFile(string key);
 }
 
 public class S3UploadService : IUploadService
@@ -83,6 +84,17 @@ public class S3UploadService : IUploadService
         {
             return Error.Failure("Resources.Failure", exception.Message);
         }
+    }
+    public async Task<ErrorOr<Success>> DeleteFile(string key)
+    {
+        DeleteObjectRequest request = new DeleteObjectRequest()
+        {
+            BucketName = _s3Settings.BucketName,
+            Key = key,
+        };
+        var response = await _client.DeleteObjectAsync(request);
+        int code = (int) response.HttpStatusCode;
+        return code >= 200 && code < 300 ? Result.Success : Error.Failure();
     }
 }
 

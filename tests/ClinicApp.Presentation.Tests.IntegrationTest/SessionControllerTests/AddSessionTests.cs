@@ -43,7 +43,7 @@ public class AddSessionTests
         var addSessionRequest = new AddSessionRequest(
             starttime,
             endtime,
-            "Test content",
+            JsonDocument.Parse("""{"test" : "test"} """).RootElement,
             SeedData.Room1Id,
             SeedData.Patient1Id,
             SeedData.Doctor1Id
@@ -68,7 +68,7 @@ public class AddSessionTests
         var addSessionRequest = new AddSessionRequest(
             alreadyExistedSession.StartTime,
             alreadyExistedSession.EndTime,
-            "Test Content",
+            JsonDocument.Parse("""{"test" : "test" }""").RootElement,
             SeedData.Room1Id,
             SeedData.Patient1Id,
             SeedData.Doctor1Id

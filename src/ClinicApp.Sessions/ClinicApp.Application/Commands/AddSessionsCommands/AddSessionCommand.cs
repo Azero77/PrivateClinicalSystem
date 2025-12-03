@@ -5,12 +5,13 @@ using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using MediatR;
+using System.Text.Json;
 
 namespace ClinicApp.Application.Commands.AddSessionsCommands;
 public record AddSessionCommand(
                        DateTimeOffset StartTime,
                        DateTimeOffset EndTime,
-                       string SessionDescriptionContent,
+                       JsonElement? SessionDescriptionContent,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,

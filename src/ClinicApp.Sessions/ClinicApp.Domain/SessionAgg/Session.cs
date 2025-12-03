@@ -4,6 +4,7 @@ using ClinicApp.Domain.Common.ValueObjects;
 using ErrorOr;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 [assembly: InternalsVisibleTo("ClinicApp.Domain.Tests.UnitTest")]
 
 
@@ -165,6 +166,6 @@ namespace ClinicApp.Domain.SessionAgg
         }
     }
 
-    public record SessionDescription(string? content);
+    public record SessionDescription(JsonElement? content);
 }
 
