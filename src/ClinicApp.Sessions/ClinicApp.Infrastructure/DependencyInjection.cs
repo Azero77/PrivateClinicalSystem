@@ -121,6 +121,7 @@ public static class DependencyInjection
                     h.SecretKey(awsConfiguration.SecretKey);
                     h.AccessKey(awsConfiguration.AccessKey);
                 });
+                config.ConfigureEndpoints(context);
             });
 
 

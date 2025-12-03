@@ -53,6 +53,8 @@ ApplyConfigurationToResource(bff, builder.Configuration.GetSection("BFF"));
 ApplyConfigurationToResource(mainapi, builder.Configuration.GetSection("JWT"));
 ApplyConfigurationToResource(mainapi, builder.Configuration.GetSection("Serilog"));
 
+var resourcesapi = builder.AddProject<Projects.API>("resources-api");
+
 builder.Build().Run();
 
 // Helper method to apply configuration sections to resources as environment variables

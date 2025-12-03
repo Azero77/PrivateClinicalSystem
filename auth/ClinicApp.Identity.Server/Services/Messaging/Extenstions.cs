@@ -46,9 +46,6 @@ public static class Extenstions
                     h.AccessKey(awsConfiguration.AccessKey);
                 });
             });
-
-
-            opts.AddConsumers(typeof(Application.DependencyInjection).Assembly);
         });
 
         return services;

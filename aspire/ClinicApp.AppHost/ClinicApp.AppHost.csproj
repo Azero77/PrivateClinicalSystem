@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\auth\ClinicApp.Identity.BFF\ClinicApp.Identity.BFF.csproj" />
     <ProjectReference Include="..\..\auth\ClinicApp.Identity.Server\ClinicApp.Identity.Server.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Resources\API\API.csproj" />
 
 	  <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Presentation\ClinicApp.Presentation.csproj" />
   </ItemGroup>
