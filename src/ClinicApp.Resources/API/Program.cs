@@ -97,6 +97,13 @@ public class Program
             return result.Match(value => Results.Ok(value),error => ProblemResult.Create(error));
         });
 
+        app.MapGet("files/list", async (string keys, IUploadService uploadService) =>
+        {
+            List<string> keysAsList = keys.Split("-").ToList();
+
+            var result = await uploadService.GetFiles(keysAsList);
+            return Results.Ok(result);
+        });
         app.Run();
     }
 }
