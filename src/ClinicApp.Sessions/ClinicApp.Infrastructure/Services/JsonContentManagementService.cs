@@ -1,0 +1,146 @@
+﻿using ClinicApp.Contracts;
+using ErrorOr;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+
+namespace ClinicApp.Infrastructure.Services;
+/// <summary>
+/// Service For dealing with session content for handling the conversion of json content to a readable format by the text editor
+/// 1- Conversion between S3 urls to presigned urls for photots and videos
+/// </summary>
+internal sealed class JsonContentManagementService
+{
+    private const string s3UrlRegex = @"s3://([^/]+)/(.+)";
+    private readonly IResourcesClientService _client;
+
+    public JsonContentManagementService(IResourcesClientService client)
+    {
+        _client = client;
+    }
+
+    public JsonElement FromClient(JsonElement clientJson)
+    {
+        throw new Exception();
+    }
+
+    /// <summary>
+    /// Changing s3 urls to presigned urls
+    /// </summary>
+    /// <param name="serverJson"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<JsonElement> FromServerAsync(JsonElement serverJson)
+    {
+
+        //to know that an image from an s3 is found to re{place
+        //each src that has s3://{bucket-name}/{url} -> presigned url
+
+        //The json will have the following structure:
+        /*
+    {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "content": [
+            { "type": "text", "text": "Session description..." }
+          ]
+        },
+        {
+          "type": "image",
+          "attrs": {
+            "src": "s3://session-content-bucket/1234et4342"
+          }
+        }
+      ]
+    }
+         */
+        List<Task> tasks = new();
+        JsonNode? json = JsonNode.Parse(serverJson.GetRawText());
+        if (json is null)
+            throw new NotSupportedException();
+        var keys = AssignKeysToList(json,tasks);
+        var keysPresignedUrls = await _client.GetPreSignedUrls(keys);
+        AssignPresignedUrlsToJson(json, tasks, keysPresignedUrls);
+        return JsonDocument.Parse(json.ToJsonString()).RootElement;
+    }
+    
+
+    private static List<string> AssignKeysToList(JsonNode json, List<Task> tasks)
+    {
+        List<string> keys = new();
+        ExtractSrcFromContentObject(json, keys);
+
+        if (json?["content"] is JsonArray items)
+        {
+            foreach (var item in items)
+            {
+                if (item is not null)
+                    ExtractSrcFromContentObject(json, keys);
+            }
+        }
+        return keys;
+
+        static void ExtractSrcFromContentObject(JsonNode json, List<string> keys)
+        {
+            if (json?["attrs"] is JsonNode attrs
+                            &&
+                        attrs?["src"]?.GetValue<string>() is string src)
+            {
+                var match = Regex.Match(src, s3UrlRegex);
+
+                if (match.Success)
+                {
+                    string key = match.Groups[2].Value;
+                    keys.Add(key);
+                }
+            }
+        }
+    }
+
+    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<Task> tasks, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
+    {
+        List<string> keys = new();
+        var filtered = dictionary.Where(i => !i.IsError).ToList();
+        ExtractSrcFromContentObject(json,filtered);
+        if (json?["content"] is JsonArray items)
+        {
+            foreach (var item in items)
+            {
+                if (item is not null)
+                    ExtractSrcFromContentObject(json,filtered);
+            }
+        }
+        return keys;
+
+        static void ExtractSrcFromContentObject(JsonNode json, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
+        {
+            if (json?["attrs"] is JsonNode attrs
+                            &&
+                        attrs?["src"]?.GetValue<string>() is string src)
+            {
+                var match = Regex.Match(src, s3UrlRegex);
+
+                if (match.Success)
+                {
+                    string key = match.Groups[2].Value;
+                    string presignedUrl = dictionary.FirstOrDefault(i => i.Value.key == key)
+                        .Value.key ?? "https://support.heberjahiz.com/hc/article_attachments/21013076295570"; //404 image not found
+
+                    attrs["src"] = presignedUrl;
+                }
+            }
+        }
+    }
+}
+
+public interface IResourcesClientService
+{
+    /// <summary>
+    /// Get the presigned Urls for keys 
+    /// </summary>
+    /// <param name="keys"></param>
+    /// <returns>A dictionary where Key of the item is the key and the value is the presigned url</returns>
+    public Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys);
+}
