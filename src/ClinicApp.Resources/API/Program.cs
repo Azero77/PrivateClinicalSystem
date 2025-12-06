@@ -97,15 +97,15 @@ public class Program
             return result.Match(value => Results.Ok(value),error => ProblemResult.Create(error));
         });
 
-        app.MapGet("files/list", async (string keys, IUploadService uploadService) =>
+        app.MapGet("files/list", async ([FromQuery] string keys, IUploadService uploadService) =>
         {
-            List<string> keysAsList = keys.Split("-").ToList();
+            List<string> keysAsList = keys.Split(",").ToList();
 
             var result = await uploadService.GetFiles(keysAsList);
             return Results.Ok(result);
         });
 
-        app.MapDelete("files/{key:string}", async(string key, IUploadService uploadService) =>
+        app.MapDelete("files/{key}", async(string key, IUploadService uploadService) =>
         {
             var response = await uploadService.DeleteFile(key);
 

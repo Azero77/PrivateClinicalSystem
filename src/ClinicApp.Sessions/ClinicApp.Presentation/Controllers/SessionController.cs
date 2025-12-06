@@ -8,6 +8,7 @@ using ClinicApp.Application.Commands.StartSessionCommands;
 using ClinicApp.Application.Commands.UpdateSessionDateCommands;
 using ClinicApp.Application.DTOs;
 using ClinicApp.Application.Queries.Common;
+using ClinicApp.Application.Queries.Sessions.SessionById;
 using ClinicApp.Application.Queries.Sessions.SessionHistory;
 using ClinicApp.Domain.Common;
 using ClinicApp.Domain.SessionAgg;
@@ -80,9 +81,10 @@ public partial class SessionController : ApiController
     public async Task<IActionResult> GetSession(
         [FromRoute] Guid id)
     {
-        var query = new QuerySingleRequest<SessionQueryType>(id);
+        
+        var query = new GetSessionByIdQuery(id,HelperExtensions.GetRole(HttpContext.User));
         var result = await _mediator.Send(query);
-        return result is not null ? Ok(result) : NotFound();
+        return result.Match(Ok, ProblemResult);
     }
 
     [HttpGet("sessions/history/{id}")]

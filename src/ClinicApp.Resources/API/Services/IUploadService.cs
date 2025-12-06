@@ -10,7 +10,7 @@ namespace API.Services;
 public interface IUploadService
 {
     Task<ErrorOr<GetPresignedUrlResponse>> GetFile(string key);
-    Task<List<ErrorOr<GetPresignedUrlResponse>>> GetFiles(List<string> keysAsList);
+    Task<List<GetPresignedUrlResponse>> GetFiles(List<string> keysAsList);
     Task<ErrorOr<GetPresignedUrlResponse>> UploadFile(string fileName, string contentType);
     Task<ErrorOr<Success>> DeleteFile(string key);
 }
@@ -47,13 +47,13 @@ public class S3UploadService : IUploadService
         }
     }
 
-    public async Task<List<ErrorOr<GetPresignedUrlResponse>>> GetFiles(List<string> keysAsList)
+    public async Task<List<GetPresignedUrlResponse>> GetFiles(List<string> keysAsList)
     {
-        List<ErrorOr<GetPresignedUrlResponse>> result = new();
+        List<GetPresignedUrlResponse> result = new();
         foreach (var key in keysAsList)
         {
              var key_result = await GetFile(key);
-            result.Add(key_result);
+            result.Add(key_result.IsError ? new GetPresignedUrlResponse(key,""): key_result.Value);
         }
 
         return result;

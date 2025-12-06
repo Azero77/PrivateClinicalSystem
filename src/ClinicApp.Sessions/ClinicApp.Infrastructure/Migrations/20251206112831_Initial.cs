@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -115,7 +116,7 @@ namespace ClinicApp.Infrastructure.Migrations
                         principalSchema: "domain",
                         principalTable: "Rooms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,12 +149,13 @@ namespace ClinicApp.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     StartTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Endtime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: true),
+                    Content = table.Column<JsonElement>(type: "jsonb", nullable: true),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
                     PatientId = table.Column<Guid>(type: "uuid", nullable: false),
                     DoctorId = table.Column<Guid>(type: "uuid", nullable: false),
                     SessionStatus = table.Column<byte>(type: "smallint", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    PatientDataModelId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,6 +167,12 @@ namespace ClinicApp.Infrastructure.Migrations
                         principalTable: "Doctors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Patients_PatientDataModelId",
+                        column: x => x.PatientDataModelId,
+                        principalSchema: "domain",
+                        principalTable: "Patients",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Sessions_Patients_PatientId",
                         column: x => x.PatientId,
@@ -188,10 +196,30 @@ namespace ClinicApp.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Doctors_UserId",
+                schema: "domain",
+                table: "Doctors",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_UserId",
+                schema: "domain",
+                table: "Patients",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sessions_DoctorId",
                 schema: "domain",
                 table: "Sessions",
                 column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sessions_PatientDataModelId",
+                schema: "domain",
+                table: "Sessions",
+                column: "PatientDataModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sessions_PatientId",

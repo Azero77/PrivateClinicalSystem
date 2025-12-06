@@ -3,6 +3,7 @@ using Amazon.SQS;
 using ClinicApp.Application.Common;
 using ClinicApp.Application.Queries.Common;
 using ClinicApp.Application.QueryServices;
+using ClinicApp.Application.Services;
 using ClinicApp.Domain.Common.Entities;
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Domain.DoctorAgg;
@@ -73,6 +74,7 @@ public static class DependencyInjection
         //Mediatr is unable to register generic requestHandlers because DI with MSDI can support this kind of stuff
         AddHttpClients(services, builder);
         services.AddMessaging(builder);
+        services.AddSingleton<IContentManagementService, JsonContentManagementService>();
         return services;
     }
 

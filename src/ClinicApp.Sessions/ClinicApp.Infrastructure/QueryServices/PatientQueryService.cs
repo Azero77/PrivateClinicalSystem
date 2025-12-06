@@ -26,11 +26,15 @@ public class PatientQueryService(AppDbContext context) : IQueryService<PatientQu
             Content = s.Content,
             CreatedAt = s.CreatedAt,
             SessionStatus = s.SessionStatus,
-        }).ToList()
+        }
+        ).ToList()
     };
     public async Task<PatientQueryType?> GetItemById(Guid id)
     {
-        return await context.Patients.Where(p => p.Id == id)
+        return await context.Patients
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Sessions)
             .Select(_converter)
             .SingleOrDefaultAsync();
     }

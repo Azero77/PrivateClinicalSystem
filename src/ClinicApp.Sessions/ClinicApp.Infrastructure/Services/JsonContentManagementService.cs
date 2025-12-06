@@ -1,4 +1,5 @@
-﻿using ClinicApp.Contracts;
+﻿using ClinicApp.Application.Services;
+using ClinicApp.Contracts;
 using ErrorOr;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -10,7 +11,7 @@ namespace ClinicApp.Infrastructure.Services;
 /// Service For dealing with session content for handling the conversion of json content to a readable format by the text editor
 /// 1- Conversion between S3 urls to presigned urls for photots and videos
 /// </summary>
-internal sealed class JsonContentManagementService
+internal sealed class JsonContentManagementService : IContentManagementService
 {
     private const string s3UrlRegex = @"s3://([^/]+)/(.+)";
     private readonly IResourcesClientService _client;
@@ -19,12 +20,6 @@ internal sealed class JsonContentManagementService
     {
         _client = client;
     }
-
-    public JsonElement FromClient(JsonElement clientJson)
-    {
-        throw new Exception();
-    }
-
     /// <summary>
     /// Changing s3 urls to presigned urls
     /// </summary>
@@ -65,7 +60,7 @@ internal sealed class JsonContentManagementService
         AssignPresignedUrlsToJson(json, keysPresignedUrls);
         return JsonDocument.Parse(json.ToJsonString()).RootElement;
     }
-    
+
 
     private static List<string> AssignKeysToList(JsonNode json)
     {
@@ -99,22 +94,21 @@ internal sealed class JsonContentManagementService
         }
     }
 
-    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
+    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<GetPresignedUrlResponse> dictionary)
     {
         List<string> keys = new();
-        var filtered = dictionary.Where(i => !i.IsError).ToList();
-        ExtractSrcFromContentObject(json,filtered);
+        ExtractSrcFromContentObject(json, dictionary);
         if (json?["content"] is JsonArray items)
         {
             foreach (var item in items)
             {
                 if (item is not null)
-                    ExtractSrcFromContentObject(json,filtered);
+                    ExtractSrcFromContentObject(json, dictionary);
             }
         }
         return keys;
 
-        static void ExtractSrcFromContentObject(JsonNode json, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
+        static void ExtractSrcFromContentObject(JsonNode json, List<GetPresignedUrlResponse> dictionary)
         {
             if (json?["attrs"] is JsonNode attrs
                             &&
@@ -125,8 +119,7 @@ internal sealed class JsonContentManagementService
                 if (match.Success)
                 {
                     string key = match.Groups[2].Value;
-                    string presignedUrl = dictionary.FirstOrDefault(i => i.Value.key == key)
-                        .Value.key ?? "https://support.heberjahiz.com/hc/article_attachments/21013076295570"; //404 image not found
+                    string presignedUrl = dictionary.FirstOrDefault(i => i.key == key)?.presignedUrl ?? ""; //404 image not found
 
                     attrs["src"] = presignedUrl;
                 }
@@ -142,7 +135,7 @@ public interface IResourcesClientService
     /// </summary>
     /// <param name="keys"></param>
     /// <returns>A dictionary where Key of the item is the key and the value is the presigned url</returns>
-    Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys, CancellationToken token = default);
+    Task<List<GetPresignedUrlResponse>> GetPreSignedUrls(List<string> keys, CancellationToken token = default);
 }
 
 public class HttpResourcesClientService : IResourcesClientService
@@ -155,17 +148,17 @@ public class HttpResourcesClientService : IResourcesClientService
         _client = clientFactory.CreateClient(HttpResourceClientServiceClientName);
     }
 
-    public async Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys, CancellationToken token = default)
+    public async Task<List<GetPresignedUrlResponse>> GetPreSignedUrls(List<string> keys, CancellationToken token = default)
     {
         string joinedKeys = string.Concat(keys);
         HttpResponseMessage response = await _client.GetAsync($"files/list?keys={joinedKeys}",token);
 
         if (!response.IsSuccessStatusCode)
         {
-            return Enumerable.Empty <ErrorOr<GetPresignedUrlResponse>>().ToList();
+            return Enumerable.Empty<GetPresignedUrlResponse>().ToList();
         }
 
-        var body = await response.Content.ReadFromJsonAsync<List<ErrorOr<GetPresignedUrlResponse>>>(token);
+        var body = await response.Content.ReadFromJsonAsync<List<GetPresignedUrlResponse>>(token);
         return body ?? new() ;
     }
 }

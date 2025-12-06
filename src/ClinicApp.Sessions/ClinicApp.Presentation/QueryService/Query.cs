@@ -18,6 +18,7 @@ public class Query
         return await mediator.Send(new QueryRequest<SessionQueryType>());
     }
 
+    [Obsolete("Use Restful endpoint instead")]
     [UseProjection]
     [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)] // will add a middleware to check the id of the session and who is requesting it
     public async Task<SessionQueryType?> GetSession(Guid id,IMediator mediator)
