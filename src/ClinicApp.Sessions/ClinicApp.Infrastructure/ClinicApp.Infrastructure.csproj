@@ -21,9 +21,11 @@
 	  <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.10" />
 	  <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="15.1.10" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.4.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ClinicApp.Contracts\ClinicApp.Contracts.csproj" />
     <ProjectReference Include="..\ClinicApp.Application\ClinicApp.Application.csproj" />
     <ProjectReference Include="..\ClinicApp.Domain\ClinicApp.Domain.csproj" />
     <ProjectReference Include="..\ClinicApp.Shared\ClinicApp.Shared.csproj" />

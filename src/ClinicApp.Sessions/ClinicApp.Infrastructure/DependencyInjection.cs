@@ -17,14 +17,19 @@ using ClinicApp.Infrastructure.Persistance.DataModels;
 using ClinicApp.Infrastructure.QueryServices;
 using ClinicApp.Infrastructure.Repositories;
 using ClinicApp.Infrastructure.Services;
+using ClinicApp.Infrastructure.SettingsConfiguration;
 using ClinicApp.Shared;
 using ClinicApp.Shared.QueryTypes;
 using MassTransit;
+using MassTransit.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Timeout;
 
 namespace ClinicApp.Infrastructure;
 public static class DependencyInjection
@@ -66,10 +71,23 @@ public static class DependencyInjection
         services.AddScoped<IQueryService<PatientQueryType>, PatientQueryService>();
         services.AddScoped<IEventAdderService<SessionDomainEvent>, SessionEventAdderService>();
         //Mediatr is unable to register generic requestHandlers because DI with MSDI can support this kind of stuff
-        RegisterMediatrGenericHandlers(services);
+        AddHttpClients(services, builder);
         services.AddMessaging(builder);
         return services;
     }
+
+    private static void AddHttpClients(IServiceCollection services, WebApplicationBuilder builder)
+    {
+        services.Configure<ClientConfiguration>(builder.Configuration.GetSection(ClientConfiguration.ClientConfigurationSectionName));
+        RegisterMediatrGenericHandlers(services);
+        services.AddHttpClient<IResourcesClientService, HttpResourcesClientService>(HttpResourcesClientService.HttpResourceClientServiceClientName, (sp, client) =>
+        {
+            client.BaseAddress = new Uri(sp.GetRequiredService<IOptions<ClientConfiguration>>()
+            .Value.ResourceClientBaseUrl);
+        })
+            .AddStandardResilienceHandler();
+    }
+
     private static void RegisterMediatrGenericHandler<T>(IServiceCollection services)
         where T:QueryType
     {

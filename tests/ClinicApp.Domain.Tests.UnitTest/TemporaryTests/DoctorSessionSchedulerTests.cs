@@ -79,7 +79,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var sessionTime = TimeRange.Create(new DateTime(2025, 7, 21, 14, 0, 0), new DateTime(2025, 7, 21, 15, 0, 0)).Value;
             var fakerClock = new FakerClock { UtcNow = new DateTime(2025, 7, 21) };
 
-            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription("Test"), Guid.NewGuid(), Guid.NewGuid(), doctor.Id, fakerClock,UserRole.Admin).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id, fakerClock,UserRole.Admin).Value;
 
             _sessionRepoMock.Setup(repo => repo.GetSessionsForDoctorOnDay(doctor.Id, session.SessionDate.StartTime)).ReturnsAsync(new List<Session>());
             _sessionRepoMock.Setup(repo => repo.GetSesssionsForDoctorOnDayAndAfter(doctor.Id, session.SessionDate.StartTime)).ReturnsAsync(new List<Session>());

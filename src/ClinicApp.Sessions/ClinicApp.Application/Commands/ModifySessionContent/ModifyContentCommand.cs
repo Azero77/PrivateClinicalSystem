@@ -7,3 +7,4 @@ using System.Threading.Tasks;
 
 namespace ClinicApp.Application.Commands.ModifySessionContent;
 public record ModifySessionCommand(Guid sessionId, JsonElement content);
+

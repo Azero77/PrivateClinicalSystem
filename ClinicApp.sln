@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "src\ClinicApp.Resour
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinciApp.SharedBuildingBlocks", "src\ClinciApp.SharedBuildingBlocks\ClinciApp.SharedBuildingBlocks.csproj", "{867E9064-F034-4F90-A1D6-E29BE8C55EAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Contracts", "ClinicApp.Contracts\ClinicApp.Contracts.csproj", "{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{867E9064-F034-4F90-A1D6-E29BE8C55EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{867E9064-F034-4F90-A1D6-E29BE8C55EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{867E9064-F034-4F90-A1D6-E29BE8C55EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +136,7 @@ Global
 		{1E8EF3A3-7ACE-8472-8777-D11A5262D58A} = {5652CEFE-CBBC-4AF7-A4A1-A2ED3906E321}
 		{DB20EE39-6A6C-943C-553E-F5AB8A2D0C79} = {F36413D0-CA07-4750-8B2B-D9DAAE165B0C}
 		{867E9064-F034-4F90-A1D6-E29BE8C55EAF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28E7AD30-B8DF-4623-8D1F-A5BAD12EA064}

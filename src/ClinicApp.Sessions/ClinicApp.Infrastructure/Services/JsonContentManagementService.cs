@@ -1,5 +1,6 @@
 ﻿using ClinicApp.Contracts;
 using ErrorOr;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -56,18 +57,17 @@ internal sealed class JsonContentManagementService
       ]
     }
          */
-        List<Task> tasks = new();
         JsonNode? json = JsonNode.Parse(serverJson.GetRawText());
         if (json is null)
             throw new NotSupportedException();
-        var keys = AssignKeysToList(json,tasks);
+        var keys = AssignKeysToList(json);
         var keysPresignedUrls = await _client.GetPreSignedUrls(keys);
-        AssignPresignedUrlsToJson(json, tasks, keysPresignedUrls);
+        AssignPresignedUrlsToJson(json, keysPresignedUrls);
         return JsonDocument.Parse(json.ToJsonString()).RootElement;
     }
     
 
-    private static List<string> AssignKeysToList(JsonNode json, List<Task> tasks)
+    private static List<string> AssignKeysToList(JsonNode json)
     {
         List<string> keys = new();
         ExtractSrcFromContentObject(json, keys);
@@ -99,7 +99,7 @@ internal sealed class JsonContentManagementService
         }
     }
 
-    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<Task> tasks, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
+    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<ErrorOr<GetPresignedUrlResponse>> dictionary)
     {
         List<string> keys = new();
         var filtered = dictionary.Where(i => !i.IsError).ToList();
@@ -142,5 +142,30 @@ public interface IResourcesClientService
     /// </summary>
     /// <param name="keys"></param>
     /// <returns>A dictionary where Key of the item is the key and the value is the presigned url</returns>
-    public Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys);
+    Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys, CancellationToken token = default);
+}
+
+public class HttpResourcesClientService : IResourcesClientService
+{
+    private readonly HttpClient _client;
+    public const string HttpResourceClientServiceClientName = "ResourcesClient";
+
+    public HttpResourcesClientService(IHttpClientFactory clientFactory)
+    {
+        _client = clientFactory.CreateClient(HttpResourceClientServiceClientName);
+    }
+
+    public async Task<List<ErrorOr<GetPresignedUrlResponse>>> GetPreSignedUrls(List<string> keys, CancellationToken token = default)
+    {
+        string joinedKeys = string.Concat(keys);
+        HttpResponseMessage response = await _client.GetAsync($"files/list?keys={joinedKeys}",token);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return Enumerable.Empty <ErrorOr<GetPresignedUrlResponse>>().ToList();
+        }
+
+        var body = await response.Content.ReadFromJsonAsync<List<ErrorOr<GetPresignedUrlResponse>>>(token);
+        return body ?? new() ;
+    }
 }
