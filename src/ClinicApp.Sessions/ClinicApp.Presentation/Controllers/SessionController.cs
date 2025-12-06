@@ -1,6 +1,7 @@
 ﻿using ClinicApp.Application.Commands.AddSessionsCommands;
 using ClinicApp.Application.Commands.DeleteSessionCommands;
 using ClinicApp.Application.Commands.FinishSessionCommands;
+using ClinicApp.Application.Commands.ModifySessionContent;
 using ClinicApp.Application.Commands.RejectSessionsCommands;
 using ClinicApp.Application.Commands.SetSessionsCommands;
 using ClinicApp.Application.Commands.StartSessionCommands;
@@ -180,6 +181,13 @@ public partial class SessionController : ApiController
     {
         var command = new UpdateSessionDateCommand(request.SessionId,request.StartTime,request.EndTime);
         var result = await _mediator.Send(command);
+        return result.Match(value => NoContent(), ProblemResult);
+    }
+
+    [HttpPatch("session/{id}/description")]
+    public async Task<IActionResult> SetDescription(ModifySessionContentCommand request)
+    {
+        var result = await  _mediator.Send(request);
         return result.Match(value => NoContent(), ProblemResult);
     }
 

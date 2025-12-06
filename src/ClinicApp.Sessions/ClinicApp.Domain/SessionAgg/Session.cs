@@ -164,6 +164,17 @@ namespace ClinicApp.Domain.SessionAgg
         {
             return (SessionStatus & status) == status;
         }
+
+        public ErrorOr<Success> SetDescription(SessionDescription description)
+        {
+            if (description.content is null)
+            {
+                return Error.Validation("Session.Validation","Description is empty");
+            }
+
+            SessionDescription = description;
+            return Result.Success;
+        }
     }
 
     public record SessionDescription(JsonElement? content);
