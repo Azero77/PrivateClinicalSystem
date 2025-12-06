@@ -149,7 +149,7 @@ namespace ClinicApp.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     StartTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Endtime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    Content = table.Column<JsonElement>(type: "jsonb", nullable: true),
+                    Content = table.Column<JsonElement>(type: "jsonb", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
                     PatientId = table.Column<Guid>(type: "uuid", nullable: false),
                     DoctorId = table.Column<Guid>(type: "uuid", nullable: false),

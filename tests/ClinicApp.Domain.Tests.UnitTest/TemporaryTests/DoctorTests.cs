@@ -15,7 +15,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
             var doctor = Factories.DoctorFactory;
             var fakerClock = new FakerClock { UtcNow = new DateTime(2025,7,21) };
             var sessionTime = TimeRange.Create(new DateTimeOffset(new DateTime(2025, 7, 22),TimeSpan.FromHours(0)),new DateTimeOffset(new DateTime(2025, 7, 22, 10, 30, 0),TimeSpan.FromHours(0))).Value; // Tuesday
-            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, (JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             // Act
             var result = doctor.CanAddBasedToSchedule(session.SessionDate);
@@ -33,7 +33,7 @@ namespace ClinicApp.Domain.Tests.UnitTest.TemporaryTests
 
             var fakerClock = new FakerClock { UtcNow = new DateTimeOffset(2025, 7, 21,0,0,0,TimeSpan.Zero) };
             var sessionTime = TimeRange.Create(new DateTimeOffset(2025, 7, 21, 8, 0, 0,TimeSpan.Zero), new DateTimeOffset(2025, 7, 21, 9, 0, 0,TimeSpan.Zero)).Value; // Monday, but too early
-            var session = Session.Schedule(Guid.NewGuid(), sessionTime, new SessionDescription(JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
+            var session = Session.Schedule(Guid.NewGuid(), sessionTime, (JsonDocument.Parse("{}").RootElement), Guid.NewGuid(), Guid.NewGuid(), doctor.Id,fakerClock,UserRole.Admin).Value;
 
             // Act
             var result = doctor.CanAddBasedToSchedule(session.SessionDate);

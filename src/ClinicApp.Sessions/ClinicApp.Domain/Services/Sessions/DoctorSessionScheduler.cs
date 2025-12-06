@@ -6,6 +6,7 @@ using ClinicApp.Domain.Repositories;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
 using System.Globalization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ClinicApp.Domain.Services.Sessions
@@ -21,7 +22,7 @@ namespace ClinicApp.Domain.Services.Sessions
         public async Task<ErrorOr<Session>> CreateSession(
                         Guid id,
                        TimeRange sessionDate,
-                       SessionDescription sessionDescription,
+                       JsonElement sessionDescription,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,

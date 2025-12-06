@@ -7,7 +7,7 @@ public class SessionDataModel : DataModel
 {
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
-    public JsonElement? Content { get; set; }
+    public JsonElement Content { get; set; }
     public Guid RoomId { get; set; }
     public RoomDataModel? Room { get; set; }
     public Guid PatientId { get; set; }

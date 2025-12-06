@@ -12,7 +12,7 @@ public class SessionConverter : IConverter<Session, SessionDataModel>
         var session = Session.Create(
             model.Id,
             TimeRange.Create(model.StartTime, model.EndTime).Value,
-            new SessionDescription(model.Content),
+            model.Content,
             model.RoomId,
             model.PatientId,
             model.DoctorId,
@@ -30,7 +30,7 @@ public class SessionConverter : IConverter<Session, SessionDataModel>
             Id = entity.Id,
             StartTime = entity.SessionDate.StartTime,
             EndTime = entity.SessionDate.EndTime,
-            Content = entity.SessionDescription.content,
+            Content = entity.Description,
             RoomId = entity.RoomId,
             PatientId = entity.PatientId,
             DoctorId = entity.DoctorId,

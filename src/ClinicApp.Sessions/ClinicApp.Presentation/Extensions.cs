@@ -18,6 +18,7 @@ public static class DbExtensions
             throw new SystemException("Can't apply migrations at runtime in prod");
         using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.EnsureDeleted();
         if (db.Database.GetPendingMigrations().Any())
         {
             db.Database.Migrate();

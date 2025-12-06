@@ -4,6 +4,7 @@ using ClinicApp.Domain.Common.ValueObjects;
 using ClinicApp.Domain.DoctorAgg;
 using ClinicApp.Domain.SessionAgg;
 using ErrorOr;
+using System.Text.Json;
 
 namespace ClinicApp.Domain.Services.Sessions
 {
@@ -12,7 +13,7 @@ namespace ClinicApp.Domain.Services.Sessions
         Task<ErrorOr<Session>> CreateSession(
                         Guid id,
                        TimeRange sessionDate,
-                       SessionDescription sessionDescription,
+                       JsonElement sessionDescription,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,

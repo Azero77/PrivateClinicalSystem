@@ -31,7 +31,7 @@ public static class Converters
             RoomId = session.RoomId,
             StartTime = session.SessionDate.StartTime,
             EndTime = session.SessionDate.EndTime,
-             SessionDescription = session.SessionDescription?.content,
+             SessionDescription = session.Description,
              SessionStatus = session.SessionStatus
 
         };

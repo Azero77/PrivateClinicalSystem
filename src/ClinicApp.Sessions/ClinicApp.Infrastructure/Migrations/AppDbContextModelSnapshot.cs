@@ -199,7 +199,7 @@ namespace ClinicApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<JsonElement?>("Content")
+                    b.Property<JsonElement>("Content")
                         .HasColumnType("jsonb")
                         .HasColumnName("Content");
 

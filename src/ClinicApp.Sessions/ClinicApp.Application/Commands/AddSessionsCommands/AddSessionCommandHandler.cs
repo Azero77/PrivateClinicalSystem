@@ -41,7 +41,7 @@ public sealed class AddSessionCommandHandler : ValidatedCommandHandler<AddSessio
             return timerange.Errors;
         ErrorOr<Session> session =  await _scheduler.CreateSession(Guid.NewGuid(),
             timerange.Value,
-            new SessionDescription(request.SessionDescriptionContent),
+            request.SessionDescriptionContent,
             request.roomId,
             request.patientId,
             request.doctorId,

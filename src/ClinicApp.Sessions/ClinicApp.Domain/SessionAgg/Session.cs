@@ -15,7 +15,7 @@ namespace ClinicApp.Domain.SessionAgg
         private IClock _clock = null!;
         public static ErrorOr<Session> Create(Guid id,
                        TimeRange sessionDate,
-                       SessionDescription sessionDescription,
+                       JsonElement sessionDescription,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,
@@ -27,7 +27,7 @@ namespace ClinicApp.Domain.SessionAgg
             {
                 Id = id,
                 SessionDate = sessionDate,
-                SessionDescription = sessionDescription,
+                Description = sessionDescription,
                 RoomId = roomId,
                 SessionStatus = session,
                 PatientId = patientId,
@@ -42,7 +42,7 @@ namespace ClinicApp.Domain.SessionAgg
         internal static ErrorOr<Session> Schedule(
                         Guid id,
                        TimeRange sessionDate,
-                       SessionDescription sessionDescription,
+                       JsonElement sessionDescription,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,
@@ -74,7 +74,7 @@ namespace ClinicApp.Domain.SessionAgg
 
         private Session() { } 
         public TimeRange SessionDate { get; private set; } = null!;
-        public SessionDescription SessionDescription { get; private set; } = null!;
+        public JsonElement Description { get; private set; } = default;
         public Guid RoomId { get; private set; }
         public Guid PatientId { get; private set; }
         public Guid DoctorId { get; private set; }
@@ -165,18 +165,20 @@ namespace ClinicApp.Domain.SessionAgg
             return (SessionStatus & status) == status;
         }
 
-        public ErrorOr<Success> SetDescription(SessionDescription description)
+        public ErrorOr<Success> SetDescription(JsonElement description)
         {
-            if (description.content is null)
+            if (description.ValueKind == JsonValueKind.Null
+                || 
+                description.ValueKind == JsonValueKind.Undefined
+                )
             {
                 return Error.Validation("Session.Validation","Description is empty");
             }
 
-            SessionDescription = description;
+            Description = description;
             return Result.Success;
         }
     }
 
-    public record SessionDescription(JsonElement? content);
 }
 

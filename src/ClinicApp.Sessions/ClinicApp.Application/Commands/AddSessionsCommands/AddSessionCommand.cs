@@ -11,7 +11,7 @@ namespace ClinicApp.Application.Commands.AddSessionsCommands;
 public record AddSessionCommand(
                        DateTimeOffset StartTime,
                        DateTimeOffset EndTime,
-                       JsonElement? SessionDescriptionContent,
+                       JsonElement SessionDescriptionContent,
                        Guid roomId,
                        Guid patientId,
                        Guid doctorId,

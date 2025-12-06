@@ -13,7 +13,7 @@ public class SessionEntityConfiguration : IEntityTypeConfiguration<SessionDataMo
         builder.HasKey(s => s.Id);
         builder.Property(s => s.StartTime).HasColumnName("StartTime").IsRequired();
         builder.Property(s => s.EndTime).HasColumnName("Endtime").IsRequired();
-        builder.Property(s => s.Content).HasColumnName("Content").IsRequired(false);
+        builder.Property(s => s.Content).HasColumnName("Content").HasDefaultValue(default);
 
         builder.Property(s => s.SessionStatus)
             .HasConversion<byte>()

@@ -1,7 +1,6 @@
 ﻿using ClinicApp.Application.Services;
 using ClinicApp.Contracts;
 using ErrorOr;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -125,40 +124,5 @@ internal sealed class JsonContentManagementService : IContentManagementService
                 }
             }
         }
-    }
-}
-
-public interface IResourcesClientService
-{
-    /// <summary>
-    /// Get the presigned Urls for keys 
-    /// </summary>
-    /// <param name="keys"></param>
-    /// <returns>A dictionary where Key of the item is the key and the value is the presigned url</returns>
-    Task<List<GetPresignedUrlResponse>> GetPreSignedUrls(List<string> keys, CancellationToken token = default);
-}
-
-public class HttpResourcesClientService : IResourcesClientService
-{
-    private readonly HttpClient _client;
-    public const string HttpResourceClientServiceClientName = "ResourcesClient";
-
-    public HttpResourcesClientService(IHttpClientFactory clientFactory)
-    {
-        _client = clientFactory.CreateClient(HttpResourceClientServiceClientName);
-    }
-
-    public async Task<List<GetPresignedUrlResponse>> GetPreSignedUrls(List<string> keys, CancellationToken token = default)
-    {
-        string joinedKeys = string.Concat(keys);
-        HttpResponseMessage response = await _client.GetAsync($"files/list?keys={joinedKeys}",token);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return Enumerable.Empty<GetPresignedUrlResponse>().ToList();
-        }
-
-        var body = await response.Content.ReadFromJsonAsync<List<GetPresignedUrlResponse>>(token);
-        return body ?? new() ;
     }
 }

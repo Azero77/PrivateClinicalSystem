@@ -19,7 +19,7 @@ public sealed class ModifySessionContentCommandHandler(ISessionRepository repo,I
 {
     protected override Task<IErrorOr> ApplySessionAction(Session session, ModifySessionContentCommand command)
     {
-        IErrorOr result = session.SetDescription(new SessionDescription(command.Content));
+        IErrorOr result = session.SetDescription((command.Content));
         return Task.FromResult(result);
     }
 }
