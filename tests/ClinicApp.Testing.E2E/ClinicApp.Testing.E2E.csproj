@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,18 +10,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	  <PackageReference Include="coverlet.collector" Version="6.0.2" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
 	  <PackageReference Include="xunit" Version="2.9.2" />
 	  <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ClinicApp.Resources.Testing.Integration\ClinicApp.Resources.Testing.Integration.csproj" />
+    <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
     <ProjectReference Include="..\ClinicApp.Presentation.Tests.IntegrationTest\ClinicApp.Presentation.Tests.IntegrationTest.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="StaticFiles\github_photo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

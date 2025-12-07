@@ -34,7 +34,6 @@ public class Program
                 RegionEndpoint = RegionEndpoint.GetBySystemName(s3Settings.Region),
                 ServiceURL = s3Settings.ServiceUrl,
                 ForcePathStyle = s3Settings.ForcePathStyle
-                
             };
             return new AmazonS3Client(config);
         });
@@ -87,13 +86,14 @@ public class Program
             return result.Match(value => Results.Ok(value),error => ProblemResult.Create(error));
         });
 
-        app.MapPost("files/", async (string fileName,string contentType,IUploadService uploadService) =>
+
+        app.MapPost("files/", async (UploadFileRequest fileRequest,IUploadService uploadService) =>
         {
-            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(contentType))
+            if (string.IsNullOrEmpty(fileRequest.FileName) || string.IsNullOrEmpty(fileRequest.ContentType))
             {
                 return Results.BadRequest();
             }
-            var result = await uploadService.UploadFile(fileName,contentType);
+            var result = await uploadService.UploadFile(fileRequest.FileName,fileRequest.ContentType);
             return result.Match(value => Results.Ok(value),error => ProblemResult.Create(error));
         });
 
@@ -114,3 +114,4 @@ public class Program
         app.Run();
     }
 }
+public record UploadFileRequest(string FileName, string ContentType);

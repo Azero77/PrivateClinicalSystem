@@ -24,7 +24,7 @@ public sealed class GetSessionByIdQueryHandler(IQueryService<SessionQueryType> q
 
         ///now we need to configure the s3 urls for the content json elemen
         JsonElement? content = null;
-        if (session.Content.Equals(default))
+        if (!session.Content.Equals(default))
         {
             content = await contentManagementService.FromServerAsync(session.Content);
         }

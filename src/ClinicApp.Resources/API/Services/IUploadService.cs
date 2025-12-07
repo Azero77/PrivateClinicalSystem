@@ -73,7 +73,9 @@ public class S3UploadService : IUploadService
                     },
                 Verb = HttpVerb.PUT,
                 Expires = DateTime.UtcNow.AddMinutes(15),
-                Key = $"files/{key}"
+                Key = $"files/{key}",
+                Protocol = Protocol.HTTP
+                
             };
 
             string url = await _client.GetPreSignedURLAsync(request);

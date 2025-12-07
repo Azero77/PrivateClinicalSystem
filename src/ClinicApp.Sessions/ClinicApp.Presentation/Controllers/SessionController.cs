@@ -100,7 +100,7 @@ public partial class SessionController : ApiController
         var result = await _mediator.Send(query);
         return result.Match(value => Ok(value),errors => ProblemResult(errors));
     }
-    [HttpDelete("sessions/{id}/delete")]
+    [HttpDelete("{id}")]
     [Authorize(Policy = PoliciesConstants.CanDeleteSession)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

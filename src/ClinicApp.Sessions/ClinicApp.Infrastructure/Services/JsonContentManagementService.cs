@@ -1,6 +1,8 @@
 ﻿using ClinicApp.Application.Services;
 using ClinicApp.Contracts;
 using ErrorOr;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -10,11 +12,15 @@ namespace ClinicApp.Infrastructure.Services;
 /// Service For dealing with session content for handling the conversion of json content to a readable format by the text editor
 /// 1- Conversion between S3 urls to presigned urls for photots and videos
 /// </summary>
-internal sealed class JsonContentManagementService : IContentManagementService
+public sealed class JsonContentManagementService : IContentManagementService
 {
     private const string s3UrlRegex = @"s3://([^/]+)/(.+)";
     private readonly IResourcesClientService _client;
 
+    public static string GetS3Url(string key, string bucketName)
+    {
+        return $"s3://{bucketName}/{key}";
+    }
     public JsonContentManagementService(IResourcesClientService client)
     {
         _client = client;
@@ -61,68 +67,58 @@ internal sealed class JsonContentManagementService : IContentManagementService
     }
 
 
-    private static List<string> AssignKeysToList(JsonNode json)
+    private static List<string> AssignKeysToList(JsonNode root)
     {
         List<string> keys = new();
-        ExtractSrcFromContentObject(json, keys);
+        LoopOnJson(root,(srcNode) =>
+        {
+            string src = srcNode.GetValue<string>();
+            var match = Regex.Match(src, s3UrlRegex);
 
-        if (json?["content"] is JsonArray items)
+            if (match.Success)
+            {
+                string key = match.Groups[2].Value;
+                keys.Add(key);
+            }
+        });
+        return keys;
+    }
+
+    private static void AssignPresignedUrlsToJson(JsonNode root, List<GetPresignedUrlResponse?> getPresignedUrls)
+    {
+        LoopOnJson(root,(srcNode) =>
+        {
+            string src = srcNode.GetValue<string>();
+            var match = Regex.Match(src, s3UrlRegex);
+
+            if (match.Success)
+            {
+                string key = match.Groups[2].Value;
+                string presignedUrl = getPresignedUrls.FirstOrDefault(i => i.key == key)?.presignedUrl ?? ""; //404 image not found
+
+                srcNode = presignedUrl;
+            }
+        });
+
+
+    }
+    private static void LoopOnJson(JsonNode node,Action<JsonNode> srcAction)
+    {
+        if (node is not JsonArray)
+            return;
+        if (node?["content"] is JsonArray items)
         {
             foreach (var item in items)
             {
-                if (item is not null)
-                    ExtractSrcFromContentObject(json, keys);
+                LoopOnJson(node, srcAction);
             }
         }
-        return keys;
-
-        static void ExtractSrcFromContentObject(JsonNode json, List<string> keys)
+        else if (node?["attrs"] is JsonNode attrs && 
+            attrs["src"] is JsonNode src)
         {
-            if (json?["attrs"] is JsonNode attrs
-                            &&
-                        attrs?["src"]?.GetValue<string>() is string src)
-            {
-                var match = Regex.Match(src, s3UrlRegex);
-
-                if (match.Success)
-                {
-                    string key = match.Groups[2].Value;
-                    keys.Add(key);
-                }
-            }
+            srcAction(src);
         }
+
     }
 
-    private static List<string> AssignPresignedUrlsToJson(JsonNode json, List<GetPresignedUrlResponse> dictionary)
-    {
-        List<string> keys = new();
-        ExtractSrcFromContentObject(json, dictionary);
-        if (json?["content"] is JsonArray items)
-        {
-            foreach (var item in items)
-            {
-                if (item is not null)
-                    ExtractSrcFromContentObject(json, dictionary);
-            }
-        }
-        return keys;
-
-        static void ExtractSrcFromContentObject(JsonNode json, List<GetPresignedUrlResponse> dictionary)
-        {
-            if (json?["attrs"] is JsonNode attrs
-                            &&
-                        attrs?["src"]?.GetValue<string>() is string src)
-            {
-                var match = Regex.Match(src, s3UrlRegex);
-
-                if (match.Success)
-                {
-                    string key = match.Groups[2].Value;
-                    string presignedUrl = dictionary.FirstOrDefault(i => i.key == key)?.presignedUrl ?? ""; //404 image not found
-
-                    attrs["src"] = presignedUrl;
-                }
-            }
-        }
-    }
 }
