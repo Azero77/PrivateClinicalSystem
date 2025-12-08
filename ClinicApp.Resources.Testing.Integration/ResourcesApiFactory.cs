@@ -65,6 +65,7 @@ public class ResourcesApiFactory : WebApplicationFactory<IResourceApiMarker>, IA
                     ForcePathStyle = s3Settings.ForcePathStyle,
                 });
             });
+
         });
         base.ConfigureWebHost(builder);
     }

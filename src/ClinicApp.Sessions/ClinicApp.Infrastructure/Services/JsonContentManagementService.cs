@@ -70,9 +70,9 @@ public sealed class JsonContentManagementService : IContentManagementService
     private static List<string> AssignKeysToList(JsonNode root)
     {
         List<string> keys = new();
-        LoopOnJson(root,(srcNode) =>
+        LoopOnJson(root,(attrNode) =>
         {
-            string src = srcNode.GetValue<string>();
+            string src = attrNode!["src"]!.GetValue<string>();
             var match = Regex.Match(src, s3UrlRegex);
 
             if (match.Success)
@@ -86,9 +86,9 @@ public sealed class JsonContentManagementService : IContentManagementService
 
     private static void AssignPresignedUrlsToJson(JsonNode root, List<GetPresignedUrlResponse?> getPresignedUrls)
     {
-        LoopOnJson(root,(srcNode) =>
+        LoopOnJson(root,(attrNode) =>
         {
-            string src = srcNode.GetValue<string>();
+            string src = attrNode!["src"]!.GetValue<string>();
             var match = Regex.Match(src, s3UrlRegex);
 
             if (match.Success)
@@ -96,27 +96,26 @@ public sealed class JsonContentManagementService : IContentManagementService
                 string key = match.Groups[2].Value;
                 string presignedUrl = getPresignedUrls.FirstOrDefault(i => i.key == key)?.presignedUrl ?? ""; //404 image not found
 
-                srcNode = presignedUrl;
+                attrNode["src"] = JsonValue.Create(presignedUrl);
             }
         });
 
 
     }
-    private static void LoopOnJson(JsonNode node,Action<JsonNode> srcAction)
+    private static void LoopOnJson(JsonNode node,Action<JsonNode> attrAction)
     {
-        if (node is not JsonArray)
-            return;
         if (node?["content"] is JsonArray items)
         {
             foreach (var item in items)
             {
-                LoopOnJson(node, srcAction);
+                if(item is not null)
+                    LoopOnJson(item, attrAction);
             }
         }
         else if (node?["attrs"] is JsonNode attrs && 
-            attrs["src"] is JsonNode src)
+            attrs["src"] is not null)
         {
-            srcAction(src);
+            attrAction(attrs);
         }
 
     }

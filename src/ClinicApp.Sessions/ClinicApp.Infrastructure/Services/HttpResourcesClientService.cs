@@ -15,7 +15,7 @@ public class HttpResourcesClientService : IResourcesClientService
 
     public async Task<List<GetPresignedUrlResponse>> GetPreSignedUrls(List<string> keys, CancellationToken token = default)
     {
-        string joinedKeys = string.Concat(keys);
+        string joinedKeys = string.Join(",",keys);
         HttpResponseMessage response = await _client.GetAsync($"files/list?keys={joinedKeys}",token);
 
         if (!response.IsSuccessStatusCode)

@@ -22,8 +22,8 @@ public static class PolicyExtensions
         builder.AddRequirements(new CanViewSessions([UserRole.Admin,UserRole.Secretary])));
 
         opts.AddPolicy(PoliciesConstants.CanViewSessionDetails, builder =>
-        builder.RequireRole(UserRole.Doctor.ToString())
-        .AddRequirements(new CanViewSessions([])));//no one can see the session details except the doctor (not even sec or admin);
+        builder.RequireRole(UserRole.Doctor.ToString(),UserRole.Admin.ToString())
+        .AddRequirements(new CanViewSessions([UserRole.Admin])));//no one can see the session details except the doctor (not even sec or admin);
 
         opts.AddPolicy(PoliciesConstants.CanAddSessions, builder =>
         builder.AddRequirements(new CanAddSessionRequirement()));

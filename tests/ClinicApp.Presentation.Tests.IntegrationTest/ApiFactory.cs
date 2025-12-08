@@ -2,6 +2,7 @@
 using ClinicApp.Domain.Common.Interfaces;
 using ClinicApp.Infrastructure.Extensions;
 using ClinicApp.Infrastructure.Persistance;
+using ClinicApp.Infrastructure.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Testcontainers.PostgreSql;
 
@@ -26,7 +28,6 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         .Build();
     private HttpClient _client = null!;
     public HttpClient Client => _client;
-
     public AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -54,6 +55,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         return base.CreateHost(builder);
     }
 
+    public Action<IServiceCollection>? ConfigureServices { get; set; } = null;
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -63,7 +65,6 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
             {
                 services.Remove(exceptionHandlerDescriptor);
             }
-
             services.RemoveAll<DbContextOptions<AppDbContext>>();
             services.AddDbContext<AppDbContext>(opts =>
             {
@@ -76,9 +77,14 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
             //remove caching using redis and using memory instead
             services.RemoveAll<IDistributedCache>();
             services.AddDistributedMemoryCache();
+
+            if (ConfigureServices is not null)
+                ConfigureServices(services);
+           
         });
         base.ConfigureWebHost(builder);
     }
+
 
     public async Task InitializeAsync()
     {

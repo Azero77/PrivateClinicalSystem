@@ -1,8 +1,10 @@
 ﻿using API.Models;
+using ClinicApp.Infrastructure.Services;
 using ClinicApp.Presentation.Tests.IntegrationTest;
 using ClinicApp.Resources.Testing.Integration;
 using MassTransit.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
@@ -22,6 +24,19 @@ public class WebFactory : IAsyncLifetime
     {
         _sessionApiFactory = new ApiFactory();
         _resourcesApiFactory = new ResourcesApiFactory();
+
+        _sessionApiFactory.ConfigureServices = ConfigureSessionApiFactoryServices;
+    }
+
+    private void ConfigureSessionApiFactoryServices(IServiceCollection services)
+    {
+        services.RemoveAll<IResourcesClientService>();
+        services.AddHttpClient<IResourcesClientService, HttpResourcesClientService>(HttpResourcesClientService.HttpResourceClientServiceClientName, (sp, client) =>
+        {
+            client.BaseAddress = _resourcesApiFactory.Server.BaseAddress;
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => _resourcesApiFactory.Server.CreateHandler())
+        .AddStandardResilienceHandler();
     }
 
     public async Task DisposeAsync()
