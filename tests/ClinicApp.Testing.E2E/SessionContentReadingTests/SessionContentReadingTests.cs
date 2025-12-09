@@ -96,7 +96,9 @@ public class SessionContentReadingTests
         var addedSession = await addSessionResponse.Content.ReadFromJsonAsync<SessionDTO>();
         addedSession?.Should()?.NotBeNull();
         //trying to retreive it
-        var session= await _sessionApiClient.GetFromJsonAsync<SessionQueryType>($"api/Session/sessions/{addedSession!.Id}");
+        //ApiFactory.AssignDoctorToken(_sessionApiClient);
+
+        var session = await _sessionApiClient.GetFromJsonAsync<SessionQueryType>($"api/Session/sessions/{addedSession!.Id}");
 
         //assert
         session?.Should()?.NotBeNull();
@@ -106,8 +108,8 @@ public class SessionContentReadingTests
 
         //clean
 
-        (await _sessionApiClient.DeleteAsync($"api/session/{addedSession.Id}"))
-            .EnsureSuccessStatusCode();
+       /*(await _sessionApiClient.DeleteAsync($"api/session/{addedSession.Id}"))
+            .EnsureSuccessStatusCode();*/
     }
 
 

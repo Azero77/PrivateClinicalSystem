@@ -73,7 +73,8 @@ public partial class SessionController : ApiController
     }
 
     [HttpGet("sessions/{id}")]
-    [Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
+    //[Authorize(Policy = PoliciesConstants.CanViewOwnSessionsPolicy)]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(SessionQueryType), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

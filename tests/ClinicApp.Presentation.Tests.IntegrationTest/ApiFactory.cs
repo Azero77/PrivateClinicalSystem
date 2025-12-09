@@ -44,6 +44,13 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
     }
 
+    public static void AssignDoctorToken(HttpClient client)
+    {
+        string jwt = Environment.GetEnvironmentVariable("Test_ClinicApp_DoctorToken")!;
+        client.DefaultRequestHeaders.Remove("Authorization");
+        client.DefaultRequestHeaders.Authorization =
+           new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwt);
+    }
     protected override IHost CreateHost(IHostBuilder builder)
     {
         Log.Logger = new LoggerConfiguration()

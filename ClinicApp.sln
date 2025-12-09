@@ -47,11 +47,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "src\ClinicApp.Resour
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinciApp.SharedBuildingBlocks", "src\ClinciApp.SharedBuildingBlocks\ClinciApp.SharedBuildingBlocks.csproj", "{867E9064-F034-4F90-A1D6-E29BE8C55EAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Contracts", "ClinicApp.Contracts\ClinicApp.Contracts.csproj", "{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Contracts", "src\ClinicApp.Contracts\ClinicApp.Contracts.csproj", "{4E6FDB8F-D56D-4205-91E9-5B301FCA2C7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Testing.E2E", "tests\ClinicApp.Testing.E2E\ClinicApp.Testing.E2E.csproj", "{312BA725-6B15-4B14-BE7C-5D60F9DC2DD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Resources.Testing.Integration", "ClinicApp.Resources.Testing.Integration\ClinicApp.Resources.Testing.Integration.csproj", "{4D793487-411D-4591-BD03-4797DC3A4E18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClinicApp.Resources.Testing.Integration", "tests\ClinicApp.Resources.Testing.Integration\ClinicApp.Resources.Testing.Integration.csproj", "{4D793487-411D-4591-BD03-4797DC3A4E18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

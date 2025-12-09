@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ClinicApp.Resources.Testing.Integration\ClinicApp.Resources.Testing.Integration.csproj" />
+    <ProjectReference Include="..\ClinicApp.Resources.Testing.Integration\ClinicApp.Resources.Testing.Integration.csproj" />
     <ProjectReference Include="..\..\src\ClinicApp.Sessions\ClinicApp.Infrastructure\ClinicApp.Infrastructure.csproj" />
     <ProjectReference Include="..\ClinicApp.Presentation.Tests.IntegrationTest\ClinicApp.Presentation.Tests.IntegrationTest.csproj" />
   </ItemGroup>

@@ -8,6 +8,7 @@ using ClinicApp.Domain.SessionAgg;
 using ClinicApp.Shared.QueryTypes;
 using ErrorOr;
 using MediatR;
+using System.Net.Mime;
 using System.Text.Json;
 
 namespace ClinicApp.Application.Queries.Sessions.SessionById;
@@ -27,6 +28,8 @@ public sealed class GetSessionByIdQueryHandler(IQueryService<SessionQueryType> q
         if (!session.Content.Equals(default))
         {
             content = await contentManagementService.FromServerAsync(session.Content);
+            if(content is not null)
+                session.Content = (JsonElement) content;
         }
         return session;
     }
